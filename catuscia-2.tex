@@ -1,0 +1,1769 @@
+\documentclass{llncs}
+\usepackage{mathptmx}
+
+\usepackage{amsmath,amssymb,amsxtra,amsfonts,cancel}
+\usepackage{graphicx,paralist}
+\usepackage{url}
+\usepackage{tikz-cd}
+\usetikzlibrary{trees}
+\usepackage{xspace}
+%\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{tikz}
+%\usepackage{algorithm}
+%\usepackage{algpseudocode}
+\usepackage{textcomp}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage{mathtools}
+
+\usepackage{todonotes}
+% To disable notes without deleting them
+%\usepackage[disable]{todonotes}
+
+%\floatstyle{plain}
+%\newfloat{myalgo}{tbhp}{mya}
+
+\newenvironment{Algorithm}[2][tbh]%
+{\begin{myalgo}[#1]
+		\centering
+		\begin{minipage}{#2}
+			\begin{algorithm}[H]}%
+			{\end{algorithm}
+		\end{minipage}
+	\end{myalgo}}
+% to cut ------------------------------------------------------
+%\usepackage{paralist}
+%\usepackage[small]{caption}
+%\usepackage{textcomp}
+%\usepackage{times}
+%\addtolength{\floatsep}{-5mm} \addtolength{\textfloatsep}{-5mm}
+% -------------------------------------------------------------
+
+\newtheorem{define}[theorem]{Definition}
+
+\newtheorem{exa}[theorem]{Example}
+\def\smallromani{\renewcommand{\theenumi}{\roman{enumi}}
+        \renewcommand{\labelenumi}{(\theenumi)}}
+
+%\def\bigodiv{{ \mathbf{\bigodot \hspace{-11pt} \boxempty \,\,}}}
+
+\def\bigodiv{ {\text{ \large $\mathbf\odiv\hspace{-9.3pt} \div$}} }
+\def\bigominus{ {\text{ \large $\mathbf\odiv\hspace{-9.3pt} -$}} }
+
+
+%\defodiv{{ \odiv\hspace{-7.5pt} \div}}
+
+\newcommand{\diag}[2]{d_{{#1}{#2}}}
+\newcommand{\comment}[1]{}
+\newcommand{\tell}{{\bf tell}}
+\newcommand{\atell}{{\bf atell}}
+\newcommand{\ask}{{\bf ask}}
+\newcommand{\ostop}{{\bf stop}}
+\newcommand{\retract}{{\bf retr}}
+\newcommand{\rarrow}{\rightarrow}
+\newcommand{\remove}{\rightarrow}
+
+
+\def\ent{\vdash}
+\def\monid{{\mathbf 0}}
+\def\1{{\mathbf 1}}
+\def\C{{\mathcal C}}
+\def\K{{\mathcal K}}
+\long\def\comment#1{}
+\def\monop{\otimes}
+\def\odiv{\, {\ominus\hspace{-7.7pt} \div} \,}
+\def\monid{\mathbf{1}}
+
+
+\newcommand{\RefFig}[1]{Figure \nolinebreak\ref{#1}}
+\newcommand\fnsep{\textsuperscript{,}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+\title{Polyadic Soft Constraints}
+
+
+\author{Laura Bussi\inst{1}, Fabio Gadducci\inst{1}, Francesco Santini\inst{2}%\fnsep\thanks{The author conducted this research while visiting the School of Computing and Information Systems at the University of Melbourne.}
+} 
+	\institute{Dipartimento di Informatica, University of Pisa, Italy \\
+		\email{fabio.gadducci@unipi.it}
+		\and Dipartimento di Matematica e Informatica, University of Perugia, Italy\\
+		\email{francesco.santini@unipg.it}
+		}
+	
+\titlerunning{Polyadic Soft Constraints}
+\authorrunning{Bussi, Gadducci, and Santini}
+
+\maketitle
+
+\begin{abstract}
+We propose a representation of soft constraints by using polyadic algebras, allowing constraints to easily represent preference/cost functions in terms of polynomials. 
+%
+Polyadic algebras are used in place of classical cylindric algebras
+%
+This choice simplifies the structure of the set of preference values by removing the need of diagonals, which are constants used for parameter passing or variable substitution. 
+%
+In this paper, diagonals are replaced with a family of polyadic operators, and we investigate how these operators interact with the residuated monoid structure representing the set of preference values. 
+%
+The constraint store that describes a \emph{Soft Constraint Satisfaction Problem} (\emph{SCSP}) or the result of agents interaction in \emph{Soft Concurrent Constraint Programming} (\emph{SCCP}), 
+is then represented by a polynomial, as all constraints in general, thus streamlining its manipulation
+%Our main objective is to provide a blueprint for  developing  such frameworks in practice, by filling the gap between the original algebraic approach and an actual implementation.
+\end{abstract}
+
+\keywords{Soft constraints, polyadic algebras}
+
+\section{Introduction}\label{sec:intro}
+
+%\subsection{Constraints and constraint programming}
+Computer scientists often face combinatorial problems, as for instance in operational research, artificial intelligence, or circuit design,
+and constraints are a tool for modelling these problems in a natural way. 
+Indeed, in their simplest form constraints are just sets of disequations over a domain: given a set of variables $V$ and a domain $D$ of values, 
+a constraint over a subset of variables limits the combinations of values that such variables can take. 
+Combinatorial problems can thus be easily modelled by constraints: \emph{constraints satisfaction problems} (CSPs)
+are defined over a set of variables $V$, a domain $D$ and a set of constraints $C$. Solving a CSP simply means 
+to find an assignment of the variables such that all the given constraints are satisfied. 
+
+Consider, for instance, a problem where we want to respect a given relation among two measures, e.g. $y = 2x$, for $x$ representing the width and $y$ the length of an object. 
+Of course, both $x$ and $y$ have to be positive reals and might have to respect some upper bounds, let us say $5$ and $9$. The problem can be formalised as
+%
+\begin{itemize}
+	\item the set of variables $V$ is $\{x,y\}$;
+	\item the domain $D$ is the set of positive reals $\mathbb{R}^+$;
+	\item the constraints in $C$ are given by polynomials: $\{2x-y = 0, \ x-5 \leq 0, \ y-9 \leq 0\}$.
+\end{itemize}
+%\sameline
+where clearly the assignment $\{x \leftarrow 4, \ y \leftarrow 8\}$ is a solution for the problem.
+
+%\smallskip
+\newpage
+Constraint programming (CP) is a computational framework that allows to implement algorithms for solving CSPs:  
+it has been intensively studied and a set of algorithms for solving CSPs have been implemented since the early Nineties~\cite{aijour}. 
+%
+As in imperative programming basic operations are \emph{read} and \emph{write}, in constraint programming we have operations to manipulate the store, which is itself a constraint
+
+\begin{itemize}
+	\item \emph{tell(c)} adds a constraint \emph{c} to the store;
+	\item \emph{ask(c)} checks if a constraint \emph{c} is satisfied, i.e. the store \emph{entails} such a constraint;
+\end{itemize}
+
+\noindent
+and depending on the domain we may additionally require subtraction
+
+\begin{itemize}
+	\item \emph{remove(c)} removes \emph{c} from the store, thus possibly lifting some of the requirements that had been enforced by the constraint. 
+	%After the removal, values which were allowed by \emph{c} could be permitted, according on the remaining constraints are satisfied. 
+\end{itemize}
+
+%
+%Constraint programming have been intensively studied and a set of algorithms for solving CSPs have been implemented since the early Nineties.~\cite{aijour}. 
+%Furthermore, CP allows for concurrency by using a blocking \emph{ask} operation: this led to the definition of concurrent constraint programming, 
+%where multiple agents can access the store at the same time and perform parallel operations~\cite{popl91}. 
+
+%
+Furthermore, in order to model variables hiding and procedure calls, further operators are needed on constraints. 
+%
+The standard solution~\cite{popl91} is via cylindric algebras: a family of unary operations called \emph{cylindrification}, 
+which is a family of variable-indexed operators representing existential quantifiers, and a family of constants called \emph{diagonals}, 
+which are used for modelling parameters passing and variables substitution.
+
+\smallskip
+Despite CSP expressiveness,  
+in many real-life situations we need a more flexible way to model problems, 
+since some constraints could be ``less important'' than others and might not have to be necessarily satisfied.
+%
+Soft constraints have been introduced to model this kind of situation. In informal terms, they are classical constraints where a value from a partially ordered set is associated to each instantiation of the variables of a constraint. It is  thus possible to state that a constraint is either  more or less significant than others in order to find a good approximation of the solution, even if constraints are not all satisfied at the same time. 
+%
+Then, a soft constraint satisfaction problem (SCSP) is defined over a set of variables $V$, a domain $D$ and a set of soft constraints $C$, each one associated to a certain value in a set $A$, which could be either its cost or its preferability, depending on whether representing negative or positive preferences. Combining positive and negative preferences results in what is called a bipolar approach~\cite{posneg}.
+
+To evaluate the combination of constraints, the set $A$ is equipped with a monoidal operator, so that it results to be a (tropical) semiring. 
+%
+Many such structures have been proposed. For instance, \emph{Fuzzy} semirings associate a constraint to its cost such that we want to minimise the sum: this falls into the range of negative preferences. Vice-versa, \emph{Probabilistic} semirings associate a constraint to its probability and the aim is to maximise the joint probability.
+%Our proposal follows instead a bipolar approach.
+Similarly, a further operation is required over the set $A$, in order to model the removal of constraints, 
+resulting in a residuated monoid: the basics of the formalism within the bipolar approach have been presented in~\cite{ipl17}.
+
+However, one of the issues that was left open is the representation of constraints in a compact form, since a polynomial presentation is not readily available:
+indeed, tackling this problem has been the starting point of our work.
+
+%\subsection{Cylindric and polyadic algebras for soft constraints}
+\medskip
+
+Some extensions of CCP for allowing soft constraints have been already proposed, as for instance in~\cite{scc}, and they required a reworking of the underlying theory.
+The starting point has been again the operators of cylindric algebras. However, cylindrification for soft constraints puts some strong requirements on the structure of the set of values $A$, 
+which are not always met in actual case studies. Moreover, the polynomial presentation is not available, and it is in fact made difficult by the need of modelling diagonals.
+
+\comment{
+Some extensions of CCP for allowing soft constraints have been already proposed, as for instance in~\cite{scc} and they have obviously required a rework of the underlying theory.
+in order to provide new operators for modelling variables hiding and procedure calls. These are mainly based on the notion of cylindric algebra, which was defined by Tarsky in 1952 and represents an algebraisation of first order logic. In rough terms, a cylindric algebra is a Boolean algebra provided with unary operations called \emph{cylindrification}, which are a family of variable-indexed operators representing the existential quantifier. Cylindric algebras are also provided with constants, called \emph{diagonals}, which are are used for modelling parameters passing and variables substitution. As said, cylindric algebras have been used in formalisation of constraints, as well as for an algebraisation of relational models~\cite{cylalg}.
+
+Our objective is to develop a more general framework for modelling bipolar preferences in the soft constraint formalism, by providing a new set of operators and defining their properties in order to represent a larger number of interesting case studies.
+
+Polyadic algebras have been introduced by Halmos and they can be considered as a generalisation of cylindric algebras, since they extend the latter and provide a new family of operators which allows for replacing diagonals in modelling variables substitution. Halmos' definition also provides the notion of diagonals and so it's been used so far: indeed, proposed algebras for soft constraints are usually based on complete lattices and structures equipped with diagonals. 
+
+In order to achieve the goal of generalisation, we're completely replacing diagonal elements with a family of weaker operators which recall the given definition of polyadic operators~\cite{sagi2013}. This will allow us to move to semi-lattices and to represent a larger number of case studies. In particular, polynomial functions don't allow for a representation using diagonals: our formalisation fills this gap, providing a comfortable way to express polynomials in the soft constraints formalism.
+}
+
+The proposal developed in this paper is to consider polyadic algebras instead of cylindric ones. This means to replace diagonals with a family of polyadic operators (see e.g.~\cite{sagi2013}) that
+precisely axiomatise variable substitution, and to investigate how these operators interact with the residuated monoid structure of the set of values $A$.
+
+
+In Section~\ref{sec:bg} we rephrase some basic definitions for residuated monoids and polyadic algebras, and we present some preliminary results concerning the combination of 
+these two structures.
+%
+In Section~\ref{sec:softconstraints} we provide a novel formalisation of soft constraints in terms of these polyadic algebras whose carrier is a residuated monoid. 
+%
+Finally, in Section~\ref{sec:polynomialsoftconstraints} we introduce a set of constraints which can be exploited for polynomials representation and we discuss the polyadic algebra of polynomials with coefficients in $\mathbb{N}$ as a case study.
+
+\section{Polyadic operators for Residuated Monoids}\label{sec:bg}
+
+We open by recalling in Section~\ref{sec:lem} some results on residuated monoids.
+%
+They are mostly drawn from~\cite{jlamp17}, even if from Proposition~\ref{reabs}
+up to Example~\ref{nodist2} the material is original, at least within the
+soft constraints community.
+%
+Section 2.2 presents our personal take on polyadic algebras:
+the standard axiomatisation of e.g.~\cite{sagi2013} has been completely 
+reworked, in order 
+to be adapted to the constraints formalism.
+%
+Finally, Section~\ref{cyre} offers some preliminary insights on 
+the laws for polyadic operators in residuated monoids.
+
+\subsection{Preliminaries on Residuated Monoids}\label{sec:lem}
+
+The first step is to define an algebraic structure for modelling preferences. 
+It falls into the range of \emph{bipolar} approaches: we refer to~\cite{ipl17} 
+for the missing proofs as well as for an introduction and a comparison with other proposals.
+% such as~\cite{xxx}\todo{Manca citazione}.
+
+\begin{definition}[orders]
+	A partial order (PO) is a pair $\langle A, \leq \rangle$ such that
+	$A$ is a set %of values 
+	and $\leq \,\,\subseteq A \times A$ is a reflexive, transitive, and
+	anti-symmetric  relation.
+	% and $\forall a \in A. \bot\leq a$.
+	%
+	%A partial order with bottom (POT) is a triple
+	%$\langle A, \leq, \bot \rangle$ such that $\langle A, \leq \rangle$ is a PO and
+	%$\forall a \in A. \bot \leq a$.
+	%
+	A (join) semi-lattice (SL) is a PO such that any non-empty finite  subset of $A$ has a
+	least upper bound (LUB).
+\end{definition}
+
+%We write 
+The LUB of a (possibly infinite or empty) subset $X \subseteq A$ is denoted $\bigvee X$, and it is clearly unique.
+Should  they exist, $\bigvee A$ and $\bigvee \emptyset$ correspond respectively to the top, denoted as 
+$\top$, and to the bottom, denoted as $\bot$, of the PO.
+%
+
+%We considered the LUBs of possibly infinite sets just for the sake of simplicity: 
+%our proposal would fit also the finite case.
+%
+%Obviously, Ls also have the greatest lower bound for any subset $Y \subseteq A$.
+%In the following we fix a BL ${\mathbb L} = \langle A, \leq, \monid \rangle$.
+
+%\begin{definition}[compact elements]
+%An element $a \in A$ is compact (or finite) if whenever $a \leq \bigvee Y$ there exists a finite subset
+%$X \subseteq Y$ such that $a \leq \bigvee X$.
+%%
+%%Let $A^C \subseteq A$ be the set of compact elements of ${\mathbb C}$.
+%%Then ${\mathbb C}$ is algebraic if $\forall c \in A. c = \bigvee \{ d \in A^C \mid d \leq c\}$.
+%\end{definition}
+
+
+%Note that for complete lattices the definition of compactness given above coincides with the one using
+%directed subsets. It will be easier to generalize it, though, to compactness with respect to the monoidal operator (see Def.~\ref{def:compactness}).
+%
+%We let $A^C \subseteq A$ denote the set of compact elements of ${\mathbb C}$. Note however
+%that $A^C$ might be trivial: indeed, in the the segment $[0, 1]$ of the reals
+%with the usual order, only $0$ is a compact element. As we are going to see, the situation for the soft paradigm
+%can be more nuanced.
+%\marginpar{is algebraicity needed?}
+%
+
+\begin{definition}[monoids]
+	A (commutative) monoid is a triple
+	$\langle A, \monop, \monid \rangle$ such that $\monop: A \times A \rightarrow A$ is
+	a commutative and associative function and $\monid \in A$ is the \emph{identity} element,
+	satisfying 
+	\begin{itemize}
+		\item $\forall a \in A. a \monop \monid = a$. % where $\monid \in A$ is the \emph{identity} element.
+	\end{itemize}
+	A partially ordered (semi-lattice) monoid is a 4-tuple
+	$\langle A, \leq, \monop, \monid \rangle$ such that 	
+	$\langle A, \leq \rangle$ is a PO (SL) and $\langle A, \monop, \monid \rangle$ a monoid.
+	
+%	\noindent
+%	A partially ordered monoid is monotone if 
+%	satisfying
+% 	A weakly ordered monoid is ordered if 
+%	\begin{itemize}
+%		\item $\forall a, b, c \in A. a \leq b \implies c \monop a \leq c \monop b$.
+%	\end{itemize}
+%	A semi-lattice monoid is an ordered (weakly so, respectively) monoid 
+%	such that its underlying PO is an SL. 
+\end{definition}
+
+We use an infix notation, as $a \monop b$ for $\monop(a,b)$.
+
+\begin{definition}[Distributivity]
+\label{dist}
+Let $\langle A, \leq, \monop, \monid \rangle$ be a semi-lattice monoid.
+It is distributive if
+	for  any  non-empty finite  $X \subseteq A$
+	\begin{itemize}
+		\item $\forall a \in A.\,  a \monop  \bigvee X = \bigvee \{a \monop x \mid x \in X\}$.
+	\end{itemize}
+
+\end{definition}
+
+Note that distributivity implies that $\otimes$ is monotone with respect to $\leq$.
+\begin{remark}
+% i.e., it holds
+%	\begin{itemize}
+%		%\item 
+%		$\forall a, b, c \in A. a \leq b \implies c \monop a \leq c \monop b$.
+%	\end{itemize}
+
+	It is now easy to show that distributive semi-lattice monoids are \emph{tropical} semirings, i.e., semirings with a sum operator
+	$a \oplus b = \bigvee \{a, b\}$ that is idempotent.
+	%~\cite{tropical}. 
+	If $\monid$ is the top of the SL we end up 
+	in what are called \emph{absorptive} semirings~\cite{golan} 
+	in the algebraic literature, which in turn are known as $c$-semirings 
+	in the soft constraint jargon~\cite{jacm97} (see e.g.~\cite{ecai06} for a brief survey on residuation 
+	for such semirings).
+	%
+	%Indeed, it is precisely the lack of the latter requirement on $\monid$ that makes ReSLs suitable for modelling bipolar 
+	%preferences:
+	Together with monotonicity, imposing $\monid$ to be the top means that preferences are negative, i.e., 
+	it holds $\forall a, b \in A. a \monop b \leq a$.
+	%, and that $\forall a, b \in A. a \leq b \implies \monid = b \odiv a$.
+	%
+\end{remark}
+
+\begin{example}
+Given a (possibly infinite) set $V$ of variables, two semi-lattice monoids are going to play a main role in the following sections.
+
+The first is the finitely supported function monoid $\mathbb{F}(V) = \langle F(V), id, \circ, \iota \rangle$ of endo-functions on $V$, 
+with $\iota$  the identity function, function composition $\circ$ as the monoid operator and equipped with the discrete order.
+Here, finitely supported for a function $f$ means that the set 
+$sv(f) = \{ x \in V \mid f(x)\neq x \}$ is finite.
+
+The second semi-lattice monoid of interest is the finite power-set monoid
+$\mathbb{M}(V) = \langle 2_f^V, \subseteq, \cup, \emptyset \rangle$
+of finite sub-sets of $V$, with the usual order given by sub-set inclusion.
+\end{example}
+
+\begin{remark}
+The developments reported in Section~\ref{cypo} could be stated also for \emph{infinite} subsets 
+and for functions whose support is not necessarily finite. More on this later on.
+\end{remark}
+
+%$a, b \in A$.
+%
+%The monoidal operator can be defined for any finite multiset: it is given for a family of elements
+%$a_i \in A$ indexed over a finite set $I$, and it is denoted by
+%$\bigotimes_{i \in I} a_i$.
+%%
+%Whenever for an index $I$ all the $a_i$'s are different,
+%we simply write $\bigotimes S$ instead of $\bigotimes_{i \in I} a_i$
+%for the set $S = \{a_i \mid i \in I\}$.
+%%
+%Conventionally, we will also usually denote $\bigotimes \emptyset = \top$.
+%
+%%smallskip
+%%In the following we fix a IM ${\mathbb M} = \langle A, \monop, \monid \rangle$.
+%
+%We now move our attention to the domain of values we are going to consider.
+
+\begin{definition}[residuation]
+	A residuated monoid (RePO) is a 5-tuple $\langle A, \leq, \monop, \odiv, \monid \rangle$ such that
+	$\langle A, \leq, \monop, \monid \rangle$ is a partially ordered monoid and
+	$\odiv: A \times A \rightarrow A$ a function satisfying 
+	\begin{itemize}
+		\item $\forall a, b, c \in A. b \monop c \leq a \iff c \leq a \odiv b$.
+	\end{itemize}
+	An ReSL is an RePO such that the underlying PO is a SL.
+\end{definition}
+
+%In the following sections on oft CCP, we will often use absorptive RePOs, i.e., such that 
+%	\begin{itemize}
+%		\item[] $\forall a, \in A. a \leq 1$.
+%	\end{itemize}
+%
+%However, 
+
+%Residuation is monotone on the first argument: 
+%$\forall a, b, c \in A. a \leq b \implies a \odiv c \leq b \odiv c$.
+%Among other things, n
+The lemma below states that residuation conveys the meaning of subtraction.
+% operator.
+
+\begin{lemma}
+	Let $\langle A, \leq, \monop, \odiv, \monid \rangle$ be an RePO.
+	Then
+	\begin{itemize}
+		\item $\forall a, b \in A.\, a \odiv b = \bigvee \{ c \mid b \monop c \leq a\}$,
+	\end{itemize}
+\end{lemma}
+
+\begin{proof}
+	By definition $a \odiv b$ is an upper bound of 
+	$\{ c \mid b \monop c \leq a\}$ and $b \monop (a \odiv b) \leq a$.
+	%
+%	The latter property ensures the monotonicity of $\odiv$ on the first argument,
+%	since by definition $a \odiv c \leq b \odiv c$ iff $c \monop (a \odiv c) \leq b$.
+	%
+%	As for the  monotonicity of $\monop$, it suffices to note that by definition
+%	$a \leq (b \monop a) \odiv b$ and also by definition $c \monop a \leq c \monop b$ iff 
+%	$a \leq (c \monop b) \odiv c$.
+\qed
+\end{proof}
+
+%Note that by commutativity, 
+%Thus $\monop$ is monotone (on both arguments), and
+%the underlying monoid is ordered.
+%while $\odiv$  is clearly anti-monotone on the second argument: 
+
+A characterisation of residuation via simpler properties is given below.
+\begin{lemma}
+\label{mono}
+Let $\langle A, \leq, \monop, \monid \rangle$ be a partially ordered monoid  and
+	$\odiv: A \times A \rightarrow A$ a function. Then $\langle A, \leq, \monop, \odiv, \monid \rangle$ is an RePO if and only if
+	\begin{itemize}
+		\item $\forall a, b \in A. b \monop (a \odiv b) \leq a \leq (b \monop a) \odiv b$,
+		\item $\forall a, b, c \in A.\, a \leq b \implies a \otimes c \leq b \otimes c$ and $a\odiv c \leq b \odiv c$.
+\end{itemize}
+\end{lemma}
+
+\begin{proof} ($\Longrightarrow$)
+The first item is immediate. Now, let $a \leq b$. Since $b \leq (b \otimes c) \odiv c$ and 
+$c \otimes (a \odiv c) \leq a$, the second item follows.
+
+($\Longleftarrow$)
+Using the monotonicity of $\odiv$ from $b \monop c \leq a$ we get
+ $(b \monop c) \odiv b \leq a \odiv b$, and by the first item
+ $c \leq a \odiv b$.
+ %
+ From the latter by the monotonicity of $\otimes$ we get
+ $b \otimes c \leq b \otimes (a \odiv b)$, and by the first item
+ $b \monop c \leq a$.
+ %
+%	Immediate: $a \odiv b$ is an upper bound of 
+%	$\{ c \mid b \monop c \leq a\}$ and $b \monop (a \odiv b) \leq a$.
+	%
+%	The latter property ensures the monotonicity of $\odiv$ on the first argument,
+%	since by definition $a \odiv c \leq b \odiv c$ iff $c \monop (a \odiv c) \leq b$.
+	%
+%	As for the  monotonicity of $\monop$, it suffices to note that by definition
+%	$a \leq (b \monop a) \odiv b$ and also by definition $c \monop a \leq c \monop b$ iff 
+%	$a \leq (c \monop b) \odiv c$.
+\qed
+\end{proof}
+
+In any RePO $\odiv$ is also anti-monotone on the second argument, i.e., 
+$\forall a, b, c \in A.\, a\leq b \implies  c\odiv b \leq c \odiv a$.
+%
+Other properties are straightforward, such as 
+$\forall a\in A. \monid \leq a \odiv a$, which in turn implies 
+that $\forall a\in A. a \monop (a \odiv a) = a$ and
+%
+%, and \emph{iii)} $a \odiv (b \monop c) = (a \odiv b) \odiv c$.
+%should $\monop$ be idempotent, $b \leq a$ implies $a \odiv b = a$.
+%
+$\forall a, b \in A. a < b \implies \monid \not \leq a \odiv b$, where
+$a < b$ means $a \leq b$ and $a \neq b$.
+%
+%Residuation is monotone on the first argument:
+%$\forall a, b, c \in A. a \leq b \implies a \odiv c \leq b \odiv c$.
+%%falsa and if $b \leq a$, then $a \odiv b = \monid$. For more properties of residuation we refer to \cite[Table~4.1]{resbook}.
+%
+%
+The latter property suggests the definition below.
+
+\begin{definition}[localisation / invertibility]
+	An RePO $\langle A, \leq, \monop, \odiv, \monid \rangle$ is
+	\begin{itemize}
+		\item
+		\emph{localised} if $\forall a, b \in A. a \leq b \implies a \odiv b \leq \monid$;
+		\item
+		\emph{invertible} if $\forall a, b \in A. a \leq b \implies b \monop (a \odiv b) = a$.
+	\end{itemize}
+\end{definition}
+
+Note that if a RePO is localised then $\forall a \in A. a \odiv a = \monid$.
+%\marginpar{all RePO are localized?}
+
+\begin{remark}\label{rmk:soft}
+	Well-known structures used for soft constraints are the 
+	%\emph{Boolean} ($\langle \{\mathit{false},\mathit{true}\}, \mathit{false} \leq \mathit{true}, \wedge, \mathit{false}, \mathit{true}\rangle$), 
+	\emph{Fuzzy} ($\langle [0,1], \leq,$ $\min, 1 \rangle$), \emph{Probabilistic} ($\langle [0,1], \leq,\allowbreak\times, 1 \rangle$), 
+	and \emph{Tropical}   ($\langle \mathbb{R}^+, \geq, +, 0 \rangle$) semirings, for $\geq$ the inverse of the standard order 
+	(thus $0$ the top of the SL). In all these cases the underlying monoids 
+	are invertible and localised, and
+	%
+	the $\odiv$ operator can be used to
+	(partially) relax constraints~\cite{ecai06}.
+\end{remark}
+
+Moving now to ReSL, Lemma~\ref{dist} states that residuation implies distributivity.
+
+\begin{lemma}
+	\label{dist}
+	Let $\langle A, \leq, \monop, \odiv, \monid \rangle$ be an ReSL.
+	Then the underlying SL is distributive.
+%	 and $X \subseteq A$ a finite set.
+%	Then
+%	\begin{itemize}
+%		\item $\forall a \in A.\, a \monop  \bigvee X = \bigvee \{a \monop x \mid x \in X\}$.
+%	\end{itemize}
+\end{lemma}
+
+\begin{proof} Let $X \subseteq A$ be a finite non-empty set. 	
+	%\paragraph{$\bigvee \{a \monop x \mid x \in X\} \leq a \monop  \bigvee X$}
+	\[\forall x \in X.\, x \leq \bigvee X %\implies %\forall x \in X.\, x \leq (a \monop \bigvee X) \odiv a \implies\]
+	\implies \forall x \in X.\, a \monop x \leq a \monop \bigvee X \implies \bigvee \{a \monop x \mid x \in X\} \leq a \monop  \bigvee X .\]
+
+	%So, let us assume that $X$ is inhabited.
+	%\paragraph{$a \monop  \bigvee X \leq \bigvee \{a \monop x \mid x \in X\}$}
+	\[\forall y \in X.\, a \monop y \leq \bigvee \{a \monop x \mid x \in X\} \implies 
+	\forall y \in X.\, y \leq (\bigvee \{a \monop x \mid x \in X\}) \odiv a \implies\] 
+	\[ \implies \bigvee X \leq (\bigvee \{a \monop x \mid x \in X\}) \odiv a \implies 
+	a \monop \bigvee X \leq \bigvee \{a \monop x \mid x \in X\} .\] 
+\qed
+\end{proof}
+
+%Note that the proof does not require that $\otimes$ is monotone, which is thus a derived property.
+%
+Distributivity holds also for the empty set and infinite sets, as long as the necessary LUBs exist.
+%
+Instead, it holds only partially for $\odiv$: this follows directly from monotonicity of $\odiv$ on the first argument, 
+since it implies that $x \odiv a \leq \bigvee X \odiv a$ for all $x \in X$.
+
+\begin{lemma}
+	\label{distodiv}
+	Let $\langle A, \leq, \monop, \odiv, \monid \rangle$ be an ReSL and $X \subseteq A$ a finite non-empty set. Then 
+	\begin{itemize}
+		\item $\forall a \in A.\, \bigvee \{ x \odiv a \mid x \in X \} \leq \bigvee X \odiv a$
+	\end{itemize}	
+\end{lemma}
+
+\begin{proof}
+Straightforward, since by the monotonicity of $\odiv$ in the first argument (Lemma~\ref{mono}) we get
+% \[\forall x \in X.\,a \otimes (x \odiv a) \leq x \implies\]
+ %\[\forall x \in X.\,a \otimes (x \odiv a) \leq \bigvee X \implies\]
+ $\forall x \in X.\,x \odiv a \leq \bigvee X \odiv a$, which implies
+ $\bigvee \{ x \odiv a \mid x \in X\} \leq \bigvee X \odiv a$.
+% \[\]
+\qed
+\end{proof}
+
+%\begin{remark}
+Also this inequation holds for the empty set and all infinite sets, too, as long as the necessary LUBs exist.
+%
+Moreover, it also holds $\bigvee \{ a \odiv x \mid x \in X \} \geq a \odiv \bigvee X$, for $\odiv$ is anti-monotone on the second argument.
+%\end{remark}
+
+\begin{proposition}\label{reabs}
+	Let $\langle A, \leq, \monop, \odiv, \monid \rangle$ be an ReSL. Then the properties below are equivalent
+	\begin{enumerate}
+		\item $\forall a \in A.\, a \leq \1$
+		\item $\forall a \in A.\, \1 \odiv a = \1$		
+		\item $\forall a, b \in A.\, a \leq b$ implies $b \odiv a = \1$
+	\end{enumerate}	
+\end{proposition}
+
+\begin{proof}
+Note that $1$ immediately implies both $2$ and $3$, since by definition $a \leq b$ implies $\1 \leq b \odiv a$
+and $\1$ is the top of the partial order.
+
+For the second step, first note that both properties implies that $\1 \odiv a \leq \1$ for all $a \in A$. This is immediate
+for $2$. As for $3$, %let us assume that $b \odiv a \leq \1$, and
+consider $b = \bigvee \{\1, a \}$. By Lemma~\ref{distodiv} we have that
+$\bigvee \{\1 \odiv a, a \odiv a\} \leq \bigvee \{\1, a \} \odiv a$. 
+Hence, $\1 \odiv a \leq \1$ for all $a \in A$, and the result follows.
+
+Finally, note that $\1 \odiv a \leq \1$ for all $a \in A$ implies that $\1 \odiv (\1 \odiv c) \leq \1$ for all $c \in A$, 
+and since it always holds
+that $c \leq \1 \odiv (\1 \odiv c)$, then $3$ implies $1$.
+\qed
+\end{proof}
+
+%\begin{remark}
+%In general, given an ReSL $\mathbb{M} = \langle A, \leq, \otimes, \odiv, \monid \rangle$, if $A \subseteq B$ such that $B(\otimes)$ is a group and $\odiv$
+% is the inverse of $\otimes$, then $\mathbb{M}$ is fully $%\odiv$-distributive, which follows from $\mathbb{M}$ is distributive for $\otimes$. \\
+%Consider, for istance, $\mathbb{M} = \langle \{0,...,5\},\geq,\oplus,\ominus,0 \rangle$, where $\oplus$ and $\ominus$ are the bounded sum and subtraction (e.g. $2 \oplus 4 = 5$, $2 \ominus 4 = 0$): 
+%it is clear that, in this case, distributivity holds for $\ominus$, as long as $a \geq b \implies b \ominus a = 0$. \\
+%\todo{un esempio dove $\odiv$ non distribuisce}
+%In the following example it is shown that distributivity for $\odiv$ could hold partially, since we choose a residuation operator which is not the inverse of $\otimes$.
+%\end{remark}
+
+\begin{remark}\label{rmk:softUnit}
+The proposition above provides an important characterisation for all absorptive RePOs, including all those mentioned in Remark~\ref{rmk:soft}.
+\end{remark}
+
+There are some important classes of ReSLs  such that $\odiv$ is easily proved to be distributive in the first argument.
+while it is not so with respect to the second argument, not even in the absorptive case.
+
+\begin{lemma}
+	\label{distodiv}
+	Let $\langle A, \leq, \monop, \odiv, \monid \rangle$ be an ReSL such that $\langle A, \leq \rangle$ is a total order and $X \subseteq A$ a finite non-empty set. Then 
+	\begin{itemize}
+		\item $\forall a \in A.\, \bigvee \{ x \odiv a \mid x \in X \} = \bigvee X \odiv a$
+	\end{itemize}	
+\end{lemma}
+
+\begin{proof}
+If $\langle A, \leq \rangle$ is a total order and $X$ is finite and non-empty we have that $\bigvee X \in X$, and since $\odiv$ 
+is monotone on the first argument (see Lemma~\ref{mono}), the result follows.
+\qed
+\end{proof}
+
+
+\begin{example}
+\label{nodist2}
+%Let $\langle A, \leq, \monop, \odiv, \monid \rangle$ be an ReSL such that $\langle A, \leq \rangle$ is a total order.
+%Then, it holds that $\bigvee \{ x \odiv a \mid x \in X \} = \bigvee X \odiv a$ for all elements $a$ and (finite, non-empty) subsets $X$.
+%In fact, if $\langle A, \leq \rangle$ is a total order and $X$ is finite and non-empty we have that $\bigvee X \in X$, and since $\odiv$ 
+%is monotone on the first argument (see Lemma~\ref{mono}), the result follows.
+%
+Let $n$ be a positive integer and $[n] = \{0, \ldots, n\}$ the segment of integers from $0$ to $n$. The bounded monoid $\mathbb{M}_n$ 
+is the tuple $\langle [n], \geq, \oplus, \ominus, 0 \rangle$, where $\oplus$ and $\ominus$ are the bounded sum and subtraction, 
+defined as $m\oplus p = min\{n, m+p\}$ and $m\ominus p = max\{0,m-p\}$.
+
+Now, it can be quite easily shown that $\mathbb{M}_n$ is an absorptive ReSL, and moreover it clearly is a total order.
+%
+However, in general $\ominus$ is not distributive on the second argument. Consider e.g. an element $m$ such that 
+$m \neq n$ and the set $\{m, m+1\}$:
+we then have that $(m+1) \ominus \bigvee\{m, m+1\} = 1$,
+while instead $\bigvee\{(m+1) \ominus m, (m+1) \ominus (m+1)\} = 0$.
+\end{example}
+
+\comment{
+\begin{example}
+Given $A = \{0,a,b,c,d,e\}$, consider the following partial order:
+	\begin{center}
+		\begin{tikzpicture}
+			\node (top) at (0,0)  {$0$};
+			\node (a) [below of= top] {$a$};
+			\node [below left of=a] (left) {$b$};
+			\node [below right of=a] (right) {$c$};
+			\node (d) [below right of=left] {$d$};
+			\node (e) [below of=d] {$e$};
+			\draw [thick] (top) -- (a);
+			\draw [thick] (a) -- (left);
+			\draw [thick] (a) -- (right);
+			\draw [thick] (left) -- (d);
+			\draw [thick] (right) -- (d);
+			\draw [thick] (d) -- (e);
+		\end{tikzpicture}
+	\end{center}
+and $\mathbb{M} = \langle A, \geq, \otimes, \odiv, 0 \rangle$, where $\otimes$ and $\odiv$ are defined as follows:
+\begin{center}
+	\begin{tabular}{@{} *{7}{c} @{}}
+	\\ $\otimes$ \ & 0 \ & a \ & b \ & c \ & d \ & e
+	\\ 0 \ & 0 \ & a \ & b \ & c \ & d \ & e
+	\\ a \ & a \ & b \ & c \ & d \ & e \ & f
+	\\ b \ & b \ & c \ & d \ & d \ & e \ & e
+	\\ c \ & c \ & d \ & d \ & d \ & e \ & e
+	\\ d \ & d \ & e \ & e \ & e \ & e \ & e
+	\\ e \ & e \ & e \ & e \ & e \ & e \ & e
+	\end{tabular}
+\\	
+	\begin{tabular}{@{} *{7}{c} @{}}
+	\\ $\odiv$ \ & 0 \ & a \ & b \ & c \ & d \ & e
+	\\ 0 \ & 0 \ & 0 \ & 0 \ & 0 \ & 0 \ & 0
+	\\ a \ & a \ & 0 \ & 0 \ & 0 \ & 0 \ & 0
+	\\ b \ & b \ & a \ & 0 \ & 0 \ & 0 \ & 0
+	\\ c \ & c \ & a \ & 0 \ & 0 \ & 0 \ & 0
+	\\ d \ & d \ & c \ & c \ & b \ & 0 \ & 0
+	\\ e \ & e \ & d \ & b \ & c \ & a \ & 0
+	\end{tabular}
+\end{center}
+Then $\mathbb{M}$ is an absortive ReSL with $0$ the top of the partial order, since it behaves as the ReSL in the example above, except for $b$ and $c$: thus, in this case, $\bigvee \{b,c\} = a$. \\
+It's now easy to show that $\odiv$ is not distributive for the first argument: $\bigvee{b \odiv a, c \odiv a} = a$ and $\bigvee\{b,c\} \odiv a = a \odiv a = 0$.
+\end{example}
+
+%
+%We can proove $\bigvee X \odiv a = \bigvee \{ x \odiv a \mid x \in X \}$ under the following hypotesis.
+%
+%\begin{lemma}
+%	\label{distodiv2}
+%	Let $\langle A, \leq, \monop, \odiv, \monid \rangle$ be an ReSL.
+%	If $a \otimes (x \odiv a) = x = (a \otimes x) \odiv a$, then $\bigvee X \odiv a = \bigvee \{ x \odiv a \mid x \in X \}$.
+%\end{lemma}
+%
+%\begin{proof}
+% \[\bigvee X = \bigvee \{ a \otimes (x \odiv a) \mid x \in X \} \implies\]
+% \[\bigvee X = a \otimes \bigvee \{ x \odiv a \mid x \in X \} \implies\]
+% \[\bigvee X \odiv a = (a \otimes \bigvee \{ x \odiv a \mid x \in X\}) \odiv a \implies\]
+% \[\bigvee X \odiv a = \bigvee \{ x \odiv a \mid x \in X\}.\]
+% \[\]
+%\end{proof}
+%
+%[Qui avevi fatto una correzione, mettendo nell'ipotesi una disuguaglianza al posto della seconda uguaglianza, ma in quel modo non potrei provare l'ultimo passaggio, quindi te la rispedisco cos\`{i}. 
+%Magari ne discutiamo quando ci vediamo.]
+%\\
+
+%Distributivity over $\bigvee$ implies that $\monop$ is
+%monotone in both arguments.
+%%as well as $\forall a \in A. a \monop \bot = \bot$.
+
+%%
+%In the following, we fix a BLIM ${\mathbb S} = \langle A, \leq, \monop \rangle$.
+%%
+%The next step is to provide a suitable notion of infinite composition. The definition below is taken from~\cite{CLIM}
+%(but see also~\cite[p.~42]{golan}).
+%
+%\begin{definition}[infinite composition]
+%Let $I$ be a (possibly countable) set of indexes. Then, the composition $\bigotimes_{i \in I} a_i$
+%is defined as $\bigvee_{J \subseteq I} \bigotimes_{j \in J} a_j$ for all finite subsets $J$.
+%\end{definition}
+
+%%\marginpar{distributivity wrt. $\vee$ or wrt. $\wedge$ coincide?}
+%Thanks to distributivity, we can show that
+%$\bigotimes$ is monotone, i.e., $\forall j \in I. a_j \leq b_j \implies
+%\bigotimes_{i \in I} a_i \leq \bigotimes_{i \in I} b_i$.
+
+%We now extends the notion of compactness.
+%
+%\begin{definition}[$\monop$-compact elements]\label{def:compactness}
+%An element $a \in A$ is $\monop$-compact (or $\monop$-finite) if whenever $a \leq \bigotimes_{i \in I} a_i$
+%then there exists a finite subset $J \subseteq I$ such that $a \leq \bigotimes_{j \in J} a_j$.
+%
+%Let $A^\monop \subseteq A$ be the set of $\monop$-compact elements of ${\mathbb S}$. Then ${\mathbb S}$ is
+%$\monop$-algebraic if $\forall c \in A. c = \bigotimes \{ d \in A^\monop \mid d \leq c\}$.
+%\marginpar{now $\monop$-algebraicity is incorrect}
+%\end{definition}
+
+%We let $A^\monop \subseteq A$ denote the set of $\monop$-compact elements of ${\mathbb S}$.
+%%
+%It is easy to show that a compact element is also $\monop$-compact.
+%%
+%Indeed, the latter notion is definitively more flexible.
+%%
+%Let us consider again the segment $[0, 1]$ of the reals, yet now with the inverse of the usual order (as used
+%in the probabilistic SCPs). Instead of the LUB, an alternative monoidal
+%product can be just the multiplication.
+%%
+%Since any infinite multiplication tends to $0$, then all the elements are
+%$\monop$-compact, except the top element itself, that is, precisely $0$.
+%\marginpar{is $\monop$-algebraicity needed?}
+}
+
+\comment{
+\subsection{On residuation and semirings}
+
+We now consider \emph{semirings} equipped with a partial order~\cite[Chapter~2]{golan}.
+
+\begin{definition}[semirings]
+	A (commutative) semiring is a 5-tuple
+	$\langle A, \monop, \monop, \monid, \1 \rangle$ such that $\langle A, \monop, \monid \rangle$
+	and $\langle A, \monop, \1 \rangle$ are (commutative) monoids
+	satisfying
+	\begin{itemize}
+		\item $\forall a \in A. a \monop \monid = \monid$
+		\item $\forall a, b, c \in A. a \monop (b \monop c) = (a\monop b) \monop (a \monop c)$
+	\end{itemize}
+	An ordered semiring is a 6-tuple
+	$\langle A, \leq, \monop, \monop, \monid, \1 \rangle$
+        such that  $\langle A, \leq, \monop, \monid \rangle$ is an ordered monoid and 
+   	$\langle A, \monop, \monop, \monid, \1 \rangle$ a semiring satisfying
+	\begin{itemize}
+			\item $\forall a, b, c \in A. a \leq b \wedge \monid\leq c \implies c \monop a \leq c \monop b$
+	\end{itemize}
+\end{definition}
+
+We often use an infix notation, as $a \monop b$ for $\monop(a,b)$.
+
+
+[A QUESTO PUNTO BISOGNA VEDERE QUALI DI QUESTE TRE PROPRIETA'
+DELL'ordered SEMIRING POSSONO DISCENDERE DA QUELLE DELLA RESIDUAZIONE,
+IN MODO DA AVERE GLI EQUIVALENTI DEI LEMMA 3 E 4]
+
+[ MA 1 MI SERVE A QUALCOSA?]
+
+\begin{definition}[residuation, II]
+	A residuated semiring (ReS) is a 7-tuple $\langle A, \leq, \monop, \odiv, \monop, \monid, \1 \rangle$
+	such that	$\langle A, \leq, \monop, \odiv, \monid \rangle$
+	 is a residuated monoid and $\langle A, \leq, \monop, \monop, \monid, \1 \rangle$ an ordered semiring,
+	  satisfying 
+	\begin{itemize}
+            ????
+	\end{itemize}
+	A residuated SSL (ReSSL) is an ReS such that the underlying PO is a SL.
+\end{definition}
+
+[COSA PUO' SERVIRE COME ASSIOMA?]
+
+%In the following sections on oft CCP, we will often use absorptive RePOs, i.e., such that 
+%	\begin{itemize}
+%		\item[] $\forall a, \in A. a \leq 1$.
+%	\end{itemize}
+%
+%However, 
+}
+
+\comment{
+Indeed, there are many classes of absorptive and idempotent ReSLs such that $\odiv$ 
+is not distributive in either arguments.
+
+\begin{example}
+\label{notdistr}
+First of all, note that a complete sup-lattice $\langle A, \leq \langle$ (i.e., admitting a sup for all subsets 
+of $A$) can be turned into a ReSL. Indeed, $\otimes$ is just the meet, so we have that 
+
+\begin{itemize}
+\item $a \otimes b = \bigvee \{c \mid c \leq a \wedge c \leq b\}$
+\item $a \odiv b = \bigvee \{c \mid c \otimes b \leq a\}$
+\end{itemize}
+
+
+$$x \otimes y = \bigg \{\begin{array}{ll}
+	\1 & \mbox{ if } y \leq x \\
+	x & \mbox{ if } y = \1 \\
+	\bot & \ otherwise
+	\end{array}$$
+
+both meetand divis
+
+
+
+
+the bounded sum $\oplus$ is here idempotent, $0$ is still 
+the identity. We can make it int
+
+
+of three otherwise unrelated elements, 
+so that for all elements $x$ we have $x \otimes x = \1 \otimes x = x$ \
+and furthermore $a \otimes b = a \otimes c = b \otimes c  = \1$.
+
+We now add the bottom element $\bot$, in order to obtain a complete lattice.
+Then $\otimes$ is extended in the expected way, so that $\bot$ is absorbing.
+%
+The resulting semi-lattice monoid is absorptive and residuated, with $\odiv$ defined as
+
+$$x \odiv y = \bigg \{\begin{array}{ll}
+	\1 & \mbox{ if } y \leq x \\
+	x & \mbox{ if } y = \1 \\
+	\bot & \ otherwise
+	\end{array}$$
+%
+Thus, $\odiv$ does not distribute, since 
+$\bigvee \{a \odiv c, b \odiv c\}  = \bot < \1 = \1 \odiv c = \bigvee \{a, b\} \odiv c$.
+\end{example}
+}
+
+\comment{
+\begin{example}
+\label{notdistr}
+Let us consider the monoid $S = \langle \{p,u,n,t\}, \otimes_s, u \rangle$ (with $t$ the top 
+of three otherwise unrelated elements): 
+$p$ and $n$ intuitively represent the sign of an integer, $t$ tells us that 
+the sign cannot be determined, $u$ is the zero
+and $\otimes_s$ (which is idempotent) tells us the sign of the addition of two integers, so that 
+for all elements $x$ we have
+\[x \otimes_s x = u \otimes_s x = x \mbox{  and  } t \otimes_s x = p \otimes_s n = t\]
+%
+We now add the bottom, in order to obtain a complete lattice.
+The $\otimes_s$ is extended in the expected way,  so that $\bot$ is absorbing.
+%
+Intuitively, $\bot$ states that an element is unsigned:
+a pattern the reader familiar with abstract interpretation formalisms will recognise.
+
+The resulting semi-lattice monoid is residuated, with $\odiv$ defined as
+
+$$x \odiv y = \bigg \{\begin{array}{ll}
+	t & y \leq x \\
+	\bot & \ otherwise
+	\end{array}$$
+%
+Thus, $\odiv$ does not distribute, since 
+$\bigvee \{p \odiv n, u \odiv n\}  = \bot < \bigvee \{p, u\} \odiv n = t \odiv n = t$.
+\end{example}
+}
+
+\subsection{Cylindric and polyadic structures for ordered monoids}
+\label{cypo}
+We now introduce two families of operators that will be used
+for modelling variables hiding and substitution:
+%
+the former is a well-known abstraction for existential quantifiers,
+while the latter is a weaker replacement for diagonals~\cite{popl91}, 
+the standard tool for modelling equivalence in constraint programming.
+%
+
+\begin{definition}[pomonoid action]
+\label{pomo}
+Let $\mathbb{M} = \langle A, \leq, \monop, \monid \rangle$ be a partially ordered monoid and $\mathbb{P} = \langle S, \leq \rangle$ a partial order.
+A pomonoid action of $\mathbb{M}$ on $\mathbb{P}$ is a function $\phi: A \times S \rightarrow S$ such that
+	\begin{itemize}
+	     \item $\forall s \in S.\ \phi(\monid, s) = s$,
+             \item $\forall a, b \in A,\ s \in S.\ \phi(a, \phi(b, s)) = \phi(a \otimes b, s)$,
+             \item $\forall a, b \in A,\ s, t \in S.\ a \leq b\, \wedge\, s \leq t \implies \phi(a, s) \leq \phi (b, t)$,
+            % \item $\forall a, b \in A,\ s \in S.\ a \leq b \implies \phi(a, s) \leq \phi (b, s)$.
+	\end{itemize}
+\end{definition}
+
+It is also said that $\mathbb{P}$ is an $\mathbb{M}$-PO: the first two requirements just state
+that $\phi$ is a monoid action of $\mathbb{M}$ on $S$, while the latter states that $\phi$ is monotone.
+
+\comment{
+\begin{remark}
+Note that, since $\phi$ is monotone, it behaves correctly on any SL and preserves its LUBs: given an SL $\mathbb{M} = \langle A, \leq, \monop, \monid \rangle$, a finite subset $X \subseteq A$ and a partial order $\mathbb{P} = \langle S, \leq \rangle$, we have $\bigvee \{ \phi(x,s) \mid x \in X \} = \phi(\bigvee X,s)$.
+\end{remark}
+\marginpar{davvero? Fai attenzione}
+}
+
+\subsubsection{Cylindric operators.}
+We now fix a partially ordered monoid $\mathbb{S} = \langle A, \leq, \monop, \monid \rangle$.
+
+\begin{definition}[cylindrification]\label{cyli}
+        Let $V$ be a set of variables. 
+	%
+	A cylindric operator $\exists$ over $\mathbb{S}$ and $V$ is a pomonoid action
+	$\exists: 2_f^V \times A \rightarrow A$ such that for all non-empty finite $X \subseteq V$
+	\begin{enumerate}
+%	     \item $\forall a \in A.\ \exists(\emptyset, a) = a$,
+%             \item $\forall a \in A.\ \exists(X, \exists(Y, a)) = \exists(X \cup Y, a)$,
+ %            \item $\forall a, b \in A.\ X \subseteq Y\wedge a \leq b \implies  \exists(X, a) = \exists(Y, b)$,
+	     \item $\exists(X, \monid) = \monid$,
+	     \item $\forall a,b \in A.\ \exists(X, a \monop \exists(X, b)) = \exists(X, a) \monop \exists(X, b)$.
+	\end{enumerate}
+	
+	\noindent Let $a \in A$. The \emph{support} of $a$ is the set of variables $sv(a) = \{ x \mid \exists(\{x\}, a) \neq a\}$. 
+	% and the set of unsupported variables of $a$ is the set of variables $uv(a) =  V \setminus sv(a)$.
+\end{definition}
+
+Since by definition $\exists(\emptyset, a) = a$, the requirements above for $\exists$ also hold for $X$ empty.
+%
+%The first two conditions tell us that $\exists$ is a monoid action of $M(V)$ over $A$. Condition $3$ states
+%that $\exists$ is a monotone function. Finally, the last two conditions state how $\exists$ interacts with the 
+%monoidal structure on $\mathbb{S}$.
+%
+%\begin{remark}
+%TODO bisogna vedere cosa altro serve, e se qualche propriet\`a \`e derivata.
+%Cosa succede se $\mathbb{S}$ \`e un SL? Questo impatta sui LUB in M(V)?
+%\end{remark}
+%
+In the following, we often use $\exists_X a$ for $\exists(X, a)$, and $\exists_x a$ whenever $X = \{x\}$.
+%
+Note that $\exists_X \monid = \monid$ would be a consequence of monotonicity,
+should $\monid$ be the top element. Also, the support is not necessarily finite.
+Finally, and importantly, note that 
+$X \cap sv(\exists_X a) = \emptyset$.
+
+\subsubsection{Polyadic operators.}
+We now fix a set of variables $V$ and a cylindric operator $\exists$ over ${\mathbb S}$ and $V$.
+Given a function $\sigma: V \rightarrow V$ and a set $X \subseteq V$, we denote by 
+$\sigma \mid_{X}: X \rightarrow V$ the obvious restriction and
+by $\sigma^{c}(X) \subseteq V$ the counter-image of $X$ along $\sigma$.
+%~\footnote{We are not going to need the other standard component proposed in the literature , i.e., \emph{diagonals}: a %family of elements $d_{x, y} \in A$ indexed by pairs of elements in $V$.}
+
+
+\begin{definition}[Polyadification]
+	\label{def:poly}
+	A polyadic operator $s$ for $\exists$ is a pomonoid action $s: F(V) \times A \rightarrow A$
+	such that for all $a, b \in A$, finite non-empty $X \subseteq V$, and $\sigma, \tau: V \rightarrow V$
+	\begin{enumerate}
+	\item $s(\sigma, a \monop b) = s(\sigma, a) \monop s(\sigma, b)$,
+        \item if $\sigma \mid_{sv(a)} = \tau \mid_{sv(a)}$ then $s(\sigma, a) = s(\tau, a)$,
+        \item if $\sigma \mid_{\sigma^{c}(X)}$ is injective then $\exists(X, s(\sigma, a)) = s(\sigma, \exists(\sigma^{c}(X), a))$.
+        \end{enumerate}
+\end{definition}
+
+Clearly item $3$ holds also for an empty $X$.
+%
+We usually denote $s(\tau,a)$ as $s_\tau a$.
+Now, being an action implies that $s_\iota a = a$, and 
+together with item $2$ it implies that $s_{\tau} \monid = \monid$.
+A polyadic operator offers enough structure for modelling variable substitution. 
+%
+In the following, we fix a polyadic operator $s$ for $\exists$.
+
+\begin{remark}
+The laws are directly adapted from~\cite{sagi2013}, with the exception of $2$, which 
+is stated as for a finite non-empty $X \subseteq V$ and $a \in A$
+	\begin{itemize}
+          \item[2a.] if $\sigma \mid_{V \setminus X} = \tau \mid_{V \setminus X}$ 
+		         then $s(\sigma, \exists (X, a)) = s(\tau, \exists (X, a))$.
+        \end{itemize}
+However, the two formulations are equivalent. Indeed, note that
+$\sigma \mid_{V \setminus X} = \tau \mid_{V \setminus X}$ implies 
+$\sigma \mid_{sv(a) \setminus X} = \tau \mid_{sv(a) \setminus X}$, 
+which in turn implies that 
+$\sigma \mid_{\exists (X, a)} = \tau \mid_{\exists (X, a)}$, and 
+assuming item $2$ the result follows.
+%
+For the vice-versa, first of all note that 
+$\sigma \mid_{V \setminus X} = \tau \mid_{V \setminus X}$
+coincides with $\sigma \mid_{Y \setminus X} = \tau \mid_{Y \setminus X}$
+for $Y = sv(\sigma) \cup sv(\tau) \subseteq V$, and that $Y$ is finite
+since both $\sigma$ and $\tau$ are finitely supported.
+Now, $\sigma \mid_{sv(a)} = \tau \mid_{sv(a)}$ implies that 
+$\sigma \mid_{Y \setminus (Y \setminus sv(a))} = \tau \mid_{Y \setminus (Y \setminus sv(a))}$,
+thus by $2a$ we have 
+$s(\sigma, \exists (Y \setminus sv(a), a)) = s(\tau, \exists (Y \setminus sv(a), a))$.
+Since by definition we have $\exists (Y \setminus sv(a), a)) = a$, the result follows.
+\end{remark}
+
+\begin{remark}
+Note also that $\sigma(\sigma^{c}(X)) \subseteq X$, so, when restricted to singleton, we have that item $3$ in Definition~\ref{def:poly} is equivalent to
+\begin{itemize}
+          \item[3a.]if $\sigma^{c}(x) = \{y\}$ then $\exists_x s_{\sigma} a =  s_\sigma \exists_y a$,
+          \item[3b.] if $\sigma^{c}(x) = \emptyset$ then $\exists_x s_{\sigma} a =  s_\sigma a$.
+\end{itemize}
+\end{remark}
+
+%\noindent As we did for $\exists$, we define the support of $\sigma$ as follows:
+%\begin{itemize}
+%\item $sv(\sigma) = \bigcap X \subseteq V \mid \sigma(X) \neq X$
+%\end{itemize}
+
+\begin{definition}[Inverse functions]
+	\label{def:inverse}
+	Let $\sigma \in F(V)$ be \emph{invertible}, i.e., such that $\sigma \mid_{sv(\sigma)}$ is injective.
+	Its \emph{inverse} is defined as
+	$$\sigma^{-1}(y) = \bigg \{\begin{array}{rl}
+	x & if \ y = \sigma(x) \ and \ x \in sv(\sigma) \\
+		y & \ otherwise
+	\end{array}$$
+	%i.e., $\{^y/_x\}(z) = z$ for all $z \neq x$.
+	%
+Its \emph{injective lifting} is defined as
+	$$\sigma_l(y) = \bigg \{\begin{array}{ll}
+	\sigma(y) & if \ y \in sv(\sigma) \\
+	\sigma^{-1}(y) & \ otherwise
+	\end{array}$$
+\end{definition}
+
+In other terms, note that an element $y \in \sigma(sv(\sigma))$ can be the image along $\sigma$ of at most two elements: 
+should this be the case, one of them is itself 
+and the other belongs to $sv(\sigma)$.
+When defining the inverse, we give precedence to the element in $sv(\sigma)$.
+%
+Instead, the injective lifting is indeed an injective substitution.
+
+%Polyadic substitution behaves correctly with respect to $\exists$. 
+\begin{lemma} \label{lemma:Inv0}
+Let $\sigma \in F(V)$ be invertible. Then it holds
+\begin{itemize}
+\item $sv(\sigma_l) = \sigma(sv(\sigma)) \cup sv(\sigma) = sv(\sigma_l^{-1})$,
+\item $sv(\sigma^{-1}) = \sigma(sv(\sigma))$,
+\item $sv(\sigma^{-1} \circ \sigma) = \sigma(sv(\sigma)) \setminus sv(\sigma)$,
+\item $sv(\sigma \circ \sigma^{-1}) = sv(\sigma) \setminus \sigma(sv(\sigma))$.
+\end{itemize}
+\end{lemma}
+
+The set-theoretical proofs are immediate and are omitted.
+The lemma helps in ensuring that polyadic substitution behaves correctly with respect to $\exists$. 
+The properties below mirror 
+those obtained for the definition of substitution via diagonal operators~\cite{jlamp17}.
+%\marginpar{leave if needed}
+
+\comment{
+\begin{remark}
+With respect to the notion of diagonal
+operators~\cite{xxx}\todo{Manca citazione}, as e.g. adopted in~\cite{jlamp17}, in the present context they are not defined, since in our RePOs we do not have the $\top$ elements.
+
+DIRE DI PIU'
+\end{remark}
+}
+
+\begin{lemma}
+	\label{lemmaSubs0}
+	Let $\sigma \in F(V)$ invertible, $a \in A$, and $W \subseteq V$ finite. Then it holds
+	\begin{enumerate}
+		\item $s_{\sigma} \exists_{sv(\sigma)} a = \exists_{sv(\sigma)} a$
+		\item if $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ then $\exists_{sv(\sigma)} a = \exists_{\sigma(sv(\sigma))} s_{\sigma} a$
+		\item if $W \cap (sv(\sigma) \cup \sigma(sv(\sigma))) = \emptyset$ then $s_{\sigma} \exists_W a =  \exists_W s_{\sigma} a$
+	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+Proofs are immediate.
+As for item $1$, it is a consequence of $\sigma \mid_{V \setminus sv(\sigma)} = id \mid_{V \setminus sv(\sigma)}$.
+
+Concerning item $3$, since $W$ satisfies $W \cap sv(\sigma) = \emptyset$ then $\sigma(W) = W$,
+and since additionally $W \cap \sigma(sv(\sigma)) = \emptyset$ it also follows that $\sigma^{c}(W) = W$. Thus
+we have that 
+$\exists_W s_{\sigma} a = \exists_{\sigma(W)} s_{\sigma} a = s_{\sigma} \exists_{\sigma^{c}(W)} a = s_{\sigma} \exists_W a$,
+the intermediate equality holding by item 3 of Lemma~\ref{lemma:Inv0}.
+
+Let us now move to item $2$, and let us consider the lifting $\sigma_l$. This can be less parsimoniously described as
+%
+%$\sigma'$ defined as follows:
+$$\sigma_l(y) = \bigg \{\begin{array}{ll}
+	\sigma(y) & \ if y \in sv(\sigma) \\
+	\sigma^{-1}(y) & \ if y \in \sigma(sv(\sigma)) \setminus sv(\sigma) \\
+	y & \ otherwise
+	\end{array}$$
+%Then $\sigma'$ is an injective substitution and switches the variables in $sv(\sigma)$ and $\sigma(sv(\sigma))$ in some way. 
+By the hypothesis $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ we have that $\sigma \mid_{sv(a)} = \sigma_l \mid_{sv(a)}$,
+%
+hence it holds $\exists_{sv(\sigma)} a = s_{\sigma} \exists_{sv(\sigma)} a = s_{\sigma_l} \exists_{sv(\sigma)} a$.
+%
+Now note that $(\sigma_l)^{c}(\sigma(sv(\sigma))) = sv(\sigma)$, for $(\sigma_l)^{c}$ the set-theoretical inverse of $\sigma_l$, 
+thus again by item $3$ of Def.~\ref{def:poly} we have that $s_{\sigma_l} \exists_{sv(\sigma)} a = \exists_{\sigma(sv(\sigma))} s_{\sigma_l} a = \exists_{\sigma(sv(\sigma))} s_{\sigma} a$.
+%As for $2$, let $\tau$ such that $\hat{\tau} \mid_{sv(\hat{\tau})}: Y \rightarrow V$ is bijective, $Im(\hat{\tau} \mid_{sv(\hat{\tau})}) = X$, $\hat{\tau} \mid_{V \setminus sv(\hat{\tau})} = id \mid_{V \setminus sv(\hat{\tau})}$ and let $\hat{\sigma}'$ defined as follows:
+%	\begin{itemize}
+%		\item $\hat{\sigma}'(y) = \hat{\sigma}(y)$ if $y \not \in Y$
+%		\item $\hat{\sigma}'(y) = \hat{\tau}(y)$ otherwise
+%	\end{itemize}
+%$\hat{\sigma}'$ switches all the variables in $sv(\hat{\sigma})$ and $sv(\hat{\tau})$ in some way. Then we have $s_{\hat{\sigma}} \exists_Y a = s_{\hat{\sigma}'} \exists_Y a$ and $\exists_Y s_{\hat{\sigma}'} \exists_Y a = s_{\hat{\sigma}'} \exists_X \exists_Y a = \exists_X a$
+\qed
+\end{proof}
+
+%\begin{proof}
+%	The proofs are immediate. Consider for instance the most difficult item $3$.
+%	If $x=y$ the proof is over. Now, since $w \not \in \{x, y\}$ we have 
+%	by definition that
+%	$\delta_{x,y} = \exists_w(\delta_{x,w} \monop \delta_{w,y})$.
+%	Again by definition $b [^y/_x] = \exists_x(\delta_{x,y} \monop b)$, so that
+%	$\exists_w (a [^y/_x]) =  \exists_w \exists_x(\delta_{x,y} \monop a) = 
+%	\exists_x \exists_w(\delta_{x,y} \monop a) = 
+%	\exists_x (\delta_{x,y} \monop \exists_w a) = 
+%	(\exists_w a) [^y/_x]$.
+%\end{proof}
+
+Finally, we rephrase some further laws of the crisp case 
+%It is easy to prove that the following laws hold 
+(see~\cite[p.140]{pippo}).
+
+\begin{lemma}
+	\label{lemmaSubs}
+	Let $\sigma \in F(V)$ invertible and $a \in A$. Then it holds
+	\begin{enumerate}
+		\item if $(\sigma(sv(\sigma)) \setminus sv(\sigma)) \cap sv(a) = \emptyset$ then $s_{\sigma^{-1}} s_{\sigma} a = a$
+		\item $(sv(\sigma) \setminus  \sigma(sv(\sigma))) \cap sv(s_\sigma a) = \emptyset$
+		%\item $s_{\sigma} a = a \iff sv(a) \cap sv(\sigma) = \emptyset$
+	\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+	As for item $1$, by definition it holds $s_{\sigma^{-1}} s_{\sigma} a = s_{\sigma^{-1} \circ \sigma} a$. Now, item $3$ of Lemma~\ref{lemma:Inv0} implies that $sv(\sigma^{-1} \circ \sigma) = \sigma(sv(\sigma)) \setminus sv(\sigma)$, and since $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ it holds $(\sigma^{-1} \circ \sigma) \mid _{sv(a)} = \iota \mid _{sv(a)}$.
+	The result then follows by item $2$ of Def.~\ref{def:poly}.
+	
+	As for item $2$, note that $sv(s_{\sigma} a) = \sigma(sv(a))$. Let $Z = sv(\sigma) \cap sv(a)$: then $\sigma(Z) \subseteq \sigma(sv(\sigma))$ and $\sigma \mid_{sv(a) \setminus Z} = \iota \mid_{sv(a) \setminus Z}$, which implies $(sv(a) \setminus Z) \cap sv(\sigma) = \emptyset$.\\
+	Since $\sigma(Z) \subseteq \sigma(sv(\sigma))$, it holds $(sv(\sigma) \setminus \sigma(sv(\sigma)) \cap \sigma(sv(a)) = (sv(\sigma) \setminus \sigma(sv(\sigma)) \cap sv(s_{\sigma} a) = \emptyset$.
+\qed	
+	%Consider now item $3$: note that $a = b \implies \exists_X a = \exists_X b$. Then $s_\sigma a = a \implies \exists_{\sigma(sv(a))} s_\sigma a = \exists_{sv(a)} a \implies s_\sigma \exists_{\sigma^{-1}(sv(a))} a = \exists_{sv(a)} a \implies \sigma^{-1}(sv(a)) = sv(a) \implies sv(\sigma) \cap sv(a) = \emptyset$. \\
+	%Questo pero' mi confonde: se $\sigma$ fosse una permutazione varrebbe lo stesso. \\
+	%To proove $sv(\sigma) \cap sv(a) \implies s_{\sigma} a = a$, consider the contrapositive of item $2$ in Definition~\ref{def:poly}: then it holds $s_{\sigma} a \not = a \implies \sigma \mid_{sv(a)} \not = \iota \mid_{sv(a)}$, i.e. there exists $X \subseteq sv(a) \not = \emptyset$ such that $\sigma(X) \not = X$, which in turn implies $sv(\sigma) \cap sv(a) \not = \emptyset$.
+	%$\hat{\tau} \circ \hat{\sigma} = \hat{\tau}$, then $s_{\hat{\tau} \circ \hat{\sigma}} a = s_{\hat{\tau}} \exists_Y a$. Since $Y = sv(\hat{\tau})$, the result follows from $1$ of Lemma~\ref{lemmaSubs0}.
+	%$\{^x/_y\} \mid_{V \setminus\{y\}} = id \mid_{V \setminus\{y\}}$.
+	%As for $3$,  note that $\sigma^{-1} (X) = \emptyset$, thus
+	%$\exists_X s_{\sigma} a = s_{\sigma} a$ and the result holds.
+%	Consider for instance the most difficult item $3$.
+%	If $x=y$ the proof is over. Now, since $w \not \in \{x, y\}$ we have 
+%	by definition that
+%	$\delta_{x,y} = \exists_w(\delta_{x,w} \monop \delta_{w,y})$.
+%	Again by definition $b [^y/_x] = \exists_x(\delta_{x,y} \monop b)$, so that
+%	$\exists_w (a [^y/_x]) =  \exists_w \exists_x(\delta_{x,y} \monop a) = 
+%	\exists_x \exists_w(\delta_{x,y} \monop a) = 
+%	\exists_x (\delta_{x,y} \monop \exists_w a) = 
+%	(\exists_w a) [^y/_x]$.
+\end{proof}
+
+\subsection{Cylindric and polyadic operators for residuated monoids}
+\label{cyre}
+Both the structures introduced in the previous section are quite standard, 
+even if polyadic operators are less-known in the soft-constraints literature.
+Their presentation here is tailored to our needs. We now check how they
+interact with residuation. To this end, in the following we assume that $\mathbb{S}$ is a RePO.
+
+
+\begin{lemma}
+Let $X \subseteq V$ a non-empty finite set of variables. Then it holds
+	\begin{itemize}
+         \item $\forall a, b \in A.\ \exists_X(a \odiv \exists_X b) \leq \exists_X a \odiv \exists_X b$.
+	\end{itemize}
+\end{lemma}
+
+\begin{proof}
+ \[\exists_X b \otimes (a \odiv \exists_X b) \leq a \implies
+   \exists_X(\exists_X b \otimes (a \odiv \exists_X b)) \leq \exists_X a \implies\]
+ \[\exists_X b \otimes \exists_X(a \odiv \exists_X b)) \leq \exists_X a \implies
+   \exists_X(a \odiv \exists_X b) \leq \exists_X a \odiv \exists_X b\]
+   \qed
+\end{proof}
+
+\begin{remark}
+Looking at the proof above, it is clear that $\exists_x(a \odiv \exists_x b) \leq \exists_x a \odiv \exists_x b$
+is actually equivalent to state that
+$\exists_x(a \monop \exists_x b) \geq \exists_x a \monop \exists_x b$.
+\end{remark}
+
+%\begin{remark}
+%\todo{un esempio dove $\odiv$ non distribuisce}
+%\end{remark}
+
+\noindent Similarly, it is easy to show that it holds $\forall a, b \in A.\ \exists_X(\exists_X a \odiv b) \leq \exists_X a \odiv \exists_X b$. 
+Moreover, the following lemma holds.
+
+\begin{lemma}
+Let $X \subseteq V$ a non-empty finite set of variables, $\sigma,\tau \in F(V)$. Then it holds
+	\begin{itemize}
+		\item $\forall a,b \in A.\ s_\sigma (a \odiv b) \leq s_\sigma a \odiv s_\sigma b$ 
+	\end{itemize}
+\end{lemma}
+
+%\begin{proof}
+%\[ a \otimes (b \odiv a) \leq b \implies \]
+%\[ s_\sigma [a \otimes (b \odiv a)] \leq s_\sigma b \implies \]
+%\[ s_\sigma a \otimes s_\sigma(b \odiv a) \leq s_\sigma b \implies \]
+%\[ s_\sigma (b \odiv a) \leq s_\sigma b \odiv s_\sigma a \]
+%\end{proof}
+
+\section{Polyadic Soft Constraints}\label{sec:softconstraints}
+\label{subsec:inst} 
+In the past sections we mentioned a few ReSLs such as 
+the Fuzzy 
+%semiring  $\langle [0, 1], \leq, \times, 1 \rangle$ 
+%of the $[0, 1]$ interval of real numbers with the usual order and multiplication
+%as the monoidal operator
+and the Tropical semiring.
+%$\langle \mathbb{R}^+ \cup\{+\infty\}, \geq, +, 0 \rangle$
+%non-negative reals plus $\infty$ with the inverse order and addition.
+%
+Building on such examples, in this section we give a main case study: a ReSL 
+where the notion of cylindric and polyadic operators can be easily given.
+It exploits the notion
+of soft constraint: indeed, our proposal follows yet generalises \cite{scc}.
+
+\begin{definition}[(Soft) Constraints]\label{def:softconstraints}
+	Let $V$ be a set of variables, $D$ a finite domain of interpretation
+	and ${\mathbb S} = \langle A, \leq, \monop, \odiv, \monid \rangle$ a ReSL.
+	A \emph{(soft) constraint} $c: (V \rightarrow D) \rightarrow
+	A$ is a function associating a value in $A$ with each assignment
+	$\eta: V\rightarrow D$ of the variables.
+\end{definition}
+
+In this section and in the following one, we define $\mathcal{C}$ as the set of constraints that can be
+built starting from chosen $\mathbb S$, $V$ and $D$. The application of a
+constraint function $c:(V \rightarrow D) \rightarrow A$ to a variable
+assignment $\eta:V\rightarrow D$ is denoted $c\eta$.  
+
+Even if
+a constraint involves all the variables in $V$, it may depend on
+the assignment of a finite subset of them, called its support. For
+instance, a binary constraint $c$ with $supp(c)=\{x,y\}$ is a function
+$c: (V\rightarrow D)\rightarrow A$ which depends only on the
+assignment of variables $\{x,y\}\subseteq V$, meaning that two
+assignments $\eta_1, \eta_2: V \rightarrow D$ differing only for the
+image of variables $z \not \in \{x,y\}$ coincide (i.e., $c\eta_1 =
+c\eta_2$).
+%
+The support corresponds to the classical notion of scope of a
+constraint.  We often refer to a constraint with support $X$ as $c_X$.
+Moreover, an assignment over a support $X$ of size $k$ is concisely
+represented by a tuple $t$ in $D^k$ and we often write $c_X(t)$
+instead of $c_X\eta$.
+
+\smallskip
+The set of constraints forms a ResL, with the structure
+lifted from ${\mathbb S}$.
+
+\begin{lemma}[The ReSL of constraints]\label{prop:soft}
+	The ReSL of constraints $\mathbb C$ is
+	defined as the tuple $\langle {\mathcal C}, \leq, \monop, \odiv, \monid \rangle$ such that
+	
+	\begin{itemize}
+		\item $c_1 \leq c_2$ if $c_1\eta\leq c_2\eta$ for all $\eta: V \rightarrow D$
+		\item $(c_1\monop c_2)\eta = c_1\eta\monop c_2\eta$ %for $c_1, c_2\ \in {\mathcal C}$
+		\item $(c_1\odiv c_2)\eta = c_1\eta\odiv c_2\eta$ %for $c_1, c_2\ \in {\mathcal C}$
+		\item $\monid \eta = \monid$
+	\end{itemize}
+\end{lemma}
+
+
+Combining constraints by the $\monop$ operator
+means building a new constraint whose support involves at most
+the variables of the original ones. The obtained constraint  associates with
+each tuple of domain values for such variables the element
+that is obtained by multiplying  those associated by the
+original constraints to the appropriate sub-tuples.
+%
+%Residuation works as expected (i.e., $(c_1\odiv c_2)\eta = c_1\eta\odiv c_2\eta$),
+%and 
+%Also, the bottom is the constant function mapping all $\eta$ to $\bot$.
+
+%\begin{example}[A simple CLIM]\label{execlim}
+%Let us consider a CLIM $\mathbb S$, 
+%and as $D$ a finite subset of the elements of the CLIM.
+%A polynomial with variables in $V$ 
+%and elements of the CLIM as coefficients
+%such as $ux \, \hat{+} \, vy \, \hat{+} \, z$
+%can be interpreted as the soft constraint associating 
+%with a function $\eta: V \rightarrow D$ the value 
+%$\bigvee \{u \monop \eta(x), v \monop \eta(y), z \}$.
+%The composition of such constraints is straightforward, while 
+%the ordering might not be the one induced by the coefficients, 
+%due to the presence of constants.
+%
+%More precisely, let us consider the CLIM of non-negative reals and
+%the polynomials $2x \, \hat{+} \, 1$ and $x \, \hat{+} \, 6$
+%and let us assume $D = \{1, 2, 3\}$.
+%The composition of such constraints is actually given just by coefficient 
+%addition, so that
+%$(2x \, \hat{+} \, 1) \monop (x \, \hat{+} \, 6) = 
+%(3x \, \hat{+} \, 7)$.
+%However, note that $2x \, \hat{+} \, 1 \leq x \, \hat{+} \, 6$.
+%
+%
+%Similarly for residuation, which is just bounded subtraction of coefficients.
+%Since $2x \, \hat{+} \, 1 \leq x \, \hat{+} \, 6$,
+%by construction ($2x \, \hat{+} \, 1) \odiv (x \, \hat{+} \, 6)$ is the bottom constraint,
+%mapping all variables to $0$.
+%Instead, $(x \, \hat{+} \, 6) \odiv (2x \, \hat{+} 1)$ could be described as $\hat{-}x \, \hat{+} \, 5$,
+%even if
+%the latter falls outside of the polynomials we considered since it has a negative coefficient:
+%it suffices to assume that if the actual result of the evaluation of the polynomial is negative 
+%then it is put to $0$.
+%
+%%
+%If $D$ is not the singleton, the support of a polynomial is precisely the set of variables occurring in it.
+%\end{example}
+
+%The ReSL of constraints also enjoys the cylindric properties, as shown by
+%the result below (for cylindric operators and diagonals in the idempotent case, see~\cite{scc}).
+
+\begin{lemma}[Cylindric and polyadic operators for (soft) constraints]
+	The ReSL of constraints $\mathbb{C}$ admits cylindric and polyadic operators, defined as
+	\begin{itemize}
+		\item  $(\exists_X c) \eta = \bigvee \{c \rho \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\}$ 
+		         for all $c \in {\mathcal C}, X \subseteq V$
+		%\item if $\sigma$ is an injective substitution, then $(s_{\sigma}c)\eta = c(\sigma \circ \eta)$ for all $c \in \mathcal{C}$
+		\item  $(s_\sigma c) \eta = c (\eta \circ \sigma)$ for all $c \in {\mathcal C}, \sigma \in F(V)$		
+%		\item $\delta_{x,y}\eta = \left\{
+%		\begin{array}{rcl} \bot & & \text{if } \eta(x) = \eta(y); \\
+%		\top & & \text{otherwise.}
+%		\end{array} \right.$ for all $x, y \in V$
+	\end{itemize}
+\end{lemma}
+
+Hiding means eliminating variables from the support:
+$supp(\exists_X c) \subseteq supp({c}) \setminus X$.\footnote{The operator
+	is called \emph{projection} in the soft framework,
+	and $\exists_X c$ is denoted $c\Downarrow_{V\setminus X}$.}
+
+\begin{proof}
+%Let us consider a finite set $X$ and a constraint $c$. Recall that since $supp(c)$ is finite,
+%$c$ can be considered as a function $D^k \rightarrow A$ for $k = \# supp(c)$.
+%
+%Thus $(\exists_X c) \eta$ just boils down to consider the LUB of $\# supp(c) \setminus X$ 
+%sets of $k$-tuples, and t
+The properties of the pomonoid action (see Definition~\ref{pomo})
+are easily shown to hold for both operators. 
+%
+As for the cylindric laws (see Definition~\ref{cyli}), we have that 
+\[(\exists_X (c \otimes \exists_X d)) \eta = 
+\bigvee \{(c \otimes \exists_X d) \rho \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\} =\]
+\[\bigvee \{c\rho \otimes (\exists_X d) \rho \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\} = \]
+\[\bigvee \{c\rho \otimes  (\bigvee \{d \xi \mid \rho\mid_{V \setminus X} = \xi\mid_{V \setminus X}\}) \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\} =\]
+\[\bigvee \{c\rho \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\} \otimes
+\bigvee \{d \xi \mid \eta\mid_{V \setminus X} = \xi\mid_{V \setminus X}\} =
+(\exists_X c) \eta \otimes (\exists_X d) \eta \]
+%\[ (\exists_X d) \rho = \bigvee \{d \xi \mid \rho\mid_{V \setminus X} = \xi\mid_{V \setminus X}\}\]
+
+Let us now move to the polyadic laws (see Definition~\ref{def:poly}).We just consider the third item, 
+and we assume that $\sigma \mid_{\sigma^c(X)}$ is injective, thus
+\[(\exists_X s_\sigma c) \eta = \bigvee \{(s_\sigma c) \rho \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\} =\]
+\[\bigvee \{c (\rho \circ \sigma) \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\} = 
+\bigvee \{c\xi \mid (\eta \circ \sigma)\mid_{V \setminus \sigma^{c}(X)} = \xi\mid_{V \setminus \sigma^{c}(X)}\} =\]
+\[(\exists_{\sigma^c(X)} c) (\eta \circ \sigma) = (s_\sigma \exists_{\sigma^c(X)} c) \eta\]
+%  \bigvee \{c (\rho \circ \sigma) \mid (\eta\circ \sigma)\mid_{V \setminus \sigma^{c}(X)} = (\rho\circ \sigma)\mid_{V \setminus \sigma^{c}(X)}\}=^{*}\]
+\noindent
+where it always holds that $\eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}$ implies $(\eta\circ \sigma)\mid_{V \setminus \sigma^{c}(X)} = (\rho\circ \sigma)\mid_{V \setminus \sigma^{c}(X)}$,
+while since $\sigma \mid_{\sigma^c(X)}$ is injective we have that
+a $\xi$ satisfying $(\eta \circ \sigma)\mid_{V \setminus \sigma^{c}(X)} = \xi\mid_{V \setminus \sigma^{c}(X)}$ can be decomposed as $\rho\circ \sigma$
+for a $\rho$ such that $\eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}$
+(otherwise, it could happen that for some $\{x, y\} \subseteq \sigma^c(X)$ we have that $\sigma(x) =\sigma(y)$ and 
+$\xi(x) \neq \xi(y)$).
+\qed
+\end{proof}
+
+%
+%Finally, the diagonal element $\delta_{x,y}$ has support $\{x, y\}$ for 
+%$x \neq y$, while the support for $\delta_{x,x}$ is $\emptyset$. 
+
+
+\comment{
+Note also that the diagonal elements are not guaranteed to be $\monop$-compact,
+even if they have finite support, since $\top$ is not necessarily so.
+%
+To this end, we close the section by adding the simple result below to the soft constraint lore.
+
+\begin{proposition}
+	Let $c \in \mathbb{C}$ be a constraint. It is $\monop$-compact if and only if it has finite support and 
+	$c\eta$ is $\monop$-compact for all $\eta$.
+\end{proposition}
+}
+
+\section{Affine Constraints}\label{sec:polynomialsoftconstraints}
+Soft constraints are an expressive specification formalism, yet they 
+suffer from requiring a potentially complex representation.
+%
+This section considers a sub-class of constraints that allows 
+for a simple presentation, one which exploits the notion of
+polyadic operators introduced in the previous sections.
+
+Let us start by defining the ReSL of natural numbers 
+$\mathcal{N} = \langle \mathbb{N}, \geq, +, 0 \rangle$,
+which is the sub-ReSL of the tropical semiring
+of positive reals (see Remark~\ref{rmk:soft}).
+%
+Also, let $\mathcal{F}$
+be the ReSL of functions $p: V \rightarrow \mathbb{N}$
+with finite support (i.e., such that 
+$supp(p) = \{ x \in V \mid  p(x) \neq 0\}$ is finite),
+whose monoidal structure is lifted from $\mathcal{N}$.
+
+
+Finally, let us now assume for the sake of simplicity that $D \subseteq A$ 
+(even if the definitions below could be parametric with respect to
+a function $D \rightarrow A$), and given $d \in D$ let
+$d^n$ be just $d \otimes \ldots \otimes d$ for $n$ times,
+with $\1$ for $n = 0$.
+
+\begin{definition}[Affine constraints]\label{def:softconstraints}
+%	Let $X\subseteq V$ be a finite set of variables. 
+	%
+	A constraint $c$ is \emph{affine} if there exist $p: V \rightarrow \mathbb{N}$ and $i \in A$ 
+	such that $\forall\eta.\ c\eta = \bigotimes_{x \in  V} \eta(x)^{p(x)} \otimes i$.
+\end{definition}
+
+Any such pair $\langle p, i \rangle$ is a presentation of $c$, and 
+$supp(c) \subseteq supp(p)$.
+Also, note that a presentation is not necessarily unique,
+even if we might have a canonical one.
+
+\begin{lemma}
+Let $\langle p_1, i_1 \rangle$ and  $\langle p_2, i_2 \rangle$
+be presentations of an affine constraint $c$. If $\1 \in D$ then
+$i_1 = i_2$ and $\langle p_1\vee p_2, i_1\rangle$ is 
+also a presentation of $c$.
+\end{lemma}
+\begin{proof}
+Since $\langle p_1, i_1 \rangle$ and $\langle p_2, i_2 \rangle$ are both presentations of $c$, it holds 
+\[ \forall \eta. \langle p_1, i_1 \rangle \eta = \langle p_2, i_2 \rangle \eta \] 
+\[ \iff \forall \eta. \bigotimes_{x \in V} \eta(x)^{p_1(x)} \otimes i_1 = \bigotimes_{x \in V} \eta(x)^{p_2(x)} \otimes i_2 \]
+Since $\monid \in D$:
+\[ \forall \eta. \bigotimes_{x \in V} \eta(x)^{p_1(x)} \otimes i_1 = \bigotimes_{x \in V} \eta(x)^{p_2(x)} \otimes i_2 \]
+\[ \implies \bigotimes_{x \in V} \monid^{p_1(x)} \otimes i_1 = \bigotimes_{x \in V} \monid^{p_2(x)} \otimes i_2 \implies i_1 = i_2 \]
+It's now easy to see that $\langle p_1 \vee p_2, i_1 \rangle$ is also a presentation of $c$, since both $\langle p_1, i_1 \rangle$ and $\langle p_2, i_1 \rangle$ are so.
+\qed
+\end{proof}
+
+Since $\mathcal{N}$ is a complete, total and discrete monoid, 
+each subset admits a maximum. 
+Thus, each affine constraint $c$ admits a
+maximal presentation, denoted as 
+$\langle p_c, i_c\rangle$.
+
+\medskip
+As an immediate generalisation of the given lemma, we can state the following:
+\begin{lemma}
+Let $c_1$, $c_2$ be affine constraints
+such that $c_1 \leq c_2$.
+If $\1 \in D$, then $i_{c_1} \leq i_{c_2}$.
+\end{lemma}
+
+Let $\mathcal{A}$ be the set of affine constraints.
+It is clearly closed with respect to $\otimes$, 
+hence it forms a sub-monoid of $\mathcal{C}$.
+Moreover, it admits cylindric and polyadic operators.
+
+\begin{lemma}[Cylindric and polyadic operators for affine constraints]
+Let $c \in \mathcal{A}$ be an affine constraint with presentation $\langle p, i \rangle$.
+Then 
+	\begin{itemize}
+		\item  $\exists_X c$ admits $\langle p[X = 0], i \otimes \bigvee_{\rho: X \rightarrow D} \bigotimes_{x \in X} \rho(x)^{p(x)} \rangle$
+		          as a presentation for all $X \subseteq V$
+		\item  $s_\sigma c$ admits $\langle \sum_{y \in \sigma^c(-)}p(y), i \rangle$ as a presentation
+		          for all $\sigma \in F(V)$
+	\end{itemize}
+for $p[X=0](x) = 0$ if $x \in X$, and $p(x)$ otherwise; and $(\sum_{y \in \sigma^c(-)}p(y))(x) = \sum_{y \in \sigma^c(\{x\})}p(y)$.
+\end{lemma}
+
+In other terms, $\exists_X c$ is obtained by first removing the coefficients of the variables in $X$
+in order to get them out of the support of $p$, and then by adding to $i$ the sup with respect of the 
+mappings $\rho: X \rightarrow D$ of the values $\bigotimes_{x \in X} \rho(x)^{p(x)}$.
+
+\begin{proof}
+\[ \forall \eta. (\exists_X c)\eta = \langle p[X = 0], i \otimes \bigvee_{\rho: X \rightarrow D} \bigotimes_{x \in X} \rho(x)^{p(x)} \rangle \eta = \]
+\[ = \bigotimes_{y \in V} \eta(y)^{p[X = 0](y)} \otimes i \otimes \bigvee_{\rho: X \rightarrow D} \bigotimes_{x \in X} \rho(x)^{p(x)} = \]
+\[ = \bigotimes_{y \in V \setminus X} \eta(y)^{p(y)} \otimes i \otimes \bigvee_{\rho: X \rightarrow D} \bigotimes_{x \in X} \rho(x)^{p(x)} = \]
+\[ = \bigvee \{ \bigotimes_{y \in V \setminus X} \eta(y)^{p(y)} \otimes i \otimes \bigotimes_{x \in X} \rho(x)^{p(x)} \mid \eta_{\mid V \setminus X} = \rho_{\mid V \setminus X} \} = \]
+\[ = \bigvee \{ \langle p, i \rangle \rho \mid \eta_{\mid V \setminus X} = \rho_{\mid V \setminus X} \} \]
+\\
+\[ \forall \eta. \langle p, i \rangle (\eta \circ \sigma) = \bigotimes_{x \in V} (\eta \circ \sigma)(x)^{p(x)} \otimes i = \]
+\[ \bigotimes_{x \in V} \eta(\sigma(x))^{p(x)} \otimes i = \bigotimes_{y \in \sigma(V)} \eta(y)^{\sum_{x \in \sigma^c(y)} p(x)} \]
+Note now that $\sigma(V) \subseteq V$, since $y$ could be the image along $\sigma$ of two variables. Then:
+\[ \bigotimes_{y \in \sigma(V)} \eta(x)^{\sum_{x \in \sigma^c(y)} p(x)} = \bigotimes_{x \in V} \eta(x)^{\sum_{y \in \sigma^c(\{x\})} p(y)} = \]
+\[ \bigotimes_{x \in V} \eta(x)^{(\sum_{y \in \sigma^c(-)} p(y))(x)} = (s_\sigma \langle p, i \rangle) \eta \]
+\qed
+\end{proof}
+\comment{
+\begin{proof}
+\marginpar{DA RIFARE. Ora gli assiomi li verificano per definizione. La notazione delle presentazioni \`e goffa, va rifatta.}
+%
+
+The given definition satisfies both cylindric and polyadic laws: \\
+\[\exists_X (\langle p_1, i_1 \rangle \otimes \exists_X \langle p_2, i_2 \rangle) = \]
+\[\exists_X (\langle p_1, i_1 \rangle \otimes \langle p_2[X = 0], i_2 \otimes \bigvee_\rho \bigotimes_{x \in X} \rho(x)^{p_2(x)} \rangle) = \]
+\[\exists_X \langle p_1 \circ (p_2[X = 0]), i_1 \otimes i_2 \otimes \bigvee_\rho \bigotimes_{x \in X} \rho(x)^{p_2(x)} \rangle = \]
+\[\langle (p_1 \circ (p_2[X = 0]))[X = 0], i_1 \otimes i_2 \otimes \bigvee_\rho \bigotimes_{x \in X} \rho(x)^{p_2(x)} \otimes \bigvee_\rho \bigotimes_{x \in X} \rho(x)^{p_1 \circ (p_2[X = 0])(x)} \rangle = \]
+\[\langle p_1[X = 0] \circ p_2[X = 0], i_1 \otimes \bigvee_\rho \bigotimes_{x \in X} \rho(x)^{p_1(x)} \otimes i_2 \otimes \bigvee_\rho \bigotimes_{x \in X} \rho(x)^{p_2(x)} \rangle = \]
+\[\exists_X \langle p_1, i_1 \rangle \otimes \exists_x \langle p_2, i_2 \rangle \]
+\\
+\[\exists_X s_\sigma \langle p, i \rangle = \exists_X \langle p \circ \sigma, i \rangle = \langle (p \circ \sigma)[X = 0], i \otimes \bigvee_\rho \bigotimes_{x \in X} \rho(x)^{p \circ \sigma(x)} \rangle = \]
+\[\langle p[\sigma^c(X) = 0] \circ \sigma, i \otimes \bigvee_\rho \bigotimes_{x \in \sigma^c(X)} \rho(x)^{p(x)} \rangle = s_\sigma \exists_{\sigma^c(X)} \langle p, i \rangle \]
+\end{proof}
+
+In the following, we thus opt for a polynomial representation of linear constraints, 
+such as $ax \, + \, by \, + \, i$ with $\{a,b\} \subseteq \mathbb{N}^+$ and
+$supp(p) = \{x,y\} \subseteq V$.
+}
+
+\begin{remark}
+Clearly affine constraints do not preserve residuation, unless the underlying structure is both residuated and associative, i.e. a group.
+However, affine constraints on $\mathbb{N}$ provide enough structure to model negative preferences. For the sake of simplicity, we focus for now on this kind of approach, leaving to future works further investigations on residuated structures.
+\end{remark}
+%
+\comment{
+In order to understand under which conditions, we first
+investigate the order.
+
+\begin{lemma}
+Let $c_1$, $c_2$ be affine constraints
+such that $c_1 \leq c_2$.
+If $\1 \in D$, then $i_{c_1} \leq i_{c_2}$.
+\end{lemma}
+\begin{proof}
+Consider the maximal presentations of $c_1$ and $c_2$, $\langle p_{c_1}, i_{c_2} \rangle$ and $\langle p_{c_2}, i_{c_2} \rangle$. Then
+\[ c_1 \leq c_2 \iff \langle p_{c_1}, i_{c_1} \rangle \leq \langle p_{c_2}, i_{c_2} \rangle \]
+\[ \implies \forall \eta. \bigotimes_{x \in V} \eta(x)^{p_{c_1}(x)} \otimes i_{c_1} \leq \bigotimes_{x \in V} \eta(x)^{p_{c_2}(x)} \otimes i_{c_2} \]
+\[ \implies \bigotimes_{x \in V} \monid^{p_{c_1}(x)} \otimes i_{c_1} \leq \bigotimes_{x \in V} \monid^{p_{c_2}(x)} \otimes i_{c_2} \]
+\[ \implies i_{c_1} \leq i_{c_2} \]
+\qed
+\end{proof}
+}
+
+\begin{example}[A simple ReSL]\label{execlim}
+	Polynomials with coefficients in $\mathbb{N}$ are affine constraints, since
+	they admit a presentation as a pair $\langle p, i \rangle$, 
+	where $p$ represents the function returning, for all $x \in supp(p)$, 
+	the coefficient of $x$ and $i$ represents the constant term of the polynomial.
+	Furthermore, we can consider as $\mathbb{S}$ any super-ReSL of $\mathbb{N}$, thus it is possible 
+	to have a presentation for polynomials having coefficients in $\mathbb{N}$ 
+	and constant term in $\mathbb{S}$. \\
+	Consider, for instance, as $\mathbb S$ the ReSL of non-negative reals, 
+	and as $D$ a finite subset of such reals.
+	An affine constraint with variables in $V = \{x,y\}$ 
+	is interpreted as the soft constraint associating 
+	with a function $\eta: V \rightarrow D$ the real 
+	obtained as $(a \, \times \, \eta(x)) \, + \, (b \, \times \, \eta(y)) \, + \, i$.
+	What is relevant is that the composition of such constraints is precisely 
+	the addition of polynomials. \\
+	As expected, the ordering depends both on coefficients and the constant term.
+	%
+	For example, let us consider the polynomials $2x \, + \, 1$ and $x \, + \, 5$
+	and let us assume that $D = \{1, 2, 3\}$: it holds that
+	$(2x \, + \, 1)\monop (x \, + \, 5) = (3x + 6)$ and  
+	$2x \, + \, 1 \leq x \, + \, 5$.
+
+\comment{
+\begin{example}[A simple ReSL]\label{execlim}
+	Let us consider as $\mathbb S$ the ReSL of non-negative reals, 
+	and as $D$ a finite subset of such reals.
+	A linear constraint with variables in $V = \{x,y\}$ 
+	is interpreted as the soft constraint associating 
+	with a function $\eta: V \rightarrow D$ the real 
+	obtained as $(a \, \times \, \eta(x)) \, + \, (b \, \times \, \eta(y)) \, + \, i$.
+	What is relevant is that the composition of such constraints is precisely 
+	the addition of polynomials.
+	Instead, the ordering might not be just the one induced 
+	by the coefficients, due e.g. to the presence of constants.
+	%
+	For example, let us consider the polynomials $2x \, + \, 1$ and $x \, + \, 5$
+	and let us assume that $D = \{1, 2, 3\}$: it holds that
+	$(2x \, + \, 1)\monop (x \, + \, 5) = (3x + 6)$ and  
+	$2x \, + \, 1 \leq x \, + \, 5$.
+	%
+	%hence, $u_1 \leq u_2$ and $z_1 \leq z_2$ implies  $u_1x \, \hat{+} \, z_1 \leq u_2x \, \hat{+} \, z_2$,
+	%but the vice versa does not hold.	
+	Similarly for residuation, which under some conditions turns out to be bounded subtraction of coefficients.
+	Since $2x \, + \, 1 \leq x \, + \, 5$,
+	by construction ($2x \, + \, 1) \odiv (x \, + \, 5)$ is the bottom constraint,
+	%associating each $\eta$ to the bottom element $0$:
+	which can be represented by the constant $0$.
+	Instead, $(x \, + \, 5) \odiv (2x \, + 1)$ could be synthetically
+	described as $-x \, + \, 4$, even if
+	the latter falls outside of the polynomial representation we considered since it has a negative coefficient.
+	In general terms, also such polynomials might be allowed: 
+	it would suffice to assume that if the result of the evaluation of the linear constraint 
+	is a negative real then it is put to $0$.
+\end{example}
+
+The support of (the image along $\xi$ of) a linear constraint is dependent on the support of $p$ (as expected)
+as well as on $i$.
+%Note that if the image of $D$ along $i$ is a singleton, then all linear constraints have empty support.
+%
+%The requirement that $i$ is injective helps in avoiding similar degenerated
+%situations.
+%
+Thus, only a minimal result can be stated.
+
+\begin{lemma}[Support]
+Let $\langle p, i \rangle$ be a linear constraint. Then $supp(\xi(p,i)) \subseteq supp(p)$.
+\end{lemma}
+%\begin{proof}
+%First of all, note that by construction $supp(c(p_X,i)) \subseteq X$.
+
+Clearly, no $y \not \in supp(p)$ belongs to $supp(\xi(p,i))$,
+%
+while for any $x \in supp(p)$ it at least depends on the element 
+$i$, which might e.g. be the top of the monoid.
+}
+\medskip
+	%In this case it holds that for a polynomial $ax + by + i$ the support 
+	%of $\xi(p,i)$ is precisely the support of $p$, i.e, $\{x, y\}$.
+	%unless the coefficient of a variable is mapped by $p$ into $0$, in which case it does
+	%not belong to the support of $p$.
+	%and let $D=\{1, 2, 3\}$. 
+	Also the polynomial representation can be equipped with a cylindric operator, so that
+	e.g. $\exists_{ \{x \} }(2x \, + \, 1) = \bigvee_{d \in D} 2d\, + \, 1 = 3$, i.e,
+	the maximum obtained by the evaluation of the constraint with respect 
+	to the elements in $D$.
+	Instead, $s_\sigma$ is just the application of substitution $\sigma$.
+%	
+%	\delta_{x,y}$ could be considered as a kind of matching $[x=y]$,
+%	since  $[x=y] \eta$ is either $0$ or $\infty$ depending if
+%	$\eta(x) = \eta(y)$ or $\eta(x) \neq \eta(y)$, respectively. 
+%	A proper treatment would anyhow require to extend the syntax of the polynomials
+%	by including suitable constants.
+\end{example}
+
+\comment{
+As for soft constraints, in this section and in the following one, we define $\mathcal{L}$ 
+as the set of linear constraints that can be built starting from chosen $\mathbb S$, $V$ and $D$. 
+%The application of a constraint function $c:(V \rightarrow D) \rightarrow A$ to a variable
+%assignment $\eta:V\rightarrow D$ is denoted $c\eta$.  
+%
+%\smallskip
+Also the set of linear constraints forms a ResL, with the structure
+lifted from ${\mathbb S}$.
+
+\begin{lemma}[The ReSL of constraints]\label{prop:soft}
+	The ReSL of constraints $\mathbb{L}$ is
+	defined as the tuple $\langle \mathcal{L}, \leq, \monop, \odiv, \monid \rangle$ such that
+	
+	\begin{itemize}
+		\item $\langle p_1, i_1 \rangle \leq \langle p_2, i_2 \rangle$ if $\xi(p_1, i_1)\eta\leq \xi(p_2, i_2)\eta$ for all $\eta: V \rightarrow D$
+		\item $(\langle p_1, i_1 \rangle \monop \langle p_2, i_2 \rangle)\eta = i_1 \otimes i_2 \otimes \bigotimes_{x \in supp(p_1) \cup supp(p_2)} \eta(x)^{p_1(x) + p_2(x)}$
+		\item $(\langle p_1, i_1 \rangle \odiv \langle p_2, i_2 \rangle)\eta = (i_1 \otimes \bigotimes_{x \in supp(p_1)} \eta(x)^{p_1(x)}) \odiv (i_2 \otimes \bigotimes_{x \in supp(p_2)} \eta(x)^{p_2(x)})$
+		\item $(\langle 0, \monid \rangle) \eta = \monid$
+	\end{itemize}
+\end{lemma}
+
+Qua un accenno di prova ci vorrebbe.
+\\
+
+Additionally, under certain conditions residuation is just coefficient substractions.
+
+\begin{proposition}
+Let $\langle p_1, i_1 \rangle$, $\langle p_2, i_2 \rangle$ be linear constraints such that
+$i_1 \leq i_2$ and $p_2(x) \leq p_1(x)$ for all $x \in V$. Then
+
+	\begin{itemize}
+		\item $(\langle p_1, i_1 \rangle \odiv \langle p_2, i_2 \rangle)\eta = (i_1 \odiv i_2) \otimes \bigotimes_{x \in supp(p_1) \cup supp(p_2)} \eta(x)^{p_1(x) - p_2(x)}$
+	\end{itemize}
+\end{proposition}
+
+Qua una prova ci vuole. Non so nemmeno se \`e vero...
+\\
+
+Finally, the ReSL of linear constraints $\mathbb{L}$ admits cylindric and polyadic operators. But first, for 
+$ \langle p, i \rangle \in \mathcal{L}$ and $Y \subseteq V$ we denote by
+$p[Y=0]$ the same function as $p$, yet modified by associating $0$ to all $y \in Y$.
+
+
+\begin{lemma}[Cylindric and polyadic operators for linear constraints]
+	The ReSL of constraints $\mathbb{L}$ admits cylindric and polyadic operators, defined as
+	\begin{itemize}
+		\item  $(\exists_X \langle p, i \rangle) \eta = \langle p[X = 0], i \otimes \bigvee_{\rho} \bigotimes_{x \in X} \rho(x)^{p(x)}$
+		         for all $ \langle p, i \rangle \in \mathcal{L}, X \subseteq V$
+		%\item if $\sigma$ is an injective substitution, then $(s_{\sigma}c)\eta = c(\sigma \circ \eta)$ for all $c \in \mathcal{C}$
+		\item  $(s_\sigma \langle p, i \rangle) \eta = \langle p \circ \sigma, i \rangle$ for all $\langle p, i \rangle \in \mathcal{L}, \sigma \in F(V)$		
+%		\item $\delta_{x,y}\eta = \left\{
+%		\begin{array}{rcl} \bot & & \text{if } \eta(x) = \eta(y); \\
+%		\top & & \text{otherwise.}
+%		\end{array} \right.$ for all $x, y \in V$
+	\end{itemize}
+\end{lemma}
+
+In other term, $\exists_X \langle p, i \rangle$ is obtained by first removing the coefficients of the variables in $X$
+in order to get $X$ out of the support of $p[X = 0]$, and then by adding to $i$ the sup with respect of the 
+mappings $\rho: X \rightarrow D$ of the values $\bigotimes_{x \in X} \rho(x)^{p(x)}$.
+\\
+
+Anche qua la prova ci vuole di sicuro!! Speriamo sia vero. Per la prova, 
+da notare che (forse) vale
+$i \otimes \bigvee_{\rho} \bigotimes_{x \in X} \rho(x)^{p(x)} 
+=
+\bigvee_{\rho} \langle p[V\setminus X = 0], i \rangle \rho$.
+\\
+
+Finally, we show that the induced structure is the same holding for soft constraints.
+
+\begin{proposition}
+The function $\xi: \mathcal{L} \rightarrow \mathcal{C}$ defined as
+$\xi(p,i)\eta = i \otimes \bigotimes_{x \in supp(p)} \eta(x)^{p(x)}$
+(see Def. \ref{def:softconstraints})
+preserves the ReSL structure and the cylindric and polyadic operators.
+\end{proposition}
+
+Anche qua ci va la prova, e bisogna vedere se \`e vero, ma se non lo \`e pare brutto.
+}
+
+\section{Concluding Remarks}\label{sec:conclusion}
+Our proposal moved from previous works, such as \cite{ipl17,jlamp17}, to build a new and more general
+framework for representing soft constraints. In this paper, we have observed properties of residuation
+in monoids equipped with partial orders or semi-lattices; moreover, we have introduced cylindric
+and polyadic operators in terms of pomonoid actions. This allowed us to exploit
+properties of M(V) and F(V) monoids and to generalise the notion of substitution,
+by defining any possible function as a substitution and building a new axiomatisation,
+which mirrors those obtained for previous definitions.
+This provides a more elegant formalisation, as well as more general and compact laws.
+Such results can be useful in giving an easier representation of soft constraints in SCSP.
+
+Furthermore, the absence of diagonals allowed the use of more general structures, which are not 
+necessarily complete lattice, thus our formalisation is applicable to more case studies.
+As shown, correspondence between constraints and polyadic algebra can be used to model
+many problems by using a comfortable polynomial representation. 
+
+Polynomials can easily fit real-life problems and can be used in SCCP paradigm to describe a knowledge
+basis shared among agents: indeed, a possible development is a rework of observational
+and behavioural equivalences as described in \cite{jlamp17}, which needed complete lattices,
+that could lead to the definition of a denotational semantics for SCCP.
+As future work, we can also think of defining the class of Polynomial \emph{Soft} Constraint Satisfaction Problems (PSCSPs), 
+as accomplished in \cite{pcsp09} with crisp constraints, in order to achieve a similar generalisation with respect to CSPs.
+
+
+
+\bibliographystyle{splncs03}%splncs
+\bibliography{main,softccp}
+
+
+
+
+\end{document}
