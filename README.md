@@ -1,1 +1,1 @@
-# polyadic_journal
+journal extension (festschrift Catuscia Palamidessi)
