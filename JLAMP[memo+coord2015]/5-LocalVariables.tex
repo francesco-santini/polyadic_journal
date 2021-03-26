@@ -1,0 +1,284 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+\section{Using Local Stores}\label{sec:localstores}
+
+The operational semantics chosen in the previous sections favoured a global view of  variables (and a single global store), using a set $\Delta$ to remember already used variable names. The purpose was to correctly use fresh ones when needed: i.e., in case of a procedure call, or avoiding to hide a variable with an already used name. In this section instead, we present alternative semantics: according to~\cite{extendedHiding,fairness} we consider an extended operator $\exists_x^\sigma$, for $\sigma$ the local store, with the proviso that $\exists_x^\bot A = \exists_x A$.\marginpar{Dai un'occhiata veloce a \cite{fairness}, usa local store e viene prima di \cite{extendedHiding}}
+
+
+With respect to Table~\ref{fig:operational}, the reduction semantics  drops $\Delta$:
+we have a pair $\langle \Gamma,  \rightarrow \rangle$, for $\Gamma = {\mathcal A} \times {\mathcal C}$
+the set of configurations  and $\rrarrow \, \, \subseteq \, \,\Gamma \times   \Gamma$ a relation between
+them. The reduction semantics using local variables is show in Table~\ref{fig:operationallocal}.
+
+
+
+
+\def\odiv{\; {\ominus\hspace{-7.8pt} \div} \;}
+\def\odivvv{\; {\ominus\hspace{-6.6pt} \div} \;}
+\begin{table}
+
+			\begin{center}
+					\scalebox{1}{
+				\begin{tabular}{llll} 
+					%
+					\mbox{\bf R1}& $ \langle \hbox{\tell}(c), \sigma \rangle \rrarrow  \langle \hbox{\ostop},
+						\sigma \otimes c\rangle$
+					\ \ \ & \bf{Tell}&
+					\\ 
+					&\mbox{   } &\mbox{   }
+					\\
+
+
+
+					%\mbox{\bf R4}& $\frac {\displaystyle \; \; \; \langle A,\sigma\rangle
+					%\rrarrow \langle \mathit{\ostop}, \sigma'\rangle \; \; \;} {\displaystyle
+					%\begin{array}{l}
+					%\langle A\parallel B, \sigma \rangle \rrarrow \langle B, \sigma' \rangle
+					%\end{array}}$&
+					% \bf{Par2}&
+					\mbox{\bf R2}&$\frac {\displaystyle   c \leq \sigma}{\displaystyle
+						\begin{array}{l} \langle \hbox{\ask}(c) \rrarrow A, \sigma \rangle \rrarrow \langle A, \sigma \rangle
+						\end{array}}$
+					\ \ \ & \bf{Ask}&
+					\\
+					&\mbox{   } &\mbox{   }
+					\\
+					
+					 \mbox{\bf R3}&$\frac {\displaystyle \langle A,\sigma \rangle \rrarrow \langle A', \sigma'   \rangle} 
+					 {\displaystyle \begin{array}{l}
+					 	\langle A\parallel B, \sigma \rangle \rrarrow \langle A'\parallel B, \sigma' \rangle
+					 	\end{array}}$ 
+					 & \bf{Par1}&
+					 \\
+					 &\mbox{   } &\mbox{   }
+					 \\						
+					
+					 \mbox{\bf R4}&$\frac {\displaystyle \langle A,\sigma \rangle \rrarrow \langle A', \sigma'   \rangle} 
+					{\displaystyle 
+						\begin{array}{l} \langle B\parallel A, \sigma \rangle \rrarrow \langle B\parallel A', \sigma' \rangle
+						\end{array}}$& \bf{Par2}&
+					\\
+					&\mbox{   }&
+					\\
+				
+					%\mbox{\bf R4}& $\frac {\displaystyle \langle p(x),\sigma\rangle \rrarrow \langle B, \sigma' \rangle}
+					%{\displaystyle\langle \mu_Z A,\sigma\rangle \rrarrow \langle B, \sigma'\rangle}$
+					%\mbox{\bf R5}& $\frac {\displaystyle p(x) = A \in  \mathcal{P} }
+					%{\displaystyle\langle p(y),\sigma\rangle \rrarrow \langle \exists_p^{d_{p,y}} \exists_x (tell(d_{p,x}) \parallel A), \sigma
+					%\rangle}$
+					%&\bf{Rec}&
+					\mbox{\bf R5}&$\frac {\displaystyle p(x) = A \in  \mathcal{P} }
+					{\displaystyle\langle p(x),\sigma\rangle \rrarrow \langle  A, \sigma\rangle}$ 
+					&\bf{Rec1}&
+					\\
+					&\mbox{   } &\mbox{   }
+					\\					
+					\mbox{\bf R6}&$\frac {\displaystyle x \neq y, \quad \displaystyle p(x) = A \in  \mathcal{P} }
+					{\displaystyle\langle p(y),\sigma\rangle \rrarrow \langle \exists_x^{\delta_{x,y}} A, \sigma\rangle}$ 
+					&\bf{Rec2}&
+					\\
+					&\mbox{   } &\mbox{   }
+					\\						
+					%\mbox{\bf R6}& $\frac {\displaystyle \langle A[\hat{y}/\hat{x}],\sigma\rangle \rrarrow \langle
+					%B, \sigma' \rangle} {\displaystyle\langle p(\hat{y}),\sigma\rangle \rrarrow \langle B,
+					%\sigma'\rangle} \ \  {\it p(\hat{x}) :: A \in F}$
+					%\mbox{\bf R6}& $\frac {\displaystyle \langle A,\sigma \otimes d_{\hat{x}, \hat{y}}\rangle \rrarrow \langle
+					%B, \sigma' \rangle} {\displaystyle\langle p(\hat{y}),\sigma\rangle \rrarrow \langle B,
+					%\sigma'\rangle} \ \  {\it p(\hat{x}) :: A \in F}$
+					%&\bf{Call}&\\
+
+				\mbox{\bf R7}&$\frac {\displaystyle \langle A, \sigma' \otimes \exists_x \sigma_0
+					\rangle \rrarrow \langle B, \sigma'' \rangle \ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'} 
+				{\displaystyle\langle \exists^{\sigma'}_x A,
+					\sigma \rangle \rrarrow \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv \exists_x \sigma_0}$
+				&\bf{Hide} &
+			\end{tabular} }
+	\end{center}
+	%\hfill
+	\caption{Reduction semantics with local stores.}
+	\label{fig:operationallocal}
+\end{table}
+\def\odiv{\, {\ominus\hspace{-6.8pt} \div} \,}
+\def\odivvv{\; {\ominus\hspace{-4.7pt} \div} \;}
+
+
+
+
+
+
+
+
+
+% TABELLA CON SOLO P-CALL e HIDING
+%\def\odiv{\; {\ominus\hspace{-6.8pt} \div} \;}
+%\def\odivvv{\; {\ominus\hspace{-7.0pt} \div} \;}
+%\begin{table}
+%	\begin{center}
+%		\scalebox{0.81}{
+%			\begin{tabular}{llll}
+%			$\frac {\displaystyle p(x) = A \in  \mathcal{P} }
+%			{\displaystyle\langle p(x),\sigma\rangle \rrarrow \langle  A, \sigma\rangle}$ 
+%			&\bf{Rec1}&
+%			\\
+%			& \mbox{   }&\mbox{   }&
+%			\\
+%			$\frac {\displaystyle x \neq y, \quad \displaystyle p(x) = A \in  \mathcal{P} }
+%			{\displaystyle\langle p(y),\sigma\rangle \rrarrow \langle \exists_x^{\delta_{x,y}} A, \sigma\rangle}$ 
+%			&\bf{Rec2}&
+%			\\
+%			&\mbox{   }&\mbox{   }&
+%			\\
+%				$\frac {\displaystyle \langle A, \sigma' \otimes \exists_x \sigma_0
+%					\rangle \rrarrow \langle B, \sigma'' \rangle \ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'} 
+%				{\displaystyle\langle \exists^{\sigma'}_x A,
+%					\sigma \rangle \rrarrow \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv \exists_x \sigma_0}$
+%				&\bf{Hide} & 
+%				\\
+%				& \mbox{   }&\mbox{   }&
+%				\\
+%				$\frac {\displaystyle p(x) = A \in  \mathcal{P} }
+%				{\displaystyle\langle p(x),\sigma\rangle \xrightarrow{\;  \bot \;} \langle  A, \sigma\rangle}$ 
+%				&\bf{L-Rec1}&
+%				\\
+%				&\mbox{   }&\mbox{   }&
+%				\\
+%				$\frac {\displaystyle x \neq y, \quad \displaystyle p(x) = A \in  \mathcal{P} }
+%				{\displaystyle\langle p(y),\sigma\rangle \xrightarrow{\;  \bot \;} \langle \exists_x^{\delta_{x,y}} A, \sigma\rangle}$ 
+%				&\bf{L-Rec2}&
+%				\\
+%				&\mbox{   }&\mbox{   }&
+%				\\ 
+%				$\frac {\displaystyle \la A, \sigma' \otimes \sigma_0[^z/_x] \ra \xrightarrow{\;  \alpha \;}
+%					\la B,  \sigma" \ra\ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma', 
+%					x\not\in sv(\alpha), z \not\in fv(A) \cup sv(\sigma)\cup sv(\sigma')}
+%				{\displaystyle\la \exists^{\sigma'}_x A, \sigma\ra \xrightarrow{\;  \alpha[^x/_z] \;}
+%					\la \exists^{\sigma_1}_x B, \sigma_0 \otimes \alpha[^x/_z] \otimes \exists_x\sigma_1 \ra
+%					\ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma" \odiv (\alpha \otimes \sigma_0[^z/_x])}$
+%				&\bf{L-Hide}&
+%			\end{tabular}
+%		}
+%	\end{center}
+%	%\hfill
+%	\caption{Unlabelled and labelled version of the rule for the local hiding of variables.}
+%	\label{fig:hiding}
+%\end{table}
+
+In the following we highlight the differences only for those rules that exploits local variables: Table~\ref{fig:operationallocal} with respect to Table~\ref{fig:operational}, and Table~\ref{fig:LTSlocal} with respect to Table~\ref{fig:LTS}.
+
+
+
+Rule {\bf R7} in Table~\ref{fig:operationallocal} hides variable $x$ in the computation of $A$: it is defined for an extended operator $\exists_x^\sigma$.
+The intuition is that variable $x$ may be local to a component $\exists_x \sigma'$ of the store $\sigma$, yet visible at a global level: we must then evaluate $A$ in the store
+when the local $x$ is hidden, yet the possible duplications are removed (e.g., $\exists_x \sigma'$ may already occur in the global store $\sigma$). The final store intuitively contains in $\sigma_1$ the original $\sigma'$ increased by what has been added by the
+step.\footnote{Our rule is thus more reminiscent of R4 in~\cite[Table~1]{pippo} than of the original one, indicated as $(8)$ in~\cite[p.~342]{popl91}. Both were unsuitable for not necessarily idempotent CLIMs.}
+
+Rule {\bf R5} in Table~\ref{fig:operationallocal} just replaces a procedure identifier with the associated body, as long as formal and actual parameter coincide, while rule {\bf R6} in Table~\ref{fig:operationallocal} uses the diagonals and the extended existential operator for simulating the replacing  of the formal parameter with the actual one: they are lifted from~\cite[Table~I]{deBoer97}.
+
+The corresponding  LTS,   $\xrightarrow{\;  \alpha \;} \, \, \subseteq \, \,\Gamma \times \mathcal{C}^\otimes \times \Gamma$, follows the same principles as in Section~\ref{sec:ltsSCCP}:  it exploits a constraint $\alpha$  represents the minimal information needed in $\sigma$ to fire an action from $\langle A, \sigma\rangle$  to $\langle A', \sigma' \rangle$, i.e., $\langle A, \sigma \otimes \alpha\rangle \longrightarrow \langle A' , \sigma' \rangle$.
+With respect ot their unlabelled variant, rules {\bf LR5} and {\bf LR6} in Table~\ref{fig:LTSlocal} need a minimal constraint $\bot$ to be fired.
+In rule {\bf LR7} (Table~\ref{fig:LTSlocal}) we rename the global $x$ with a fresh variable $z$, instead of hiding $x$ in the global store, as we do in the corresponding unlabelled rule, i.e. {\bf R7} in Table~\ref{fig:operationallocal}. We accomplish this in order to keep track of the global $x$ in $\alpha$: finally, in the final result we restore all the occurrences of $z$ back to $x$, i.e., $\alpha[x/z]$.
+
+\def\odiv{\; {\ominus\hspace{-7.8pt} \div} \;}
+\def\odivv{\; {\ominus\hspace{-5.4pt} \div} \;}
+\def\odivvv{\; {\ominus\hspace{-7.8pt} \div} \;}
+\begin{table}[t]
+	%\hfill
+
+		%\begin{minipage}{0.48\linewidth}%{.45\textwidth}
+			\begin{center}
+			\scalebox{0.9}{
+				\begin{tabular}{llll}
+					\mbox{\bf LR1}&$\langle \hbox{\tell}(c), \sigma \rangle \xrightarrow{\; \bot \;} \langle \mathit{\ostop},
+					\sigma \otimes c \rangle$
+					\ \ \ & \bf{Tell}&
+					\\
+					&\mbox{   } &\mbox{   }
+					\\
+					
+					\mbox{\bf LR2}&$\langle \hbox{\ask}(c) \rrarrow A, \sigma \rangle \xrightarrow{c  \odivv  \sigma} 
+					\langle A, \sigma \otimes (c\odivvv \sigma) \rangle$
+					\ \ \ & \bf{Ask}&
+					\\
+					&\mbox{   }&\mbox{   }
+					\\					
+					
+					
+					\mbox{\bf LR3}&$\frac {\displaystyle \langle A,\sigma \rangle \xrightarrow{\;  \alpha \;} \langle A', \sigma'   \rangle} 
+					{\displaystyle
+						\langle A\parallel B, \sigma \rangle \xrightarrow{\;  \alpha \;} \langle A'\parallel B, \sigma'
+						\rangle}$& \bf{Par1}&
+					\\
+					&\mbox{   }&
+					\\
+					\mbox{\bf LR4}&$\frac {\displaystyle \; \; \; \langle A,\sigma\rangle \xrightarrow{\;  \alpha \;} 
+						\langle A', \sigma'\rangle \; \; \;} 
+					{\displaystyle \langle B\parallel A, \sigma \rangle \xrightarrow{\;  \alpha \;} \langle B\parallel A', \sigma' \rangle}$
+					& \bf{Par2}&
+					\\
+					&\mbox{   }&
+					\\					
+					
+					
+					
+					\mbox{\bf LR5}&$\frac {\displaystyle p(x) = A \in  \mathcal{P} }
+					{\displaystyle\langle p(x),\sigma\rangle \xrightarrow{\;  \bot \;} \langle  A, \sigma\rangle}$ 
+					&\bf{Rec1}&
+					\\
+					&\mbox{   }&
+					\\					
+			
+			
+
+
+					\mbox{\bf LR6}&$\frac {\displaystyle x \neq y, \quad \displaystyle p(x) = A \in  \mathcal{P} }
+					{\displaystyle\langle p(y),\sigma\rangle \xrightarrow{\;  \bot \;} \langle \exists_x^{\delta_{x,y}} A, \sigma\rangle}$ 
+					&\bf{Rec2}&
+					%\mbox{\bf LR6}& $\frac {\displaystyle \langle A[\hat{y}/\hat{x}],\sigma\rangle \xrightarrow{\;  \alpha \;} \langle
+					%B, \sigma' \rangle} {\displaystyle\langle p(\hat{y}),\sigma\rangle \xrightarrow{\;  \alpha \;} \langle B,
+					%\sigma'\rangle} \ \  {\it p(\hat{x}) :: A \in F}$
+					%&\bf{Call}&\\
+					%\mbox{\bf LR6}& $\frac {\displaystyle \langle A, \sigma \otimes d_{\hat{x}, \hat{y}}\rangle \xrightarrow{\;  \alpha \;} \langle
+					%B, \sigma' \rangle} {\displaystyle\langle p(\hat{y}),\sigma\rangle \xrightarrow{\;  \alpha \;} \langle B,
+					%\sigma'\rangle} \ \  {\it p(\hat{x}) :: A \in F}$
+					%&\bf{P-call}&\\
+				
+				
+				%$\frac {\displaystyle \la A[z/x], c[z/x] \otimes \sigma \ra \xrightarrow{\;  \alpha \;} \la
+				%B,  c' \otimes \sigma \otimes \alpha \ra} {\displaystyle\la \exists^c_x A,
+				%\sigma\ra \xrightarrow{\;  \alpha \;} \la \exists^{c'[x/z]}_x B[x/z], \exists_x(c'[x/z]) \otimes \sigma \otimes \alpha \ra} \ \ 
+				% {\it x\not\in fv(c'), z \not\in (fv(A) \cup fv(c \otimes \sigma \otimes \alpha)) }$
+				
+				\\
+				&\mbox{   }&
+				\\				
+				\mbox{\bf LR7}&$\frac {\displaystyle \la A, \sigma' \otimes \sigma_0[^z/_x] \ra \xrightarrow{\;  \alpha \;} 
+					\la B,  \sigma" \ra\ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'}   
+				{\displaystyle\la \exists^{\sigma'}_x A, \sigma\ra \xrightarrow{\;  \alpha[^x/_z] \;} 
+					\la \exists^{\sigma_1}_x B, \sigma_0 \otimes \alpha[^x/_z] \otimes \exists_x\sigma_1 \ra
+					\ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma" \odiv (\alpha \otimes \sigma_0[^z/_x])}$ \ \ , * \; \
+				&\bf{Hide}&\\
+				&\mbox{   }&
+				\\
+				&\footnotesize$* \equiv {\it x\not\in sv(\alpha), z \not\in fv(A) \cup sv(\sigma)\cup sv(\sigma') }$&
+			\end{tabular}
+		}
+	\end{center}
+	%
+	\caption{An LTS for \SCCP with local stores.}
+	\label{fig:LTSlocal}
+\end{table}
+\def\odiv{\, {\ominus\hspace{-6.8pt} \div} \,}
+\def\odivvv{\; {\ominus\hspace{-4.7pt} \div} \;}
+
+
+
+%\begin{remark}\label{ex:localglobal}
+%	Having local variables makes problematic renaming variables with fresh names. For instance, suppose to have a parallel agent as $\exists_x  tell (x=5) || \exists_y  tell (y=6)$. The final store depends on the choice of the fresh variables for both $x$ and $y$. Confluence (see Proposition~\ref{prop:confluence}) only holds if at the end of the computation the store is closed with respect to the freshly introduced variables, with the purpose to ultimately obtain $Result(\xi_1) = Result(\xi_2)$.
+%	\textcolor{red}{TO BE FINISHED...}
+%\end{remark}
+
+
+In Section~\ref{sec:examples} some examples of agent computation are reported to clarify both the presented semantics with either global (see Section~\ref{sec:detSCCP}) or local stores (this section). Such examples are reported for an instantiation of the presented framework that reproduces the classical soft concurrent constraint paradigm~\cite{scc}.
+
+
+\end{document}

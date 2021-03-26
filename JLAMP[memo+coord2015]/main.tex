@@ -1,0 +1,160 @@
+\documentclass[preprint,12pt]{elsarticle}
+
+\usepackage{latexsym,enumerate}
+\usepackage{amssymb, amsxtra, amsfonts, mathtools}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{booktabs}
+%\usepackage{hyperref}
+\usepackage{marvosym}
+\usepackage{pxfonts}
+\usepackage{framed}
+%\usepackage{times}
+%% New package
+\usepackage{subfiles}
+\usepackage{color}
+\usepackage{placeins}
+\usepackage{cancel}
+\usepackage{stmaryrd}
+\usepackage{tikz}
+\usetikzlibrary{trees}
+\usetikzlibrary{arrows}
+
+
+
+
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proof}{Proof}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{example}{Example}
+
+
+\def\odiv{\, {\ominus\hspace{-7.8pt} \div} \,}
+\newcommand{\SCCP}{\texttt{SCCP}\xspace}
+\newcommand{\CCP}{\texttt{CCP}\xspace}
+\newcommand{\CCS}{\texttt{CCS}\xspace}
+
+
+
+\newcommand\remove[1]{}
+%to remove the proofs on exists and \otimes completeness
+\newcommand{\Exists}{\exists\!\!\exists}
+%\newcommand{\rrarrow}{\longrightarrow}
+\newcommand{\la}{\langle}
+\newcommand{\ra}{\rangle}
+\newcommand{\rarrow}{\rightarrow}
+\newcommand{\longar}{\longrightarrow}
+\newcommand\deff{\mathit{def}}
+\newcommand\conn{\mathit{con}}
+\newcommand\mahh{\mathit{mah}}
+\newcommand{\lan}{\langle}
+\newcommand{\ran}{\rangle}
+\newcommand{\os}{[\![}
+\newcommand{\cs}{]\!]}
+\newcommand{\rrarrow}{\longrightarrow}
+\newcommand{\hiding}{\\exists}
+\newcommand{\restr}{\mid}
+\newcommand{\lrarrow}{{\longrightarrow}}
+\newcommand{\tell}{{\bf tell}}
+\newcommand{\atell}{{\bf atell}}
+\newcommand{\ask}{{\bf ask}}
+\newcommand{\ostop}{{\bf stop}}
+\newcommand{\nask}{{\itshape nask}}
+\newcommand{\update}{{\bf update}}
+\newcommand{\sat}{{\itshape sat}}
+\newcommand{\nil}{{\itshape nil}}
+\newcommand{\true}{{\itshape true}}
+\newcommand{\false}{{\itshape false}}
+\newcommand{\vars}{{\itshape Var}}
+\newcommand{\form}{P \; sat \; \phi}
+\newcommand{\timeout}{{\bf timeout}}
+\newcommand{\NI}{\noindent}
+\newcommand{\bis}{\, \dot{\approx} \,}
+%\newenvironment{program}{\tt \begin{tabbing}pro\={\tt pro}\= clause \kill}{\end{tabbing}}
+\def\ent{\vdash}
+\def\ent{\vdash}
+\def\0{{\mathbf 0}}
+\def\1{{\mathbf 1}}
+\def\C{{\mathcal C}}
+
+%\addtolength{\floatsep}{-4mm}
+%\addtolength{\textfloatsep}{-4mm}
+
+\makeatletter
+\renewcommand{\paragraph}{%
+	\@startsection{paragraph}{4}%
+	{\z@}{1ex \@plus 1ex \@minus .2ex}{-1em}%
+	{\normalfont\normalsize\bfseries}%
+}
+\makeatother
+
+
+%% Commands by Luis
+\usepackage{commands}
+
+
+\begin{document}
+
+
+\begin{frontmatter}
+%%  Tell me if you like this title. It's ok if you want to keep the old one.
+%%
+\title{Observational and Behavioural Equivalences\\ for 
+Soft Concurrent Constraint Programming\thanks{The research 
+has been partially supported 
+%by the EU FP7-ICT IP 257414 ASCENS, 
+by the MIUR PRIN 2010LHT4KM CINA
+and PRIN 2010XSEMLC ``Security Horizons'',
+by the ANR 12IS02001 PACE, and 
+by the Aut.\ Reg.\ of Sardinia P.I.A.\ 2010 ``Social Glue''.
+}
+}
+
+\author[fb]{Fabio~Gadducci\corref{cor1}}
+    \ead{gadducci@di.unipi.it}
+    \author[fs]{Francesco~Santini\corref{cor2}\fnref{fn2}}
+    \ead{francesco.santini@dmi.unipg.it}
+    \author[lp]{Luis~F.~Pino}
+    \ead{luis.pino@unica.it}
+    \author[fv]{Frank~D.~Valencia}
+    \ead{frank.valencia@lix.polytechnique.fr}
+ 
+\cortext[cor1]{Principal corresponding author.}
+\cortext[cor2]{Secondary corresponding author.}
+
+
+%\fntext[fn2]{Partially supported by .} 
+\address[fb]{Dipartimento di Informatica, Universit\`a di Pisa, Italy} 
+\address[fs]{Dipartimento di Matematica e Informatica, Universit\`a di Perugia, Italy}
+\address[lp]{Dipartimento di Matematica e Informatica, Universit\`a di Cagliari, Italy}
+\address[fv]{CNRS and LIX, \'{E}cole Polytechnique de Paris, France}
+
+   
+    \subfile{0-Abstract.tex}
+
+%\maketitle
+\end{frontmatter}
+
+
+\subfile{1-Intro.tex}
+\subfile{2-Background.tex}
+\subfile{3-DetSoftCCP.tex}
+\subfile{4-LabelledSem.tex}
+%\subfile{5-LocalVariables.tex}
+\subfile{6-Axiomatization.tex}
+\subfile{7-CaseStudy.tex}
+\subfile{8-Conclusions.tex}
+
+\section*{References} \label{}
+\bibliographystyle{elsarticle-num}
+\bibliography{softccp}
+
+%\newpage
+%\subfile{appendix.tex}
+
+\end{document}

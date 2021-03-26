@@ -1,0 +1,262 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{An Axiomatisation of Simple Agents for Weak Bisimilarity}\label{sec:axiomatiastion}
+Once the behaviour of an agent is captured by an observational equivalence, 
+it is natural to look for laws characterising it. 
+Given its correspondence with the standard equivalence via fair computations,
+weak bisimilarity is the preferred behavioural semantics for soft CCP. 
+%
+%in this section we shall discuss some axioms for weak bisimilarity in soft CCP. 
+A sound and complete axiomatisation was proposed for CCP in~\cite{popl91}. 
+%
+However, the lack of idempotence in the soft formalism makes unsound some of the axioms  
+there, since posting a constraint twice is different from adding it just
+once. 
+As an example, law \emph{L1} of~\cite{popl91} states that
+$\ask(c) \rightarrow \tell(d) = \ask(c) \rightarrow (\tell(c) \parallel \tell(d))$, 
+which is clearly false in the soft formalism.
+
+Nevertheless, most of the axioms in~\cite{popl91} can be recovered, as long as we mix together
+the various operators available in a CLIM.\footnote{Our axioms follow closely those of~\cite[p.341]{popl91},
+replacing  the law \emph{L1} mentioned above with $\tell(\bot) = \ostop$ and dropping altogether the laws 
+\emph{L11} and \emph{L12}.}
+%
+So, let an agent be simple if it is finite and contains no occurrence of an existential quantifier.
+Our set of axioms for simple agents of SCCP in presented in Figure \ref{fig:axioms2}. 
+
+As for sequential processes, in Eqs.~\ref{eq:stop1}-\ref{eq:stop2} we present the axioms involving the $\0$
+and in Eqs.~\ref{eq:ask1}-\ref{eq:ask2} those related to \emph{ask}.
+Those concerning the parallel composition operator are instead represented in Eqs.~\ref{eq:parall1}-\ref{eq:parall3}. 
+Distributivity of \emph{tell} and \emph{ask} are presented in Eqs.~\ref{eq:tell1}-\ref{eq:dis1},
+while Eqs.~\ref{eq:dis2}-\ref{eq:dis3}  show how further simplify the combination of
+\emph{tell} and \emph{ask} through parallel composition. 
+ %
+%\marginpar{Soundness of these 2 laws must be proved}
+
+%\begin{figure}[t]
+%\begin{framed}
+%\setcounter{equation}{0}
+%\begingroup
+%\everymath{\scriptstyle}
+%\scriptsize
+%%\vspace{-0.35cm}
+%
+%\begin{minipage}{0.52\linewidth}
+%\begin{equation}\label{eq:stop1}
+%%\underline{\ask(c) \rrarrow \tell(d) = \ask(c) \rrarrow (\tell(c) \parallel \tell(d))}
+%\tell(\bot) = \ostop
+%\end{equation}
+%\end{minipage}
+%\hspace{0.7cm}
+%\begin{minipage}{0.34\linewidth}
+%\begin{equation} \label{eq:stop2}
+%\ask(c) \rarrow \ostop= \ostop
+%\end{equation}
+%\end{minipage}
+%%\vspace{0.13cm}
+%
+%\begin{minipage}{0.52\linewidth}
+%\begin{equation}\label{eq:ask1}
+%%\underline{\ask(c) \rrarrow \tell(d) = \ask(c) \rrarrow (\tell(c) \parallel \tell(d))}
+%\ask(c) \rarrow \ask(d) \rarrow A= \ask(c \vee d) \rarrow A
+%\end{equation}
+%\end{minipage}
+%\hspace{0.7cm}
+%\begin{minipage}{0.34\linewidth}
+%\begin{equation}\label{eq:ask2}
+%%\ask(c) \rarrow (\ask(d) \rarrow A) = \ask(c \otimes d) \rarrow A
+%\ask(\bot) \rarrow A = A
+%\end{equation}
+%\end{minipage}
+%%\vspace{0.13cm}
+%
+%\begin{minipage}{0.52\linewidth}
+%\begin{equation}\label{eq:parall1}
+%A \parallel B = B \parallel A
+%\end{equation}
+%\end{minipage}
+%\hspace{0.7cm}
+%\begin{minipage}{0.34\linewidth}
+%\begin{equation}
+%A \parallel (B \parallel C) = (A \parallel B) \parallel C
+%\end{equation}
+%\end{minipage}
+%%\vspace{-0.27cm}
+%
+%\begin{minipage}{0.52\linewidth}
+%\begin{equation}\label{eq:parall3}
+%A \parallel \ostop = A
+%\end{equation}
+%\end{minipage}
+%\hspace{0.7cm}
+%\begin{minipage}{0.34\linewidth}
+%\begin{equation}\label{eq:tell1}
+%\tell(c) \parallel \tell(d) =  \tell(c \otimes d)
+%\end{equation}
+%\end{minipage}
+%%\vspace{0.11cm}
+%
+%\begin{minipage}{\linewidth}
+%\begin{equation}\label{eq:dis1}
+%\ask(c) \rarrow (A \parallel B) = (\ask(c) \rarrow A) \parallel (\ask(c) \rarrow B)
+%\end{equation}
+%\end{minipage}
+%%\vspace{0.05cm}
+%
+%\begin{minipage}{\linewidth}
+%\begin{equation}\label{eq:dis2}
+%%\ask(a) \rarrow \tell(b) \parallel \ask(c) \rarrow \tell(d) = \ask(a) \rarrow \tell(b\otimes d) \mbox{ if $a < c \leq a \otimes b$}
+%\ask(a) \rarrow \tell(b) \parallel \ask(a \otimes b) \rarrow \tell(d) = \ask(a) \rarrow \tell(b\otimes d)
+%\end{equation}
+%\end{minipage}
+%
+%\begin{minipage}{\linewidth}
+%\begin{equation}\label{eq:dis3}
+%\ask(a) \rarrow \tell(b) \parallel \ask(c) \rarrow \tell(d) = \ask(a) \rarrow \tell(b) \parallel \ask(c \vee (a \otimes b)) \rarrow \tell(d) \mbox{ if $a \leq c$}
+%\end{equation}
+%\end{minipage}
+%\vspace{0.05cm}
+%
+%%\begin{equation}
+%%\underline{(\ask(a) \rarrow \tell(b)) \parallel (\ask(c) \rarrow \tell(d)) = (\ask(a) \rarrow \tell(b)) \ \ \
+%%\ \mathit{if} \ a \leq c, d \leq b}
+%%\end{equation}
+%%\vspace{-0.9cm}
+%
+%
+%%\scriptsize
+%%\begin{equation}\label{eq:dis4}
+%%(\ask(a) \rarrow \tell(b)) \parallel (\ask(c) \rarrow \tell(d)) = (\ask(a) \longrightarrow \tell(b)) \parallel (\ask(c \otimes b) \rarrow \tell(d)) \ \ \
+%%\ \mathit{if} \ a \leq c
+%%\end{equation}
+%%\vspace{-0.6cm}
+%
+%
+%%%%%%NOT IN POPL91 BUT IT WAS HERE BEFORE....TO ADD OR NOT?
+%%\scriptsize
+%%\begin{equation}\label{eq:tell1}
+%%\tell(\bot) = \ostop
+%%end{equation}
+%
+%%\begin{equation}\label{eq:dis5}
+%%\underline{(\ask(a) \rarrow \tell(b)) \parallel (\ask(c) \rarrow \tell(d)) = (\ask(a) \rarrow \tell(b)) \parallel (\ask(c) \rarrow \tell(d \otimes b) \ \ \ \
+%%\mathit{if} \ a \leq d}
+%%\end{equation}
+%%\vspace{-0.4cm}
+%
+%\endgroup
+%%\vspace{-0.1cm}
+%
+%\setcounter{equation}{8}
+%
+%\begingroup
+%\everymath{\scriptstyle}
+%\scriptsize
+%%\vspace{-0.35cm}
+%
+%%\begin{minipage}{0.37\linewidth}
+%%\begin{equation}\label{eq:hid1}
+%%\exists_x \tell(c)  = \tell(\exists_x c)
+%%\end{equation}
+%%\end{minipage}
+%%\hspace{0.19cm}
+%%\begin{minipage}{0.5\linewidth}
+%%\begin{equation}\label{eq:hid2}
+%%\exists_x (\ask(c) \rightarrow A) = \ask(\forall_x c) \rightarrow \exists_x A
+%%\end{equation}
+%%\end{minipage}
+%%\vspace{-0.1cm}
+%
+%%\begin{equation}
+%%\underline{\exists_x (\parallel_{i \in I} \ask(c_i)\rarrow \tell(d_i)) = \parallel_{i \in I}  \exists_x (\ask(c_i) \rarrow (\tell(d_i)  \parallel_{j \in I, j \not= i} \ask(c_j) \rarrow \tell (d_j))}
+%%\end{equation}
+%%\vspace{-0.6cm}
+%
+%%\begin{equation}\label{eq:hid4}
+%%\exists_x (\tell(c) \parallel_{i \in I} \ask(c_i) \rarrow \tell(d_i)) = \tell(\exists_x c) \parallel \exists_x (\parallel_{i \in I} \ask(c\Rightarrow_x c_i) \rarrow \tell(d_i))
+%%\end{equation}
+%\endgroup
+%%\vspace{-0.1cm}
+%\end{framed}\caption{Axioms for simple agents.}% and for agents with quantifiers (\ref{eq:hid1}-\ref{eq:hid4})
+%\label{fig:axioms2}
+%\end{figure}
+
+	\setcounter{equation}{0}
+
+
+\begin{figure}
+\scriptsize
+	\begin{flalign}
+\tell(\bot) = \ostop\label{eq:stop1}\\
+\ask(c) \rarrow \ostop= \ostop\label{eq:stop2}\\
+\ask(c) \rarrow \ask(d) \rarrow A= \ask(c \vee d) \rarrow A\label{eq:ask1}\\
+\ask(\bot) \rarrow A = A\label{eq:ask2}\\
+A \parallel B = B \parallel A\label{eq:parall1}\\
+A \parallel (B \parallel C) = (A \parallel B) \parallel C\label{eq:parall2}\\
+A \parallel \ostop = A\label{eq:parall3}\\
+\tell(c) \parallel \tell(d) =  \tell(c \otimes d)\label{eq:tell1}\\
+\ask(c) \rarrow (A \parallel B) = (\ask(c) \rarrow A) \parallel (\ask(c) \rarrow B)\label{eq:dis1}\\
+\ask(a) \rarrow \tell(b) \parallel \ask(a \otimes b) \rarrow \tell(d) = \ask(a) \rarrow \tell(b\otimes d)\label{eq:dis2}\\
+\ask(a) \rarrow \tell(b) \parallel \ask(c) \rarrow \tell(d) = \ask(a) \rarrow \tell(b) \parallel \ask(c \vee (a \otimes b)) \rarrow \tell(d) \mbox{ if $a \leq c$}\label{eq:dis3}
+	\end{flalign}
+\caption{Axioms for simple agents.}\label{fig:axioms2}
+\end{figure}
+
+\setcounter{equation}{8}
+
+
+\begin{proposition}
+The axioms in Figure \ref{fig:axioms2} are sound and complete for simple agents with respect to weak bisimilarity.
+\end{proposition}
+%\begin{proof}
+%AGGIUNGERE SKETCH
+%\end{proof}
+%\begin{proof}
+%SO FAR, THIS IS FALSE. Indeed, e.g. the agents in $(1)$ are not weakly bisimilar. Similarly, $(10)$, $(12)$ and $(15)$ are false. The problem is linked with the lack of idempotency %of $\otimes$. Law $(13)$, $(14)$, and $(16)$ should be checked. Law $(15)$ is a real problem: it has somehow to be reformulated, otherwise, there is no normal form at all.
+%\end{proof}
+
+Soundness is easily checked, while completeness is obtained by mimicking the proof schema adopted for the crisp case, 
+exploiting  a normal form that is in fact reminiscent of the one in~\cite[Definition 3.2]{popl91}.\footnote{With respect to the properties 
+stated in~\cite[p.342]{popl91}, we weakened property 1 and dropped property 4, the latter being linked to axiom L12.}
+
+%\normalsize
+%The completeness of the axiomatisation in Figs.~\ref{fig:axioms1} and~\ref{fig:axioms2} would require a normal form on agents. Indeed, a simple one is available 
+%for our set of axioms.
+%
+%\begin{definition}[Normal form]\label{def:nf}
+%An agent $A$ is in normal form if $A = \tell(\bot)$, or $A = \parallel_{i \in I} \ask(c_i)\rarrow \tell(d_i)$ and (2) all $c_i$'s are pairwise different, and (3) $c_i \leq c_j$ implies $d_i \leq c_j$.
+%\end{definition}
+%
+%The two more properties required in \cite{popl91}, i.e. ``$c_i \leq d_i$'' and ``$c_i \leq d_j$, implies $d_i \leq d_j$'', hold only for normal forms over idempotent CLIMs.
+%Also property (3) is slightly weaker than in the idempotent variant. Finally, note that the normal form is not unique, intuitively depending on the order of application of the law $(11)$.
+%
+%\begin{lemma}\label{def:nf}
+%Any agent $A$ containing no hiding construct $\exists_x B$ can be converted to normal form using Eq.~\ref{eq:ask1}-Eq.~\ref{eq:dis4}.
+%\end{lemma}
+
+%\marginpar{A stronger normal form may be necessary}
+%
+%\begin{theorem}
+%Let $A$ and $B$ be finite agents. Then $\langle A, \bot \rangle \approx \langle B, \bot \rangle$ if and only if $A$ and $B$ have the same normal form.
+%\end{theorem}
+%
+%\begin{proof}
+%TO DO [Note that the notion of normal form here is tricky]
+%\end{proof}
+
+\begin{lemma}
+Let $A$ be an agent. Then either $A = \ostop$ or it can be decomposed as $\bigparallel_{i} \ask(c_i) \rarrow \tell(d_i)$ such that 
+\begin{itemize}
+\item  $d_i \neq \bot$
+\item  $c_i \neq c_j$ for all $i \neq j$
+\item $c_i < c_j$ implies $c_i \otimes d_i < c_j$
+\end{itemize}
+\end{lemma}
+
+%\begin{proof}
+Axioms 1-8 guarantee that an agent can be decomposed as $\bigparallel_{i} \ask(c_i) \rarrow \tell(d_i)$
+such that $d_i \neq \bot$. Axiom 9 then ensures the second condition. Finally, by applying as long as possible first axiom 11 
+and then axiom 10, the final condition is also enforced.
+%\end{proof}
+\end{document}

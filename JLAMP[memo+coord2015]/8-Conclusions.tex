@@ -1,0 +1,83 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{Conclusions and Further Work}\label{sec:conclusions}
+Inspired by the characterisation of the labelled semantics for the crisp variant of the language~\cite{pippo}, 
+in this paper we investigated observational and behavioural 
+equivalences of the deterministic fragment of soft CCP~\cite{scc}: we introduced 
+the notion of $\otimes$-compactness, we proposed an observational semantics for the language  and 
+presented a novel behavioural characterisation in terms of weak bisimilarity 
+(enhancing the syntactic bisimulation advanced in \cite{fun14}).
+ We then rounded the work by introducing 
+ %following the seminal work of Saraswat, Rinard, and Panagaden: 
+ % we recast the notion of compactness with respect to $\otimes$, and we provide 
+ an axiomatisation of the finite fragment of the language, in the spirit of \cite{popl91}. 
+ %Axiomatisation for SCCP is novel, while only syntactic bisimulation has been advanced in \cite{fun14}.
+ 
+The use of residuation theory (advanced in~\cite{ecai06} for solving soft constraints problems)
+provides an elegant way to define the minimal information 
+that enables the firing of actions in the LTS shown in Sec.~\ref{sec:4}. 
+ %
+ This choice allowed for the study of the behavioural equivalence of agents in terms of weak and strong bisimilarity on such LTS, 
+ and it allowed for relating them to the corresponding barbed bisimilarities of (unlabelled) reductions
+ and with the standard semantics via fair computations.
+ %
+ The two kinds of equivalences, as well as the axiomatisation for weak bisimilarity, are presented in this paper for the first time.
+
+For future work, we plan to provide a denotational semantics for soft CCP by building on the work for the crisp case in \cite{popl91}. 
+%
+No denotational semantics has been yet proposed for \cite{scc}.
+Concerning the axioms, we will try and investigate the relationship between soft CCP and a logical system whose fundamental 
+properties are closely related to the ones we have investigated
+in this paper; namely \emph{affine linear logic} \cite{LagoM04}. %Asperti98,
+%
+This logical system  \emph{rejects contraction} 
+%(or idempotence of entailment)
+but \emph{admits weakening}, which intuitively correspond to dropping idempotence and preserving
+monotonicity in the soft formalism.  %Our quest for a complete axiomatisation of soft CCP may benefit from the proof theory of affine linear logic.  
+The denotational model of CCP is based on \emph{closure operators}: Each 
+agent is compositionally interpreted as a monotonic, extensive and idempotent operator/function on constraints.
+%
+We shall then investigate a denotational 
+model for soft CCP  processes based on \emph{pre-closure operators}~\cite{general-topology}.
+% (or \emph{\v{C}ech closure operators}), which are not required to be idempotent. 
+
+We plan to consider two extensions of the language, checking how far the results given 
+in this paper can be adapted. As evidenced by \cite{Pino:14:ICTAC},
+%,PinoPhD}, 
+a non-deterministic extension is an 
+interesting challenge since the closure under any context for the saturated 
+bisimilarity gets more elaborated than just closing
+with respect to the addition of constraints (Defs. \ref{def:strongsb} and \ref{def:weaksb}, condition 3), and similarly
+one also needs to find the right formulation of bisimilarity for the labelled transitions systems. 
+%
+Also, the presence of residuation makes intuitive the definition of a retract operator for the calculus. 
+%
+Even if the operational semantics would be less affected, retraction would require a complete reformulation of the semantics via fair computations, since monotonicity
+(as stated in Lemma~\ref{mono}) would not hold~\cite{sefm12,fun14}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Moreover, we might consider languages with temporal features, such as \emph{timed} SCCP~\cite{coordination08}, where a
+%reduction takes a bounded period of time and it is measured by a discrete global clock. Maximal parallel steps are adopted there with a 
+%new construct that can e.g. express time-out and pre-emption, and developing suitable 
+%temporal variants of bisimilarity might reveal a worthwhile, albeit difficult task.
+
+%\textcolor{red}{
+Finally, we would like to find the same observational equivalences also for a semantics that considers local stores of agents. In this case, the hiding operator needs to carry some information on the variables it abstracts.
+According to~\cite{extendedHiding}, we should consider an extended operator $\exists_x^\sigma$, for $\sigma$ the local store. The intuition is that variable $x$ may be local to a component $\exists_x \sigma'$ of the store $\sigma$, yet visible at a global level: we must then evaluate $A$ in the store
+when the local $x$ is hidden, yet the possible duplications are removed (e.g., $\exists_x \sigma'$ may already occur in the global store $\sigma$). The final store contains in $\sigma_1$ the original $\sigma'$ increased by what has been added by the step.
+%
+To this end, we consider also to investigate the more general framework for distilling labelled semantics from unlabelled ones proposed 
+in~\cite{BonchiGM14}.
+
+%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%Note that in classical SCCP, \emph{ask} and \emph{tell} operations are equipped with a monoid element $a$ or a constraint 
+%$\phi$ that are used as a cut level to prune computations that are not good enough. These checks lead to a \emph{fail} state 
+%whenever they are not satisfied by the current store. Our intent is to leave this study (not treated in this paper) as a future work.
+%
+%Moreover, in the future we also plan to consider a non-deterministic extension of the language, and thus to study how the bisimilarity 
+%equivalences we give in this paper adapt in it. Indeed we can also develop the denotational semantics, currently missing in SCCP 
+%language, by trying to follow the same approach given for CCP~\cite{popl91}.
+\end{document}

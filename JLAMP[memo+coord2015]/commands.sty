@@ -1,0 +1,271 @@
+
+\newcommand{\pippo}[1]{
+\fbox{
+  \parbox{0.5\textwidth}{
+Pippo: #1 }
+}}
+
+%%% Abbreviations, Sets
+\newcommand{\Con}{\mathit{Con}}
+\newcommand{\Proc}{\mathit{Proc}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\A}{\alpha}
+\newcommand{\B}{\beta}
+% \newcommand{\C}{\lambda}
+\newcommand{\G}{\gamma}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\partition}{\mathcal{P}}
+\newcommand{\idrel}{\mathit{id}}
+\newcommand{\Conf}{\mathit{Conf}}
+\newcommand{\Confdccp}{\Conf_{\mathtt{\dccp}}} % dccp configurations
+\newcommand{\ccp}{ccp}
+\newcommand{\dccp}{ccp-\{+\}}
+\newcommand{\F}[2]{\mathbf{F}_{#1}(#2)}
+\newcommand{\IR}[2]{\mathbf{IR}_{#1}(#2)}
+\newcommand{\genname}{($\gentrans{}$)} % Arbitrary transition relation name
+\newcommand{\IS}{{\it IS}}
+\newcommand{\deftitle}[1]{(#1)}
+\newcommand{\relpartition}[1]{\mathsf{Rel}(#1)}
+
+%%% Misc Symbols
+\newcommand{\defsymbol}{\stackrel{\textup{\texttt{def}}}  {=}}
+\newcommand{\imply}{\Rightarrow}
+\newcommand{\lub}{\sqcup}
+\newcommand{\entailed}{\sqsubseteq}
+\newcommand{\concatset}{\otimes}
+\newcommand{\pDom}{\succ} % Domination between pairs
+\newcommand{\redpair}{\succeq} % Redundant Pair
+\newcommand{\sredpair}{\succ} % Redundant Pair
+
+%%% Style
+\newcommand{\bigfrac}[2]{
+\begin{array}{c}#1\\
+\hline #2
+\end{array}}
+
+%%% CCP Process constructions
+\newcommand{\tellp}[1]{\tell(#1)}
+\newcommand{\askp}[2]{\ask(#1) \  \rightarrow \ #2}
+\newcommand{\skipp}{\Skip}
+\newcommand{\defp}[2]{#1 \defsymbol #2}
+% \newcommand{\true}{{\it true}}
+% \newcommand{\false}{{\it false}}
+% \newcommand{\vars}{{\it Var}}
+% \newcommand{\ask}{{\bf ask}}
+\newcommand{\local}{{\bf local}}
+% \newcommand{\tell}{{\bf tell}}
+\newcommand{\Stop}{{\bf stop}}
+\newcommand{\Skip}{{\bf skip}}
+\newcommand{\localprocess}[3]{{\bf \exists}^{#3}_{#1} #2}
+\newcommand{\localp}[3]{\localprocess{#1}{#2}{#3}}
+\newcommand{\truep}{\mbox{\true}}
+\newcommand{\stopp}{\mbox{\Stop}}
+
+%%% Configurations
+% \newcommand{\la}{\langle}
+% \newcommand{\ra}{\rangle}
+\newcommand{\pairccp}[2]{\langle #1,#2 \rangle}
+\newcommand{\config}[2]{\pairccp{#1}{#2}}
+
+%%% Transitions
+\newcommand{\triple}[3]{(#1,#2,#3)}
+\newcommand{\src}[1]{{\it src}(#1)} % Source
+\newcommand{\lab}[1]{{\it lab}(#1)} % Label
+\newcommand{\tar}[1]{{\it tar}(#1)} % Target
+% \newcommand{\rarrow}{\rightarrow}
+% \newcommand{\rrarrow}{\longrightarrow}
+% Operational Semantics
+\newcommand{\trans}[1]{\stackrel{#1}{\rrarrow}}
+\newcommand{\tr}[1]{\trans{#1}}
+\newcommand{\reds}{\rrarrow^*}
+\newcommand{\notrans}{\not \! \trans{}}
+% Weak semantics
+\newcommand{\newtrans}[1]{\stackrel{#1}{\Longrightarrow}} %% Weak transition
+\newcommand{\newreds}{\Longrightarrow^*} %% Weak reductions
+% Arbitrary Transition Relation
+\newcommand{\gentrans}[1]{\stackrel{#1}{\rightsquigarrow}}
+\newcommand{\genreds}{\rightsquigarrow^*}
+% Full transition
+\newcommand{\transition}[5]{\config{#1}{#2} \trans{#3} \config{#4}{#5}}
+\newcommand{\redstransition}[4]{\config{#1}{#2} \reds \config{#3}{#4}}
+\newcommand{\newtransition}[5]{\config{#1}{#2} \newtrans{#3} \config{#4}{#5}}
+\newcommand{\gentransition}[5]{\config{#1}{#2} \gentrans{#3} \config{#4}{#5}}
+\newcommand{\maxtransition}[5]{\config{#1}{#2} \maxtrans{#3} \config{#4}{#5}}
+% Misc
+\newcommand{\newtransitionA}[5]{\config{#1}{#2} \newtrans{#3} {\color{blue} \config{#4}{#5}}}
+% Derivatives
+\newcommand{\derivSet}[1]{{\sf Deriv}(#1)}
+% Max weak transition
+\newcommand{\maxtrans}[1]{\newtrans{#1}_{\max}} %% Weak transition
+\newcommand{\maxreds}{\Longrightarrow^*_{\max}} %% Weak reductions
+
+%%% Labeled Transition System
+\newcommand{\LTS}[1]{{\it LTS}_{#1}}
+\newcommand{\LTSgen}[2]{{\it LTS}_{#1}(#2)}
+\newcommand{\V}[1]{{\tt V}(#1)}
+\newcommand{\E}[1]{{\tt E}(#1)}
+
+%%% Barbs
+\newcommand{\barb}[1]{\downarrow_{#1}}
+% Weak barbs
+\newcommand{\wbarb}[1]{\Downarrow_{#1}}
+% Generic
+\newcommand{\genbarb}[1]{\lightning{#1}}
+% Generic Weak
+\newcommand{\genwbarb}[1]{{{\lightning\!\!}_{_*}}{#1}}
+
+%%% Equivalences
+\newcommand{\obseq}{{\sim_o}} % Observational
+\newcommand{\barbbis}{\dot{\sim}_b} % Barbed
+\newcommand{\satbis}{\dot{\sim}_{s}} % Saturated Barbed
+\newcommand{\wsatbis}{\dot{\approx}_{s}} % Weak saturated barbed
+\newcommand{\stbisim}{\dot{\sim}} % Strong
+\newcommand{\wbisim}{\dot{\approx}} % Weak
+\newcommand{\irrbis}{\dot{\sim}_{I}} % Irredundant
+\newcommand{\symbis}{\dot{\sim}_{sym}} % Symbolic
+% Parametrized
+\newcommand{\parwbarb}[2]{\lightning_{#1}^{#2}}
+\newcommand{\stpmbis}[2]{\sim_{#1}^{#2}}
+\newcommand{\wpmbis}[2]{\approx_{#1}^{#2}}
+% Weak versions
+\newcommand{\newirrbis}{\dot{\sim}^{\newtrans{}}_{I}}
+\newcommand{\newsymbis}{\dot{\sim}^{\newtrans{}}_{sym}}
+% With an Arbitrary Transition Relation
+\newcommand{\gensatbis}{\satbis^{\gentrans{}}}
+\newcommand{\genwsatbis}{\wsatbis^{\gentrans{}}}
+% Negation
+\newcommand{\nosim}{\not{\sim}}
+\newcommand{\nodotsim}{\not \! \dot{\sim}}
+\newcommand{\noapprox}{\not{\approx}}
+\newcommand{\nodotapprox}{\not \!\! \dot{\approx}}
+\newcommand{\nobarbbis}{\nodotsim_b}
+\newcommand{\nosatbis}{\nodotsim_{sb}}
+\newcommand{\nowsatbis}{\nodotapprox_{sb}}
+\newcommand{\nostbisim}{\nodotsim}
+\newcommand{\nowbisim}{\nodotapprox}
+\newcommand{\noirrbis}{\nodotsim_{I}}
+\newcommand{\nosymbis}{\nodotsim_{sym}}
+\newcommand{\nonewirrbis}{\not \!\!\! \newirrbis}
+\newcommand{\nonewsymbis}{\nosim^{\newtrans{}}_{sym}}
+
+
+%%% Definitions, Theorems
+% \newdef{theorem}{Theorem}
+% \newdef{proposition}{Proposition}
+% \newdef{definition}{Definition}
+% \newdef{remark}{Remark}
+% \newdef{corollary}{Corollary}
+% \newdef{lemma}{Lemma}
+% \newdef{example}{Example}
+% \newdef{notation}{Notation}
+%% uncomment to use another style, comment the newdefs below
+% \newtheorem{theorem}{Theorem}
+% \newtheorem{proposition}{Proposition}
+% \newtheorem{definition}{Definition}
+% \newtheorem{remark}{Remark}
+% \newtheorem{corollary}{Corollary}
+% \newtheorem{lemma}{Lemma}
+% \newtheorem{example}{Example}
+% \newtheorem{notation}{Notation}
+
+%%% Derivation and dominance
+\newcommand{\deriv}{\vdash_D}
+\newcommand{\derivR}{\vdash_{\R}}
+\newcommand{\derivParam}[1]{\vdash_{#1}}
+\newcommand{\dom}{\succ_D}
+\newcommand{\domR}{\succ_{\R}}
+\newcommand{\domParam}[1]{\succ_{#1}}
+
+%%% Abbreviations of Relations
+\newcommand{\rel}[4]{\config{#1}{#2} \R \config{#3}{#4}}
+\newcommand{\relPar}[5]{\config{#1}{#2} #3 \config{#4}{#5}}
+\newcommand{\relTwo}[4]{(\config{#1}{#2}, \config{#3}{#4}) \in \R}
+\newcommand{\relTwoPar}[5]{(\config{#1}{#2}, \config{#3}{#4}) \in #5}
+\newcommand{\confwbis}[4]{\config{#1}{#2} \wsatbis \config{#3}{#4}}
+
+%%% Rule Names
+% Operational Semantics
+\newcommand{\Rtell}{{\sf R1} }
+\newcommand{\Rask}{{\sf R2} }
+\newcommand{\Rpar}{{\sf R3} }
+\newcommand{\Rsum}{{\sf R4} }
+% Labeled semantics
+\newcommand{\LRtell}{{\sf LR1} }
+\newcommand{\LRask}{{\sf LR2} }
+\newcommand{\LRpar}{{\sf LR3} }
+\newcommand{\LRsum}{{\sf LR4} }
+% Weak semantics
+\newcommand{\rTau}{{\sf R-Tau} }
+\newcommand{\rLabel}{{\sf R-Label} }
+\newcommand{\rAdd}{{\sf R-Add} }
+% CCS Rules
+\newcommand{\rNewCCSA}{{\sf RCCS1}}
+\newcommand{\rNewCCSB}{{\sf RCCS2}}
+\newcommand{\rNewCCSC}{{\sf RCCS3}}
+% Partition refinement rules
+\newcommand{\rISname}{{\sf (IS)}}
+\newcommand{\rRSname}{{\sf (RS)}}
+\newcommand{\rRDname}{{\sf (RD)}}
+\newcommand{\rRDaname}{{\sf (RD')}}
+%% Parameterized
+% \newcommand{\genrIS}[1]{{\sf (IS $#1$)}}
+\newcommand{\genrIS}[2]{$(\mathsf{IS}_{#1}^{#2})$}
+\newcommand{\genrRS}[2]{$(\mathsf{RS}_{#1}^{#2})$}
+\newcommand{\genrRD}[2]{$(\mathsf{RD}_{#1}^{#2})$}
+%% Weak rules for dccp
+\newcommand{\genrISopt}{{\sf (IS' $\newtrans{}$)}}
+\newcommand{\genrRSopt}{{\sf (RS' $\newtrans{}$)}}
+\newcommand{\genrRDopt}{{\sf (RD' $\newtrans{}$)}}
+%% Aliases
+\newcommand{\rIS}{\genrIS{\trans{}}{\IS}}
+\newcommand{\rRS}{\genrRS{\trans{}}{\IS}}
+\newcommand{\rRD}{\genrRD{\trans{}}{\IS}}
+%% Weak rules for full ccp
+\newcommand{\optrRD}{{\sf (opt-RD $\newtrans{}$)}}
+\newcommand{\optrRDdccp}{{\sf (opt-RD-dccp $\newtrans{}$)}}
+
+%%% Finitely Branching
+\newcommand{\rulelabel}[1]{(\textsc{#1})}
+\newcommand{\Reach}[2]{{\sf Reach}(#1, #2)}
+\newcommand{\ReachS}[2]{{\sf Reach^*}(#1, #2)}
+\newcommand{\LA}{\mathcal{L}}
+\newcommand{\CO}{\mathcal{C}}
+\newcommand{\Finite}[1]{|#1| < \infty}
+\newcommand{\RPair}[2]{[#1,#2]}
+
+%%% Minimal set definitions
+% Barb Set
+\newcommand{\barbset}[2]{\llbracket \config{#1}{#2} \rrbracket}
+\newcommand{\barbsetdef}[4]{\{ (#3, #4) \ |\ \config{#1}{#2 \lub #3} \wbarb{#4} \} }
+% Relevant Set
+\newcommand{\relvset}[2]{\M(\config{#1}{#2})}
+\newcommand{\relvsetdef}[5]{\bigcup_{\transition{#1}{#2}{#3}{#4}{#5}} \left( \{(#3, #5)\} \cup (#3 \concatset \relvset{#4}{#5}) \right)}
+% Min set
+\newcommand{\minset}[2]{\M^C(\config{#1}{#2})}
+\newcommand{\minsetconf}[1]{\M^C(#1)}
+\newcommand{\pair}[2]{(#1, #2)} % Pair belonging to some minimal set M
+\newcommand{\minsetdef}[4]{\{ (#3, #4)\ |\ (#3, #4) \in \relvset{#1}{#2} \mbox{ and } \\ (#3, #4) \mbox{ is relevant in } \relvset{#1}{#2}\}}
+% Concat set
+\newcommand{\concatsetdef}[4]{\{ (#1 \lub #3, #4) \ |\ (#3, #4) \in #2)\}}
+
+%%% Algorithm Names
+\newcommand{\algpr}[2]{\texttt{pr}(#1,#2)}
+\newcommand{\algprccp}[2]{\texttt{pr-ccp}(#1,#2)}
+\newcommand{\algwprccp}[2]{\texttt{weak-pr-ccp}(#1,#2)}
+% \newcommand{\algwprdccp}[1]{\texttt{weak-pr-dccp}(#1)}
+\newcommand{\algwprdccp}[1]{\texttt{weak-pr-dccp}(#1)}
+\newcommand{\algoptwprccp}[2]{\texttt{imp-weak-pr-ccp}(#1, #2)}
+
+%%% Set of reachable configurations
+% \newcommand{\reachset}[1]{\mathtt{Config}(#1)} % Using the operational semantics
+\newcommand{\genreachset}[2]{\mathtt{Config}_{#1}(#2)} % Parameterized with an arbitrary transition relation
+\newcommand{\reachset}[1]{\genreachset{\trans{}}{#1}} % Using the operational semantics
+\newcommand{\ISstar}{\IS^{\star}}
+\newcommand{\ISstargen}{\ISstar_{\gentrans{}}}
+\newcommand{\setstargen}[2]{#1^{\star}_{#2}}
+
+
+%%% New commands ICALP
+\newcommand{\Si}{\sigma}
+% \newcommand{\Prod}{\otimes}
+\newcommand{\rename}[2]{[#1/#2]}

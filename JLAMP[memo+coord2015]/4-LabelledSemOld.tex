@@ -1,0 +1,430 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{A Labelled Transition System for Soft CCP}\label{sec:ltsSCCP}\label{sec:4}
+Although $\approx_{\mathit{s}}$ is fully abstract, it is to some extent unsatisfactory
+because of the upward-closure, namely, the for-all quantification in condition \emph{3} of Def.~\ref{def:weaksb}.
+
+In Tab.~\ref{fig:LTS} we refine the notion of transition (given by the rules in Tab.~\ref{fig:operational})
+by adding to it a label that carries additional information about the constraints that cause the reduction.
+Hence, we define a new labelled transition system (LTS) $\xrightarrow{\;  \alpha \;}_\Delta \, \, \subseteq \, \,\Gamma \times \langle \mathcal{C}^\otimes, 2^V \rangle \times \Gamma$;
+as a reminder, $\Gamma$ is the set of configurations, $\mathcal{C}^\otimes$ the set of $\otimes$-compact constraints, and,  as for the unlabelled semantics in Section~\ref{sec:detSCCP}, 
+transitions are indexed by subset of variables.
+All rules in Tab.~\ref{fig:LTS} are identical to the ones in Tab.~\ref{fig:operational}, except for a constraint $\alpha$ that
+represents the minimal information that must be added to $\sigma$ in order to fire an action
+from $\langle A, \sigma\rangle$  to $\langle A', \sigma' \rangle$, i.e., $\langle A, \sigma \otimes \alpha\rangle \longrightarrow_\Delta \langle A' , \sigma' \rangle$.
+
+
+%%%%% OLD LTS
+
+%\def\odivv{\; {\ominus\hspace{-4pt} \div} \;}
+%\def\odivvv{\; {\ominus\hspace{-6pt} \div} \;}
+%\begin{table}%[h]
+%  %\hfill
+%  \scalebox{0.87}{
+%  \begin{minipage}{0.5\linewidth}%{.45\textwidth}
+%    \begin{center}
+%    \begin{tabular}{llll}
+%    \mbox{\bf LR1}& $\langle \hbox{\tell}(c), \sigma \rangle \xrightarrow{\; \bot \;} \langle \mathit{\ostop},
+%          \sigma \otimes c \rangle$
+%    \ \ \ & \bf{Tell}&
+%    \\
+%   &\mbox{   }&\mbox{   } &\mbox{   }
+%   \\
+%   \mbox{\bf LR3}& $\frac {\displaystyle \langle A,\sigma \rangle \xrightarrow{\;  \alpha \;} \langle A', \sigma'   \rangle}
+%              {\displaystyle
+%               \langle A\parallel B, \sigma \rangle \xrightarrow{\;  \alpha \;} \langle A'\parallel B, \sigma'
+%               \rangle}$& \bf{Par1}&
+%  \\
+%  & \mbox{   }&\mbox{   }&
+%  \\
+%  \mbox{\bf LR5}& $\frac {\displaystyle p(x) = A \in  \mathcal{P} }
+%  {\displaystyle\langle p(x),\sigma\rangle \xrightarrow{\;  \bot \;} \langle  A, \sigma\rangle}$
+%  &\bf{Rec1}&
+%  \end{tabular}
+%  \end{center}
+% \end{minipage}
+% %
+% \hspace{0.6cm}
+%  \begin{minipage}{0.5\linewidth}
+%    \begin{center}
+%    \begin{tabular}{llll}
+%   \mbox{\bf LR2}& $\langle \hbox{\ask}(c) \rrarrow A, \sigma \rangle \xrightarrow{c  \odivv  \sigma}
+%               \langle A, \sigma \otimes (c\odivvv \sigma) \rangle$
+%   \ \ \ & \bf{Ask}&
+%   \\
+%   &\mbox{   }&\mbox{   }&\mbox{   }
+%   \\
+%   \mbox{\bf LR4}& $\frac {\displaystyle \; \; \; \langle A,\sigma\rangle \xrightarrow{\;  \alpha \;}
+%               \langle A', \sigma'\rangle \; \; \;}
+%               {\displaystyle \langle B\parallel A, \sigma \rangle \xrightarrow{\;  \alpha \;} \langle B\parallel A', \sigma' \rangle}$
+%   & \bf{Par2}&
+%   \\
+%%&\mbox{   }&\mbox{   } &\mbox{   }
+%%\\
+%%\mbox{\bf LR5}& $\frac {\displaystyle \langle A[y/x],  \sigma
+%%\rangle \xrightarrow{\;  \alpha \;} \langle B, \sigma' \rangle} {\displaystyle\langle \exists X.A,
+%%\sigma \rangle \xrightarrow{\;  \alpha \;} \langle B, \sigma' \rangle} \ \  \text{TO DO}$
+%%&\bf{Hide} &
+%%\\
+%   &\mbox{   }&\mbox{   }&
+%  \\
+%  \mbox{\bf LR6}& $\frac {\displaystyle x \neq y, \quad \displaystyle p(x) = A \in  \mathcal{P} }
+%  {\displaystyle\langle p(y),\sigma\rangle \xrightarrow{\;  \bot \;} \langle \exists_x^{\delta_{x,y}} A, \sigma\rangle}$
+%  &\bf{Rec2}&
+%%\mbox{\bf LR6}& $\frac {\displaystyle \langle A[\hat{y}/\hat{x}],\sigma\rangle \xrightarrow{\;  \alpha \;} \langle
+%%B, \sigma' \rangle} {\displaystyle\langle p(\hat{y}),\sigma\rangle \xrightarrow{\;  \alpha \;} \langle B,
+%%\sigma'\rangle} \ \  {\it p(\hat{x}) :: A \in F}$
+%%&\bf{Call}&\\
+%%\mbox{\bf LR6}& $\frac {\displaystyle \langle A, \sigma \otimes d_{\hat{x}, \hat{y}}\rangle \xrightarrow{\;  \alpha \;} \langle
+%%B, \sigma' \rangle} {\displaystyle\langle p(\hat{y}),\sigma\rangle \xrightarrow{\;  \alpha \;} \langle B,
+%%\sigma'\rangle} \ \  {\it p(\hat{x}) :: A \in F}$
+%%&\bf{P-call}&\\
+%  \end{tabular}
+%  \end{center}
+% \end{minipage}
+%}
+%
+%\def\odiv{\, {\ominus\hspace{-6pt} \div} \,}
+%\begin{center}
+%\scalebox{0.9}{
+%\begin{tabular}{llll}
+%\mbox{\bf LR7}&
+%%$\frac {\displaystyle \la A[z/x], c[z/x] \otimes \sigma \ra \xrightarrow{\;  \alpha \;} \la
+%%B,  c' \otimes \sigma \otimes \alpha \ra} {\displaystyle\la \exists^c_x A,
+%%\sigma\ra \xrightarrow{\;  \alpha \;} \la \exists^{c'[x/z]}_x B[x/z], \exists_x(c'[x/z]) \otimes \sigma \otimes \alpha \ra} \ \
+%% {\it x\not\in fv(c'), z \not\in (fv(A) \cup fv(c \otimes \sigma \otimes \alpha)) }$
+%$\frac {\displaystyle \la A, \sigma' \otimes \sigma_0[^z/_x] \ra \xrightarrow{\;  \alpha \;}
+%            \la B,  \sigma" \ra\ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'}
+%           {\displaystyle\la \exists^{\sigma'}_x A, \sigma\ra \xrightarrow{\;  \alpha[^x/_z] \;}
+%            \la \exists^{\sigma_1}_x B, \sigma_0 \otimes \alpha[^x/_z] \otimes \exists_x\sigma_1 \ra
+%            \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma" \odiv (\alpha \otimes \sigma_0[^z/_x])}$ \ \ , * \; \
+%&\bf{Hide}&\\
+%   &\mbox{   }&\mbox{   }&
+%  \\
+%&\footnotesize$* \equiv {\it x\not\in sv(\alpha), z \not\in fv(A) \cup sv(\sigma)\cup sv(\sigma') }$&
+%\end{tabular}
+%}
+%\end{center}
+%%
+%\caption{An LTS for \SCCP.}
+%\label{fig:LTS}
+%\end{table}
+%\def\odiv{\, {\ominus\hspace{-6.8pt} \div} \,}
+%\def\odivvv{\; {\ominus\hspace{-4.7pt} \div} \;}
+
+
+
+%%%%% NEW LTS
+\def\odiv{\; {\ominus\hspace{-6pt} \div} \;}
+\def\odivv{\; {\ominus\hspace{-4pt} \div} \;}
+\def\odivvv{\; {\ominus\hspace{-6pt} \div} \;}
+\begin{table}  %\hfil5
+  \scalebox{0.9}{
+  \begin{minipage}{0.5\linewidth}%{.45\textwidth}
+   \begin{center}
+   \begin{tabular}{llll} 
+   %
+   \mbox{\bf LR1}& $\frac{\displaystyle  sv(\sigma) \cup sv(c) \subseteq \Delta } {\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \xrightarrow{\;  \bot \;}_\Delta  \langle \hbox{\ostop},
+                                               \sigma \otimes c\rangle}$
+   \ \ \ & \bf{Tell}&
+  \\ 
+  &\mbox{   }&\mbox{   } &\mbox{   }
+  \\
+  \mbox{\bf LR3}& $\frac {\displaystyle \langle A,\sigma \rangle \xrightarrow{\alpha}_\Delta \langle A', \sigma' \rangle
+  \wedge fv(B) \subseteq \Delta} 
+  {\displaystyle \begin{array}{l}
+                          \langle A\parallel B, \sigma \rangle \xrightarrow{\alpha}_\Delta \langle A'\parallel B, \sigma' \rangle
+                          \end{array}}$ 
+    & \bf{Par1}&
+  \\
+  & \mbox{   }&\mbox{   }&
+  \\
+  \mbox{\bf LR5}& $\frac {\displaystyle \{y\} \cup sv(\sigma) \subseteq \Delta \wedge \displaystyle p(x) = A \in  \mathcal{P} }
+  {\displaystyle\langle p(y),\sigma\rangle \xrightarrow{\bot}_\Delta \langle  A[^y/_x], \sigma\rangle}$ 
+  &\bf{Rec}&
+    \\
+   &\mbox{   }&\mbox{   }&
+  \\
+  
+  \end{tabular}
+  \end{center}
+ \end{minipage}
+  %\hfill
+ %\hspace{0.1cm}
+ \begin{minipage}{0.5\linewidth}
+   %\vspace{-.4cm}
+    \begin{center}
+    \begin{tabular}{llll}
+  \mbox{\bf LR2}& $\frac {\displaystyle   sv(\sigma) \cup sv(c) \subseteq \Delta}{\displaystyle
+  \begin{array}{l} \langle \hbox{\ask}(c) \rrarrow A, \sigma \rangle \xrightarrow{c  \odivv  \sigma}_\Delta
+               \langle A, \sigma \otimes (c\odivvv \sigma) \rangle
+  \end{array}}$
+  \ \ \ & \bf{Ask}&
+  \\
+  &\mbox{   }&\mbox{   }&
+  \\
+  \mbox{\bf LR4}& $\frac {\displaystyle \langle A,\sigma \rangle \xrightarrow{\alpha}_\Delta \langle A', \sigma'   \rangle
+  \wedge fv(B) \subseteq \Delta} 
+  {\displaystyle 
+    \begin{array}{l} \langle B\parallel A, \sigma \rangle \xrightarrow{\alpha}_\Delta \langle B\parallel A', \sigma' \rangle
+    \end{array}}$& \bf{Par2}&
+  \\
+  &\mbox{   }&\mbox{   }&
+  \\
+  \mbox{\bf LR6}& $\frac {\displaystyle fn(A) \cup sv(\sigma) \subseteq \Delta \wedge w \not \in \Delta }
+  {\displaystyle\langle \exists_x A,\sigma\rangle \xrightarrow{\bot}_\Delta \langle A[^w/_x], \sigma\rangle}$
+  &\bf{Hide}&
+  \\
+   &\mbox{   }&\mbox{   }&
+  \\
+  \end{tabular}
+  \end{center}
+ \end{minipage} 
+}
+\caption{An LTS for \SCCP.}
+\label{fig:LTS}
+\end{table}
+\def\odiv{\, {\ominus\hspace{-6.8pt} \div} \,}
+\def\odivvv{\; {\ominus\hspace{-4.7pt} \div} \;}
+
+
+Rule {\bf LR2} says that $\langle \mathit{ask}(c) \rrarrow A, \sigma \rangle$
+can evolve to $\langle A, \sigma \otimes \alpha \rangle$ if the environment provides a minimal
+constraint $\alpha$ that added to the store $\sigma$ entails $c$, i.e., $\alpha = c \odiv \sigma$.
+Notice that, differently from \cite{pippo}, here the definition of this minimal label comes directly
+from a derived operator of the underlying CLIM (i.e., from $\odiv$), which by Lemma~\ref{preres} preserves $\otimes$-compactness.
+%
+%In rule {\bf LR7}  we rename the global $x$ with a fresh variable $z$, instead of hiding $x$ in the
+%global store, as we do in the corresponding unlabelled rule, i.e. {\bf R7}. We accomplish this in order
+%to keep track of the global $x$ in $\alpha$: finally, in the final
+% result we restore all the occurrences of $z$ back to $x$, i.e., $\alpha[x/z]$.
+%\marginpar{discuss side conditions}
+%
+%To better explain {\bf LR7} and {\bf R7} consider the following example.
+%
+%\begin{example}
+%Let $c_x$ and $c_y$ constraints with $fv(c_x)=x$, $fv(c_y)=y$, $c_x \not\leq c_y$ and $c_y \not\leq c_x$.
+%Consider the configuration $\config{\localp{x}{\askp{(c_y)}{\tellp{c_x}}}{\mbox{{\scriptsize \true}}}}{c_x}$.
+%In order to proceed with the local transition we first need to make sure that the global $x$ will not
+%clash with the local $x$, to achieve this we shall rename the $x$ in the global store $c_x$ with a fresh variable $z$,
+%namely $c_x\rename{z}{x} = c_z = \Si_0\rename{z}{x}$.
+%Therefore the local transition looks like this $\transition{\askp{(c_y)}{\tellp{c_x}}}{c_z}{c_y}{\tellp{c_x}}{c_z \otimes c_y}$.
+%Using {\bf LR7} we have
+%$\config{\localp{x}{\askp{(c_y)}{\tellp{c_x}}}{\mbox{{\scriptsize \true}}}}{c_x} \trans{c_y}
+%\config{\localp{x}{\tellp{c_x}}{\mbox{{\scriptsize \true}}}}{c_x \otimes c_y}$.
+%Now the new local transition is  $\transition{\tellp{c_x}}{c_z \otimes c_y}{}{\Stop}{c_z \otimes c_y \otimes c_x}$
+%since $\Si_0\rename{z}{x} = ((c_x \otimes c_y) \odiv \exists_x \truep)\rename{z}{x} = (c_x \otimes c_y) \rename{z}{x} = c_z \otimes c_y$.
+%Therefore the final transition is $\config{\localp{x}{\tellp{c_x}}{\mbox{{\scriptsize \true}}}}{c_x \otimes c_y} \trans{}
+%\config{\localp{x}{\Stop}{c_x}}{c_x \otimes c_y \otimes \exists_x c_x}$ and indeed $\Si_1 = (c_z \otimes c_y \otimes c_x) \odiv (c_z \otimes c_y) = c_x$
+%captures exactly the information produced locally.
+%Note that if we compute $\Si_0$ in the last configuration, it corresponds exactly to the global store minus
+%the existential quantification of the local store.
+%Thus avoiding several copies of the local information to be used in the premise of {\bf LR7} and {\bf R7}.
+%More concretely, $\Si_0 = (c_x \otimes c_y \otimes \exists_x c_x) \odiv (\exists_x c_x) = c_x \otimes c_y$.
+%\end{example}
+
+
+The LTS is sound and complete with respect to the unlabelled semantics. 
+%Soundness states
+%that $\langle A, \sigma\rangle \trans{\A}_\Delta \langle A' , \sigma' \rangle$ implies
+%that if $\alpha$ is added to $\sigma$, $A$ can reach $\langle A', \sigma'\rangle$. Completeness states that
+%if we add $c$ to (the store in) $\langle A, \sigma \rangle$ and reduce to $\langle A', \sigma' \rangle$,
+%there is $\alpha \leq c $ such that $\langle A, \sigma \rangle \xrightarrow{\;  \alpha \: }_\Delta \langle A', \sigma'' \rangle$ with
+%$\sigma'' \leq \sigma'$.
+%\marginpar{Check soundness and completeness}
+
+%For technical purposes, in the following lemmata we shall use an equivalent formulation of \textbf{R7}
+%that uses renaming instead of hiding using the existential quantification, as follows:
+%{\footnotesize
+%\[
+%\makebox{\textbf{R7'} }
+%\bigfrac{\config{B}{\Si' \otimes \Si_0\rename{z}{x}} \trans{} \pairccp{B'}{\Si''} \mbox{ with } \Si_0 = (\Si \odiv \exists_x \Si')}
+%{\config{\localp{x}{B}{\Si'}}{\Si} \trans{} \config{\localp{x}{B'}{\Si_1}}{\Si_0 \otimes \exists_x \Si_1} \mbox{ with } \Si_1 = (\Si'' \odiv \Si_0\rename{z}{x})}
+%\mbox{ where } z \not\in fv(A) \cup sv(\Si) \cup sv(\Si')
+%\]
+%}
+%One can easily verify that \textbf{R7} and \textbf{R7'} coincide.
+
+\begin{lemma}[Soundness]\label{lemma:soundness}
+% If $\langle A, \sigma\rangle \xrightarrow{\;  \alpha \: } \langle A', \sigma' \rangle$ then $\langle A, \sigma \otimes \alpha \rangle \longrightarrow \langle A', \sigma' \rangle$.
+If $\config{A}{\Si} \trans{\A}_\Delta \config{A'}{\rho}$ then $\config{A}{\Si \otimes \A} \trans{}_\Delta \config{A'}{\rho}$.
+%%% Proof by Luis
+\end{lemma}
+
+\begin{lemma}[Completeness]\label{lemma:completeness}
+% If $\langle A, \sigma \otimes d \rangle \longrightarrow \langle A', \sigma' \rangle$ then there exist $\alpha, a \in C^\otimes$ such that $\langle A, \sigma\rangle \xrightarrow{\;  \alpha \: } \langle A', \sigma''\rangle$ and $\alpha \otimes a = d$, $\sigma'' \otimes a = \sigma'$.
+If $\config{A}{\Si \otimes d} \trans{}_\Delta \config{A'}{\rho}$ then there exist $\A, a \in C^\otimes$ such that
+$\config{A}{\Si} \trans{\A}_\Delta \config{A'}{\rho'}$ and $\A \otimes a = d$ and $\rho' \otimes a = \rho$.
+\end{lemma}
+
+
+
+% \begin{proof}
+% (TO FINISH)
+% The proof proceeds by induction on (the depth) of the inference of $\la A, \sigma \otimes a\ra \longrightarrow  \la A' , \sigma'\ra$, and a case analysis on the last transition rule used. As before, the only relevant cases are  {\bf R2} and  {\bf R7}.
+%
+% As for {\bf R2},  by construction $\alpha = c \odiv \sigma$ and $\sigma'' = \sigma \otimes (c \odiv \sigma)$,
+% thus it suffices to consider $a = d \odiv (c \odiv \sigma)$.
+% Since the verification of the ask guarantees that $c \leq (\sigma \otimes d)$, we have that $(c \odiv \sigma) \leq d$ and by invertibility $\alpha \otimes a = d$ and $\sigma'' \otimes a = \sigma \otimes d = \sigma'$, hence the result holds.
+%
+% As for  {\bf R7}', $D= \exists^{\sigma'}_x A$ and $E= \exists^{\sigma_1}_x B$, and $\bar{\sigma} =  \sigma_0 \otimes \exists_x \sigma_1 \otimes d$,
+% with $\la A, \sigma' \otimes  (\sigma_0 \otimes \alpha)[z/x] \ra \rarrow \la B,  \sigma'' \otimes \alpha[z/x] \ra$
+% where $z \not\in (fv(A) \cup fv(\sigma') \cup fv(\sigma) \cup fv(\alpha))$, by a previous step of inference. By induction,
+% we know that there exists $\alpha$ and $a$
+% such that $\langle B, \sigma' \otimes \sigma[z/x] \rangle \xrightarrow{\;  \alpha \: } \langle B, \sigma'' \otimes \alpha \rangle$, with $ \alpha \otimes a = d[z/x]$, and $\sigma'' \otimes \alpha[z/x] = \sigma_1'' \otimes a$. Note that $x \not\in fv(d[z/x]) = fv(\alpha \otimes a)$,
+% and thus $x \not\in (fv(\alpha) \cup fv(a))$. By using rule {\bf LR7}
+% we have $\langle \exists_{x}^{\sigma'} A, \sigma\ra\xrightarrow{\;  \alpha[x/z] \;} \langle \exists^{\sigma_1}_xB, \sigma_0 \otimes \exists_x \sigma_1 \otimes \alpha[x/z] \rangle$. From $d[z/x] = \alpha \otimes a$
+% we have $(d[z/x])[x/z] = (\alpha \otimes a)[x/z]$, that is $d= \alpha[x/z] \otimes a[x/z]$.
+% Now, consider $\sigma_1'' = \sigma_0 \otimes \exists_{x}^{\sigma_1} \otimes \alpha[x/z]$;
+% we have that $\sigma'' \otimes \alpha \otimes a[x/z] = \sigma_0 \otimes \exists_{x}^{\sigma_1} \otimes \alpha[x/z] \otimes a[x/z]$
+% that, by the previous equivalence, is equal to $\sigma_0 \otimes \exists_{x}^{\sigma_1} \otimes d$, that is, $\bar{\sigma}$.
+% \end{proof}
+
+\begin{theorem}\label{cor:true}
+$\langle A, \sigma \rangle \xrightarrow{\;  \bot \: }_\Delta \langle A', \sigma' \rangle$ if and only if $\langle A, \sigma\rangle \longrightarrow_\Delta \langle A', \sigma'\rangle$.
+\end{theorem}
+
+\subsubsection{Strong and Weak Bisimilarity on the LTS.}
+%Having an LTS for SCCP, w
+We now proceed to define an equivalence that
+characterises  $\sim_{\mathit{sb}}$ without the upward closure condition. 
+Differently from languages such as Milner's \CCS, 
+%when using an LTS 
+barbs cannot be removed
+from the definition of bisimilarity because they cannot be inferred by the transitions.
+%Equivalently, as proposed in ,
+%an alternative (yet cumbersome) solution might have been to have labels showing the whole store.
+%but this would have betrayed the philosophy of ``labels as minimal constraints''.
+
+
+\begin{definition}[Strong bisimilarity]\label{def:strong} A strong bisimulation is a symmetric relation $R$
+on configurations such that whenever $(\gamma_1, \gamma_2) \in R$ with $\gamma_1 = \langle A, \sigma \rangle$ and $\gamma_2 = \langle B, \rho\rangle$
+\begin{enumerate}
+\item if $\gamma_1 \downarrow_c$ then $\gamma_2 \downarrow_c$,
+\item if $\gamma_1 \xrightarrow{\; \; \alpha\;  \;} \gamma_1'$ then $\exists \gamma_2'$
+such that $\langle B, \rho \otimes \alpha \rangle \longrightarrow \gamma_2'$ and $(\gamma_1', \gamma_2') \in R$.
+\end{enumerate}
+We say that $\gamma_1$ and $\gamma_2$ are strongly bisimilar ($\gamma_1 \sim \gamma_2$) if there exists a strong
+bisimulation $R$ such that $(\gamma_1, \gamma_2) \in R$.
+\end{definition}
+
+The first condition boils down to require that $\sigma \leq \rho$, so that $(\gamma_1, \gamma_2) \in R$
+ implies that $\gamma_1$ and $\gamma_2$ have the same store.
+ %
+ As for the second, we adopted a \emph{semi-saturated} equivalence, introduced 
+ for CCP in~\cite{pippo}. In the bisimulation game a label can  be simulated 
+ by a reduction including in the store the label itself.
+ %, with the objective to obtain an equivalence which is a congruence.
+
+\begin{definition}[Weak bisimilarity]\label{def:weak} A weak bisimulation is a symmetric
+relation $R$ on configurations such that whenever $(\gamma_1, \gamma_2) \in R$ with $\gamma_1 = \langle A, \sigma \rangle$ and $\gamma_2 = \langle B, \rho\rangle$
+\begin{enumerate}
+\item if $\gamma_1 \downarrow_c$ then $\gamma_2 \Downarrow_c$,
+\item if $\gamma_1 \xrightarrow{\; \; \alpha\;  \;} \gamma_1'$ then $\exists \gamma_2'$ such that $\langle B, \rho \otimes \alpha \rangle \longrightarrow^* \gamma_2'$ and $(\gamma_1', \gamma_2') \in R$.
+\end{enumerate}
+We say that $\gamma_1$ and $\gamma_2$ are weakly bisimilar ($\gamma_1 \approx \gamma_2$) if there exists a weak bisimulation $R$ such that $(\gamma_1, \gamma_2) \in R$.
+\end{definition}
+
+With respect to the weak equivalence for crisp constraints, some of its characteristic equivalences do not hold, so that e.g.
+$\ask(c) \rrarrow \tell({c}) \not  \approx \ostop$. As usual, this is linked to the fact that the underlying CLIM may not be idempotent.
+
+We can now conclude by proving the equivalence between $\sim_{\mathit{s}}$ and $\sim$, and between $\approx_{\mathit{s}}$ and $\approx$ (hence, $\approx$ is further equivalent to $\sim_o$, using Proposition~\ref{prop:weaksbequivobs}). We start by showing that $\sim$ is preserved under composition.
+
+\begin{lemma}\label{lemma:equality}
+If $\langle A, \sigma\rangle \sim \langle B, \rho\rangle$, then $\langle A, \sigma \otimes a \rangle \sim \langle B, \rho \otimes a\rangle$ for all $a \in C^\otimes$.
+\end{lemma}
+
+\begin{theorem}\label{stronEq}
+$\sim_{\mathit{s}} \; = \; \sim$
+\end{theorem}
+
+In order to prove the correspondence between weak bisimulations, we need a result 
+analogous to Lemma~\ref{lemma:equality}. The key issue is the preservation of weak barbs by
+the addition of constraints to the store, which is  trivial in strong bisimulation.
+
+\begin{lemma}\label{pres}
+Let $\langle A, \sigma \rangle \approx \langle B, \rho \rangle$ and $a, c \in C^\otimes$. If $\langle A, \sigma \otimes a \rangle\downarrow_c$, then $\langle B, \rho \otimes a\rangle\Downarrow_c$.
+\end{lemma}
+
+The result below uses Lemma~\ref{pres} and a rephrasing of the proof of Lemma~\ref{lemma:equality}
+
+\begin{lemma}
+If $\langle A, \sigma \rangle \approx \langle B, \rho \rangle$, then $\langle A, \sigma \otimes a \rangle \approx \langle B, \rho \otimes a \rangle$ for all $a \in C^\otimes$.
+\end{lemma}
+
+\begin{theorem}
+\label{th:wbisimiffwsbbisim}
+$\approx_{\mathit{s}} \; = \; \approx$
+\end{theorem}
+
+
+%To give some intuition about the above definition,let us recall that in $\langle A, \sigma \rangle \longrightarrow \gamma$ the
+%label $\alpha$ represents minimal information from the environment that needs to be added to the store $\sigma$ to evolve
+%from $\langle A, \sigma \rangle$ into $\gamma'$. We do not require the transitions from $\langle B, \rho\rangle$ to match $\lapha$.
+%Instead \emph{ii)} requires something weaker: If $\alpha$ is added to the store $\rho$, it should be possible to reduce into some $\gamma''$
+%that it is in bisimulation with $\gamma'$. This condition is weaker because $\alpha$ may not be a minimal information allowing a transition
+%from ?Q, e? into a ??? in the bisimulation, as shown in the previous example.
+
+
+\paragraph{LTS and barbed semantics.} Some process calculi tend to adopt reduction semantics based on unlabelled transitions and barbed congruence~\cite{barbedMontanari}. The main drawback of this approach is that to verify barbed congruences it is often necessary to analyze the behaviour of processes under every context, in order to make such relation a congruence.
+This is the main motivation why we aimed at defining techniques for deriving labels and bisimilarity from unlabelled reduction semantics (see also \cite{pippo}). The main intuition is that labels should represent the ``minimal context allowing a process to reduce'': a bisimilarity-checking algorithm than has to verify this minimal context only, instead of every one. 
+
+According to condition \emph{3} in Def.~\ref{def:strongsb}, an algorithm has to check  $(\langle A,\sigma \otimes d\rangle, \langle B,\rho \otimes d \rangle) \in R$ for all $d \in \mathcal{C}^\otimes$: given $\langle A, \sigma \otimes d \rangle \longrightarrow \gamma_1$, then it has to check the existence of $\gamma_2$ such that $\langle B, \rho \otimes d \rangle \longrightarrow \gamma_2$ and $(\gamma_1, \gamma_2) \in R$ (for all $d \in \mathcal{C}^\otimes$). Instead, in case of its labelled version, if $\gamma_1 \xrightarrow{\; \; \alpha\;  \;} \gamma_1'$ then we only need to  check the existence of $\gamma_2'$ such that $\langle B, \rho \otimes \alpha \rangle \longrightarrow \gamma_2'$ and $(\gamma_1', \gamma_2') \in R$. For instance, if $B$ is $\mathit{ask}(c) \rrarrow B'$, the check to be performed is $c \leq \rho \otimes \alpha$, which involves the solution of the combinatorial problem associated with $\rho \otimes \alpha$, and comes with some computational effort.
+
+Let us explain some of the advantages of $\wbisim$ over $\wsatbis$ with the following examples.
+
+\begin{example}
+\label{ex:barbvslabbis1}
+Let $\G = \config{\askp{c}{\stopp}}{\bot}$ and $\G' = \config{\stopp}{\bot}$.
+To prove that $\G\,\wbisim\,\G'$ let us define the following relation:
+\[ \R = \{ (\config{\askp{c}{\stopp}}{\bot}, \config{\stopp}{\bot}), (\config{\stopp}{c}, \config{\stopp}{c})\} \]
+Now let us prove that $\G\,\wsatbis\,\G'$, for this purpose consider the relation below:
+\[
+\mathcal{S} = \{ (\config{\askp{c}{\stopp}}{d}, \config{\stopp}{d}), (\config{\stopp}{d}, \config{\stopp}{d}) \ |\ d \in C^\otimes\} 
+\]
+Since $\R$ is finite it is straightforward to prove that $\G\,\wbisim\,\G'$ given that 
+the symmetric closure of $\R$ is a weak bisimulation as in Def. \ref{def:strong}.
+On the other hand, proving that $\G\,\wsatbis\,\G'$ is not so difficult (notice that $\mathcal{S}$ is very similar to $\R$),
+however one is obliged to consider an infinite relation even for comparing rather simple configurations such as $\G$ and $\G'$.
+\qed
+\end{example}
+
+\begin{example}
+\label{ex:barbvslabbis2}
+Let $I$ be a set of indexes from $1$ to $n$, i.e. $I = \{1,\dots,n\}$. Now let $c_i \in C^\otimes$ such that
+for all $i, j$ if $i \neq j$ then $c_i \not\leq c_j$. Now consider the following configurations $\G$ and $\G'$:
+\[
+\G = \config{\prod_{i \in I} \askp{c_i}{\stopp}}{\bot} \ \ \ \ \G' = \config{\stopp}{\bot}
+\]
+Let us show first that $\G\,\wbisim\,\G'$ for this purpose consider the following relation:
+\[
+\R = \{ (\config{\prod_{j \in J} \askp{c_j}{\stopp}}{\bigotimes_{k \in K} c_k}, \config{\stopp}{\bigotimes_{k \in K} c_k}) 
+\ |\  J \subseteq 2^I \mbox{ and } K = J - I\}
+\]
+To prove that $\R$ is a weak bisimulation we need to check the two conditions in Def. \ref{def:weak}). Condition 1 is trivial
+since all the pair have the same store. For condition 2 we must consider the following transition:
+\[
+ \config{\prod_{j \in J} \askp{c_j}{\stopp}}{\bigotimes_{k \in K} c_k} \trans{c_i} 
+ \config{\prod_{j \in J-\{i\}} \askp{c_j}{\stopp}}{\bigotimes_{k \in K+\{i\}} c_k} \mbox{ for some } i \in J
+\]
+And notice that after the transition the resulting configuration is related with $\G'$ in $\R$ by definition. 
+Hence $\R$ is a weak bisimulation and since $(\G, \G') \in \R$ (when $J = I$) then $\G\,\wbisim\,\G'$.
+
+In turn, let us prove that $\G\,\wsatbis\,\G'$, in order to do this consider the following relation:
+\[
+\mathcal{S} = \{ (\config{\prod_{j \in J} \askp{c_j}{\stopp}}{d}, \config{\stopp}{d}) \ |\  J \subseteq 2^I\}
+\]
+Note that $\mathcal{S}$ is a more succint relation, however before jumping to conclusions
+let us prove that it is a weak saturated barbed bisimulation as in Def. \ref{def:weaksb}.
+If we take the configuration $\G'' = \config{\prod_{j \in J} \askp{c_j}{\stopp}}{d}$ we have to consider about $2^{|J|}$
+cases in order to consider every possible interleaving that $\G''$,
+namely $d$ must take each value in the set $\bigotimes_{k \in K} c_k$ 
+where $K \subseteq 2^{|J|}$. Recall that $\wsatbis$ uses the reflexive and transitive closure $\reds$.
+Hence it is clearly much more difficult to prove that $\mathcal{S}$ is a weak saturated 
+barbed bisimulation which instead was proven easily by using the labeled semantics.
+\qed
+\end{example}
+
+
+\end{document}

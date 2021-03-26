@@ -1,0 +1,534 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{Deterministic Soft CCP}\label{sec:detSCCP}
+We now introduce our language. 
+%In the following we
+We fix an invertible CLIM $\mathbb S = \langle {\mathcal C},$ $\leq, \otimes\rangle$, which is also cylindric 
+over a set of variables $V$, denoting by
+$c$ an element in ${\mathcal C}^\otimes$.
+%
+%We now recall the syntax of (the deterministic fragment) of soft CCP
+\[ A \Coloneqq \: \: \mathit{\ostop} \mid \textit{\tell}(c)  \mid \textit{\ask}(c) \rightarrow A \mid A \parallel A \mid \exists_x A \mid %Z \mid \mu_Z A
+p(x).\]  
+%
+%
+%%Given a soft constraint system $S_C=\langle \C, \otimes,\bot,\top ,
+%%\exists_x, d_{xy}\rangle$ as defined in
+%%Section~\ref{sec:softconstraints}, the syntax
+%%of  deterministic \SCCP agents is defined as
+%
+%
+%\def\odivv{\; {\ominus\hspace{-4pt} \div} \;}
+%\def\odivvv{\; {\ominus\hspace{-6pt} \div} \;}
+%\begin{table}
+%%\footnotesize
+%\begin{center}
+%%P \Coloneqq \: \: F.A \; \; \; \; \; \; \; \;
+%%F \Coloneqq \: \: p(\hat{x})::A \mid F.F \; \; \; \; \; \; \; \;
+%$A \Coloneqq \: \: \mathit{\ostop} \mid \textit{\tell}(c)  \mid \textit{\ask}(c) \rightarrow A \mid A \parallel A \mid \exists_x A \mid %Z \mid \mu_Z A$
+%p(x)$
+%\end{center}
+%%\normalsize
+%\caption{The syntax of deterministic soft CCP}
+%\label{syntax}
+%\end{table}
+%
+%In Tab.~\ref{syntax} we recall the deterministic fragment of soft CCP,
+%with respect to the standard proposal, we replaced the procedure call with the
+%simpler to handle recursion operator $\mu_Z$.
+%%\marginpar{A che servono F e P?}
+%%
+Let $\mathcal{A}$ be the set of all agents, which is
+parametric with respect to a set $\mathcal{P}$ of (unary) procedure declarations 
+$p(x) = A$ such that $fv(A) = \{x\}.$\footnote{The set of free variables of an agent is defined in the expected way by structural induction, assuming that $fv(\tell(c)) = sv(c)$ and $fv(\ask(c) \rightarrow A) = sv(c) \cup fv(A)$.}
+%
+%$\mathcal{P}$ is the class of programs, $\mathcal{F}$ is the class of sequences of procedure
+%declarations,
+%$\mathcal{A}$ is the set of agents and
+%$\mathcal{Z} = \{Z, Z_1, Z_2 \ldots\}$ is the set of recursion variables, 
+%$c \in \C^\otimes$ with $sv(c) \in V$.
+%
+%, and $\hat{x}$ is a tuple of variables in $Var$ passed in a procedure call.
+%
+%In $p(\hat{x}) :: A$ we assume that the variables in
+%$\mathit{vars}(A)$, i.e. the set of variables occurring either as parameters of procedure calls or belonging
+%to the support of
+%the constraints in agent $A$, also occur
+%among $\hat{x}$.
+%\footnote{Note that, with respect to the standard proposals, we require only for the
+%$\textit{ask}$ operator to have a compact constraint, while the $\textit{tell}$ ranges over all constraints.
+%Intuitively, we allow to require to the store the removal of certain constraint, while compactness allow
+%for obtaining a simpler relation when checking the entailment of a constraint.}
+
+In Table~\ref{fig:operational} we provide a reduction semantics for SCCP:
+%
+%It is defined as a triple $\langle \Gamma, T,  \rightarrow
+%\rangle$, where $\Gamma = {\mathcal A} \times {\mathcal C}$ is the set of all possible configurations,
+%$T = \{\mathit{stop}\} \times {\mathcal C} $ is the set of \emph{terminal} configurations and
+%$\rrarrow \, \, \subseteq \, \,\Gamma \times   \Gamma$ is a binary relation between
+%configurations.
+%It is defined as
+a pair $\langle \Gamma,  \rightarrow \rangle$, for $\Gamma = {\mathcal A} \times \C^\otimes$
+the set of configurations  and $\rrarrow \, \, \subseteq \, \,\Gamma \times   \Gamma$ a family 
+ of binary relations indexed over set of variables,
+%$2^V$,
+%between them, 
+i.e., $\rrarrow = \bigcup_{\Delta \subseteq V} \rrarrow_\Delta$ and 
+$\rrarrow_\Delta \, \, \subseteq \, \,\Gamma \times \Gamma$.
+%indexed by subset of variables.
+
+%\vspace{-.25cm}
+\def\odiv{\; {\ominus\hspace{-6pt} \div} \;}
+\def\odivvv{\; {\ominus\hspace{-6pt} \div} \;}
+\begin{table}  %\hfil5
+  
+  %\scalebox{0.9}{
+   \begin{center}
+   \begin{tabular}{llll} 
+   %
+   \mbox{\bf R1}& $\frac{\displaystyle sv(\sigma) \cup sv(c) \subseteq \Delta } {\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \rrarrow_\Delta  \langle \hbox{\ostop},
+                                               \sigma \otimes c\rangle}$
+   \ \ \ & \bf{Tell}&
+  \\ 
+  &\mbox{   }&\mbox{   } &\mbox{   }
+  \\
+  \mbox{\bf R2}& $\frac {\displaystyle c \leq \sigma \wedge  sv(\sigma) \cup sv(c) \subseteq \Delta}{\displaystyle
+  	\begin{array}{l} \langle \hbox{\ask}(c) \rightarrow A, \sigma \rangle \rrarrow_\Delta \langle A, \sigma \rangle   	\end{array}}$
+    \ \ \ & \bf{Ask}&
+    \\
+    &\mbox{   }&\mbox{   }&
+    \\
+  \mbox{\bf R3}& $\frac {\displaystyle \langle A,\sigma \rangle \rrarrow_\Delta \langle A', \sigma' \rangle
+  \wedge fv(B) \subseteq \Delta} 
+  {\displaystyle \begin{array}{l}
+                          \langle A\parallel B, \sigma \rangle \rrarrow_\Delta \langle A'\parallel B, \sigma' \rangle
+                          \end{array}}$ 
+    & \bf{Par1}&
+  \\
+  & \mbox{   }&\mbox{   }&
+  \\
+    \mbox{\bf R4}& $\frac {\displaystyle \langle A,\sigma \rangle \rrarrow_\Delta \langle A', \sigma'   \rangle
+    	\wedge fv(B) \subseteq \Delta} 
+    {\displaystyle 
+    	\begin{array}{l} \langle B\parallel A, \sigma \rangle \rrarrow_\Delta \langle B\parallel A', \sigma' \rangle
+    	\end{array}}$& \bf{Par2}&
+    \\
+    &\mbox{   }&\mbox{   }&
+    \\
+  \mbox{\bf R5}& $\frac {\displaystyle \{y\} \cup sv(\sigma) \subseteq \Delta \wedge \displaystyle p(x) = A \in  \mathcal{P} }
+  {\displaystyle\langle p(y),\sigma\rangle \rrarrow_\Delta \langle  A[^y/_x], \sigma\rangle}$ 
+  &\bf{Rec}&
+    \\
+   &\mbox{   }&\mbox{   }&
+  \\
+    \mbox{\bf R6}& $\frac {\displaystyle fv(A) \cup sv(\sigma) \subseteq \Delta \wedge w \not \in \Delta }
+    {\displaystyle\langle \exists_x A,\sigma\rangle \rrarrow_\Delta \langle A[^w/_x], \sigma\rangle}$
+    &\bf{Hide}&
+  \end{tabular}
+  \end{center}
+\caption{Reduction semantics for SCCP.}
+\label{fig:operational}
+\end{table}
+\def\odiv{\, {\ominus\hspace{-7.8pt} \div} \,}
+\def\odivvv{\; {\ominus\hspace{-4.7pt} \div} \;}
+
+
+In {\bf R1} a constraint $c$ is added to the store $\sigma$.
+%, which in the next step will be $\sigma \otimes c$.
+%
+{\bf R2} checks if $c$ is entailed by  $\sigma$: if not, the computation is blocked.
+% until this condition holds, and then continuation $A$ is executed.
+%
+Rules {\bf  R3}  and {\bf  R4} model the interleaving of two agents in parallel.
+%provides the standard unfolding step for the recursion operator: the mechanisms of variable.
+%substitution and scope are defined as usual.
+%
+%Rules {\bf  R3}  and {\bf  R4} model the interleaving of two agents in parallel.
+%% symmetric rules (on agent $B$) are not shown in Fig.~\ref{fig:operational}.
+%\marginpar{Either $\exists_x \ostop = \ostop$ is missing or R4 is basically useless}
+%
+Rule {\bf R5} replaces a procedure identifier with the associated body, renaming the formal parameter with the actual one:
+$A[^y/_x]$ stands for the agent obtained by replacing all the occurrences of $x$ with $y$.\footnote{With the usual 
+conventions, so that e.g. $(\exists _y A)[^y/_x] = \exists_w ((A[^w/_y])[^y/_x])$ for $w \not \in sv(A) \cup \{x,y\}$
+and $\hbox{\tell}(c)[^y/_x] =  \hbox{\tell}(c[^y/_x])$, the latter defined according to Definition~\ref{def:sub}.}
+%
+Rule {\bf R6} hides the variable $x$ occurring in $A$. 
+%
+The variable $w$ that replaces $x$ is globally fresh,
+as ensured by requiring $w \not \in \Delta$.
+The latter is more general than just requiring that 
+$w \not \in fv(A) \cup sv(\sigma)$, since
+$\langle B, \rho \rangle   \rrarrow_\Delta$ implies that $fv(B) \cup sv(\rho) \subseteq \Delta$.\footnote{Our rule is  reminiscent of $(8)$ in~\cite[p.~342]{popl91}.}
+%
+%
+%(as $(9)$ in~\cite{popl91}), assuming a set of variables $Var_{\mathcal{P}}$
+%(one for each procedure definition) that cannot occurr either in the support nor in the syntax of any agent.
+%
+%\marginpar{R5 may add non-determinsm!!}
+%\marginpar{R5 is much more difficult now: the problem was in the superscript $\sigma''$ for non-idempotent CLIMs}
+%Finally, rule {\bf R6} calls a procedure $p(\hat{x})$ by passing the (global) parameters $\hat{y}$:
+%%$d_{\hat{x},\hat{y}}$ is a shorthand for the composition of the $d_{x_i,y_i}$'s.
+%$A[\hat{y}/\hat{x}]$ is the pairwise renaming in $A$ of variables in  $\hat{y}$ with variables in $\hat{x}$.
+%\marginpar{The use of $d_{x,y}$ for R6 would be nicer, but maybe problematic (compactness)}
+%Finally, rule {\bf R6} provides the standard unfolding step for the recursion operator: the mechanisms of variable
+%substitution and scope are defined as usual.
+
+%\smallskip
+We denote $fv(A) \cup sv(\sigma)$ as $fv(\gamma)$ for a configuration
+$\gamma = \langle A, \sigma \rangle$, and by
+$\gamma[^z/_w]$ the component-wise application of substitution $[^z/_w]$.
+%
+ Clearly $\gamma \rightarrow_\Delta \gamma'$ 
+ implies $fv(\gamma) \subseteq \Delta$, and 
+ %
+ we now further provide three lemmata on reduction.
+ %, which are needed later on.
+
+\begin{lemma}[Mono]\label{mono}
+Let $\langle A, \sigma \rangle \rightarrow_\Delta \langle B, \sigma' \rangle$
+be a reduction. Then, $\sigma \leq \sigma'$ and $sv(\sigma') \subseteq \Delta$.
+\end{lemma}
+
+The proof is straightforward: only rule {\bf R1} can modify the store,
+and $\sigma \leq \sigma \otimes c$ as well as 
+$sv(\sigma \otimes c) \subseteq sv(\sigma) \cup sv(c)$ hold,
+since as shown above $fv( \hbox{\tell}(c) ) \cup sv(\sigma) \subseteq \Delta$.
+%%The difficult case is  {\bf  R7}, 
+%%which is solved since $\sigma \leq  \sigma_0 \otimes \exists_x \sigma'$ and by monotonicity 
+%%of $\exists_x$ and $- \odiv \exists_x \sigma_0$. 
+%%
+%Note that 
+%%$A$ may be an extended agent, and 
+%$\sigma$ is not necessarily $\otimes$-compact.
+
+%A simple fact to establish is that if 
+%$\langle A, \sigma \rangle \rightarrow \langle \exists_x^{\sigma'} B, \sigma" \rangle$
+%is a reduction, then $\exists_x \sigma' \leq \sigma"$.
+%More can be said by restraining $A$ and $\sigma$. 
+%
+%\begin{definition}[extended agents, admissible configurations]
+%An extended agent $A \in \mathcal{A}^+$ is either an agent $A \in \mathcal{A}$ or it has the shape 
+%$A = A_1 \parallel A_2$ and both $A_i$'s are extended agents or it has the shape 
+%$\exists_x^\rho A_0$ and $A_0$ is an extend agent and $\exists_x \rho \in \mathcal{C}^\otimes$.
+%
+%A configuration $\langle A, \sigma \rangle$ is admissible if $A \in \mathcal{A}^+$ and if its shape is 
+%$A = A_1 \parallel A_2$ then both $\langle A_i, \sigma \rangle$ are admissible or if its shape is
+%$\exists_x^\rho A_0$ then $\langle A_0, \rho \otimes \exists_x (\sigma \odiv \exists \rho) \rangle$ is admissible.
+%\end{definition}
+
+%So, let $\mathcal{A}^+$ denote the set of agents obtained by including 
+%the extended operators $\exists_x^{\sigma'} -$ such that $\exists_x\sigma'$ is $\otimes$-compact, and let 
+%$\langle A, \sigma \rangle$ be admissible if $A \in \mathcal{A}^+$ and whenever $A = A_0 \parallel \ldots \parallel A_n$ %such that $A_i =\exists_x^{\sigma'} A'_i$ then $\exists \sigma' \leq \sigma$ and $\langle A'_i, \sigma' \otimes \exists_x 
+%(\sigma \odiv \exists \sigma') \rangle$ is admissible.
+
+%\begin{lemma}\label{comp}
+%Let $\langle A, \sigma \rangle \rightarrow \langle B, \sigma' \rangle$ be
+%a reduction. If $\langle A, \sigma \rangle$ is admissible, then $\langle B, \sigma' \rangle$ is so and $\sigma' \odiv \sigma \in \mathcal{C}^\otimes$.
+%\end{lemma}
+%\begin{proof}
+%[TO FINISH]
+%We proceed by induction on the length of the proof. 
+%The axioms {\bf R2}, {\bf R5}, and {\bf R6} are straightforwardly checked, so, the only one 
+%to be verified is if the last inference rule applied 
+%%in the $n$-th step 
+%is {\bf R7}.
+%%
+%So, let $\langle \exists^{\sigma'}_x A,
+%\sigma \rangle \rrarrow \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle$ with the construction of rule {\bf R7}. By hypothesis, $up = \sigma'' \odiv (\sigma' \otimes \exists_x \sigma_0) =  (\sigma'' \odiv \sigma') \odiv \exists_x \sigma_0 = \sigma_1 \odiv \sigma'$ is $\otimes$-compact. Now, $\sigma_1 \leq up \otimes \sigma'$, so that 
+%$\exists_x \sigma_1 \leq \exists_x (up \otimes \sigma')$: by Lemma~\ref{preserve} $\exists_x (up \otimes \sigma')$ is 
+%$\otimes$-compact, and by Lemma\ref{undercomp} so is $\exists_x \sigma_1$, hence $\exists_x^{\sigma_1} B \in \mathcal{A}^+$.
+%
+%Since $\langle B, \sigma''\rangle$ is admissible, and $\sigma_1 \otimes \exists_x [(\sigma_0 \otimes \exists_x \sigma_1) \odiv \exists_x \sigma_1)]$
+%
+%Now, consider $up' = (\sigma_0 \otimes \exists_x \sigma_1) \odiv \sigma$. By hypothesis we have that 
+%$\sigma = \sigma_0 \otimes \exists_x \sigma'$, thus 
+%$up' = (\sigma_0 \otimes \exists_x \sigma_1) \odiv (\sigma_0 \otimes \exists_x \sigma') = 
+%[(\sigma_0 \otimes \exists_x \sigma_1) \odiv \sigma_0] \odiv \exists_x \sigma') \leq \exists_x \sigma_1 \odiv \exists_x\sigma'$, 
+%and since $\exists_x \sigma_1$ is $\otimes$-compact, so is $\exists_x \sigma_1 \odiv \exists_x \sigma'$ 
+%by Lemma~\ref{preres} and thus $up'$ by Lemma\ref{undercomp}.
+%\end{proof}
+
+%We now establish two important results concerning computations.
+%
+%\begin{proposition}
+%Let $\langle A, \sigma \rangle \rightarrow^* \langle B, \sigma' \rangle$
+%be a computation. If $A \in \mathcal{A}$ and $\sigma \in {\mathcal C}^\otimes$, then
+%$B \in \mathcal{A}^+$, $\sigma' \in {\mathcal C}^\otimes$ and $\sigma \leq \sigma'$.
+ %\end{proposition}
+%
+%We now establish an additional result on the operational monotonicity.
+% but first, we say that for a reduction $\xi: 
+%The proposition is an immediate consequence of the lemmata above.
+
+\begin{lemma}[Operational mono]\label{opmonotonicity}
+Let $\langle A, \sigma \rangle \rightarrow_\Delta \langle B, \sigma' \rangle$
+be a reduction and $\rho \in  \C^\otimes$ such that $sv(\rho) \subseteq \Delta$. Then,
+ there exists a reduction $\langle A, \sigma \otimes \rho \rangle \rightarrow_\Delta \langle B, \sigma' \otimes \rho \rangle$.
+\end{lemma}
+
+The proof is straightforward, since as before $sv(\sigma \otimes \rho) \subseteq sv(\sigma) \cup sv(\rho)$ and 
+moreover $\sigma, \rho \in  \C^\otimes$ ensure that $\sigma \otimes \rho \in  \C^\otimes$.
+
+\subsection{Observational Semantics}
+To define fair computations (Definition~\ref{def:fair}), we introduce enabled and active agents.
+Note that any transition is generated by an agent of the shape $\mathit{\tell}(c)$ or  $\mathit{\ask}(c) \rightarrow A$ 
+or $p(x)$ or $\exists_x A$ via the application of precisely one instance of one of the axioms {\bf R1}, {\bf R2},  {\bf R5}, and {\bf R6} of Table~\ref{fig:operational}.
+%
+An agent of such  shape is \emph{active} in a transition $t = \gamma \rightarrow \gamma'$ if it generates such transition, i.e. if there is a derivation of $t$ where that agent is used in the building axiom.
+%
+Moreover, an agent is \emph{enabled} in a configuration $\gamma$ if there is a transition $\gamma \rightarrow \gamma'$ such that the agent is \emph{active} in it.
+%\marginpar{qua ci vogliono gli agenti, non i processi}
+
+\begin{definition}[Fair computations]\label{def:fair}
+Let $\gamma_0  \rightarrow_{\Delta_1} \gamma_1  \rightarrow_{\Delta_2} \gamma_2 \rightarrow_{\Delta_3} \dots$ be a
+(possibly infinite) computation. 
+%\marginpar{added ``infinite'' before computation}
+It is fair if it is increasing (i.e., $\Delta_k \subseteq \Delta_{k+1}$ for any $k$) and whenever an agent
+$A$ is enabled in some $\gamma_i$ then $A$ is active in  $\gamma_j  \rightarrow_{\Delta_{j+1}} \gamma_{j+1}$ 
+for some $j \geq i$.
+\end{definition}
+
+Note that fairness is well given: the format of the rules allows us to always trace the occurrence of an agent along a computation.
+%\marginpar{R4 may be a problem for this tracing. Drop that rule!}
+
+\begin{definition}[Observables]\label{def:observables}
+Let $\xi = \gamma_0  \rightarrow_{\Delta_1} \gamma_1  \rightarrow_{\Delta_2} \dots$ be a (possibly infinite) computation with $\gamma_i = \langle A_i, \sigma_i\rangle$.
+%
+$\mathit{Result}(\xi)$ 
+is $\bigvee_i (\exists_{X_i} \sigma_i)$, for $X_i = (fv(\gamma_i))\setminus(fv(\gamma_0))$.
+%$\bigvee_{i} \sigma_i$.
+\end{definition}
+
+%We often denote $fv(A) \cup sv(\sigma)$ as $fv(\gamma)$ for a configuration
+%$\gamma = \langle A, \sigma \rangle$.
+%
+%\smallskip
+
+Similarly to crisp programming~\cite{popl91}, if a finite computation is fair
+then it is deadlocked and 
+%(and thus increasing),
+%then it ends on a state $\langle \mathit{\ostop}, \sigma\rangle$, and
+its result coincides with the store of the last configuration.
+%\marginpar{intermediate stores are compact if tell are so}
+
+\begin{proposition}[Confluence]\label{prop:confluence}
+Let $\gamma$ be a configuration and $\xi_1$, $\xi_2$ two (possibly infinite)
+computations of $\gamma$.
+%
+If $\xi_1$ and $\xi_2$ are fair, then $\mathit{Result}(\xi_1) = \mathit{Result}(\xi_2)$.
+\end{proposition}
+
+
+%As for crisp programming~\cite{popl91}, all the fair computations of a configuration have the same result.
+%
+%\begin{proposition}[confluence]\label{prop:confluence}
+%Let $\gamma$ be a configuration and $\xi_1$, $\xi_2$ two fair computations of $\gamma$. Then $\mathit{Result}(\xi_1) = \mathit{Result}(\xi_2)$.
+%\end{proposition}
+
+The proposition is an immediate consequence of the lemma below.
+
+\begin{lemma}\label{lemma:upto}
+Let $\gamma \rightarrow_{\Delta_i} \gamma_i$ be reductions for $i =  1, 2$.
+%such that $\gamma_1 \cong_\Delta \gamma_2$ and $\Delta \subseteq \Delta_1 \cup \Delta_2$.
+Then one of the following holds
+\begin{enumerate}
+\item $\xi_i = \gamma \rightarrow_{\Delta_i} \gamma_i[^z/_{w_i}]$
+and $\gamma_1[^z/_{w_1}] =  \gamma_2[^z/_{w_2}]$
+for $w_i \not \in \Delta_i$ and $z$ fresh;
+\item
+$\xi_i = \gamma \rightarrow_{\Delta_i} \gamma_i[^{z_i}/_{w_i}] \rightarrow_{\Delta_1 \cup \Delta_2 \cup \{z_i\}} \gamma_3$
+for $w_i \not \in (\Delta_1 \cap \Delta_2) \cup fv(\gamma_3)$ and $z_i$'s fresh.
+\end{enumerate}
+In both cases, $Result(\xi_1) = Result(\xi_2)$.
+\end{lemma}
+
+\begin{proof}%[of Lemma~\ref{lemma:upto}]
+	%\marginpar{the proof is wrong}
+	%Similarly to \cite{popl91}, Prop.~\ref{prop:confluence} can be proved by taking advantage of the commutativity of
+	%transitions: if two different transitions $\langle A, \sigma \rangle \rightarrow \langle A_1, \sigma_1 \rangle$ and $\langle A, 
+	%\sigma \rangle \rightarrow \langle A_2 , \sigma_2\rangle$ are enabled, then $\langle A_1, \sigma_1 \rangle \rightarrow 
+	%\langle A_3, \sigma_1 \otimes \sigma_2\rangle$ and $\langle A_2, \sigma_2 \rangle \rightarrow \langle A_3, \sigma_1 
+	%\otimes \sigma_2\rangle$ are possible.
+	First of all, note that the calculus is deterministic except for the parallel and the hiding operators.
+	Consider the latter. The problem may arise if different fresh variables are chosen, let us say $w_1$ and $w_2$.
+	However, $\gamma_1[^z/_{w_1}] =  \gamma_2[^z/_{w_2}]$ 
+	by replacing the new variables with a globally fresh one, as in item 1.
+	
+	So, let us assume that the two reductions occur on the opposite sides of a parallel operator.
+	Also, let $\gamma \rightarrow_{\Delta_1} \gamma_1$ replace a hiding operator with a variable $w_1$
+	(hence we have $w_1 \not \in \Delta_1$). 
+	%
+	If $w_1 \in fv(\gamma_2)$, since $w_1 \not \in \gamma$ and the only reduction enlarging the set of free variables is the 
+	replacement of a hiding operator, also $\gamma \rightarrow_{\Delta_2} \gamma_2$ 
+	must replace a hiding operator with variable $w_1$, and thus it suffices to replace $w_1$ 
+	with fresh variables $z_1$ and $z_2$ in  the two reductions, in order for item 2 to be verified.
+	%
+	If $w_1 \not \in fv(\gamma_2)$, then $\xi_2$ is obtained by replacing in $\gamma_2$ 
+	the hiding operator with $z_1$ instead of $w_1$. As for obtaining $\xi_1$, the only problematic case is 
+	if  $\gamma \rightarrow_{\Delta_2} \gamma_2$ also replaces 
+	a hiding operator with a variable $w_2 \in \Delta_1 \cup fv(\gamma_1)$.
+	However, we have that $w_2 \not \in fv(\gamma_1)$ since otherwise (as shown above) $w_1 = w_2$, 
+	thus $\xi_1$ is obtained by replacing in $\gamma_1$ the hiding operator with $z_2$ instead of $w_2$,
+	and item 2 is then verified. 
+		
+	Among the remaining cases, the only relevant one is whenever both actions add different constraints to the store.
+	%\medskip
+	%
+	So, let us assume that $\gamma = \langle A_1 \parallel A_2, \sigma \rangle$ such that 
+	$\langle A_1, \sigma \rangle \rightarrow_{\Delta_1} \langle B_1, \sigma_1 \rangle$
+	and
+	$\langle A_2, \sigma \rangle \rightarrow_{\Delta_2} \langle B_2, \sigma_2 \rangle$.
+	%Also, we may safely assume up-to that any locally fresh variable occurring in either $B_1$ or $B_2$ 
+	%is globally fresh.
+	%
+	Note that since reduction semantics is monotone (Lemma~\ref{mono})
+	and $\sigma$ is $\otimes$-compact, also $\sigma_1$
+	is $\otimes$-compact and furthermore we have
+	$\sigma_1 = \sigma \otimes (\sigma_1 \odiv \sigma)$.
+	% (by Lemma~\ref{mono}).
+	%
+	Now, operational monotonicity (Lemma~\ref{opmonotonicity}) ensures us that
+	$\langle B_1 \parallel A_2, \sigma \otimes (\sigma_1 \odiv \sigma) \rangle
+	\rightarrow_{\Delta_1 \cup \Delta_2}
+	\langle B_1 \parallel B_2, \sigma \otimes (\sigma_1 \odiv \sigma) \otimes (\sigma_2 \odiv \sigma) \rangle$ 
+	and by symmetric reasoning the latter configuration 
+	is the one we were looking for. \qed
+\end{proof}
+
+
+The result above is a local confluence theorem, which is expected, since the calculus is essentially deterministic.
+The complex formulation is  due to the occurrence of hiding operators: as an example, different fresh variables may be chosen
+for replacing $\exists_x$, such as  $w_1$ and $w_2$ in the first item above, and then a globally fresh variable $z$ has to 
+be found for replacing them.
+
+As a final remark, note that  $\gamma \rightarrow_\Delta \gamma'$ with $z \in fv(\gamma)$ and $w \not \in fv(\gamma')$
+implies $\gamma[^w/_z] \rightarrow_{(\Delta\setminus \{z\}) \cup \{w\}} \gamma'[^w/_z]$.
+Combined with the proposition above, they ensure that
+%
+fair computations originating from a configuration are  either all finite or all infinite, 
+and furthermore  they have the same result.
+%
+So, in the following we denote as $\mathit{Result}(\langle A, \sigma \rangle)$ the unique result of the fair 
+computations originating from $\langle A, \sigma \rangle$.
+%
+This fact allows to define an observation-wise equivalence.
+% on agents.
+% In Definition~\ref{def:obequivalence}, we show when two processes are observation-wise equivalent.
+
+\begin{definition}[Observational equivalence]\label{def:obequivalence}
+Let $A, B \in \mathcal {A}$ be agents. They are observationally equivalent ($A \sim_o B$) if 
+$\mathit{Result}(\langle A, \sigma \rangle) = \mathit{Result}(\langle B, \sigma \rangle)$
+for all $\sigma \in  \C^\otimes$.
+%Let $\mathcal{O} : (\mathcal{A} \rrarrow \mathcal{C}^\otimes) \rrarrow \mathcal{C}$ be the function given by 
+%$\mathcal{O}({A})(\sigma) = \mathit{Result}(\langle A, \sigma \rangle)$.
+%We say that $A$ and $B$ are \emph{observationally equivalent} ($A \sim_o B$) if $\mathcal{O}(A) = \mathcal{O}(B)$.
+\end{definition}
+
+It is easily shown that $ \sim_o$ is preserved by all contexts, i.e., it is a \emph{congruence}.\footnote{Recall that a context $C[\bullet]$ is a syntactic expression with a single hole $\bullet$ 
+such that replacing $\bullet$ with an agent $A$ in the context produces an agent, denoted by $C[A]$. For example if $C[\bullet]$ is the context $\tell(c) \parallel \bullet$  then $C[A] =  \tell(c) \parallel A.$ An equivalence $\cong$ between agents is a congruence if $A \cong B$ implies $C[A] \cong C[B]$ for every context $C[\bullet].$}
+
+
+\subsection{Saturated Bisimulation}
+As proposed in \cite{pippo} for crisp languages, we define a barbed equivalence between two agents~\cite{barbed}.  Since barbs are basic observations (predicates) on the states of a system, in this case they correspond to the compact constraints in $\mathcal{C}^\otimes$, and we say that $\langle A, \sigma \rangle$ verifies $c$, or that $\langle A, \sigma \rangle \downarrow_c$ holds, if  $c \leq \sigma$.
+%
+However, since \emph{barbed bisimilarity} is an equivalence already for CCP, along~\cite{pippo}
+we propose the use of \emph{saturated bisimilarity}
+%~\cite{barbedMontanari} has been proposed 
+in order to obtain a congruence:
+%
+Definition~\ref{def:strongsb} and Definition~\ref{def:weaksb} respectively provide the strong and weak definition of saturated bisimilarity.
+%We say that $\gamma = \langle P, \sigma\rangle$ satisfies the barb $c$, written $\gamma \downarrow_c$,
+%iff $\gamma \longrightarrow \gamma'$ and $\gamma' \downarrow_c$.
+%\marginpar{Are barbs compact?}
+
+\begin{definition}[Saturated bisimilarity]\label{def:strongsb} A saturated bisimulation is a symmetric relation $R$ on configurations such that whenever
+%$(\gamma_1,\gamma_2) \in R$ with $\gamma_1 = \langle A, \sigma \rangle$
+%and $\gamma_2 = \langle B, \rho \rangle$
+$( \langle A, \sigma \rangle,\langle B, \rho \rangle) \in R$
+\begin{enumerate}
+\item if $\langle A, \sigma \rangle \downarrow_c$ then $\langle B, \rho \rangle \downarrow_c$;
+\item if $\langle A, \sigma \rangle \longrightarrow \gamma'_1$ then there exists $\gamma'_2$ such that $\langle B, \rho \rangle \longrightarrow \gamma'_2$ and $(\gamma'_1, \gamma'_2) \in R$;
+\item $(\langle A,\sigma \otimes d\rangle, \langle B,\rho \otimes d \rangle) \in R$ for  all $d \in \mathcal{C}^\otimes$.
+\end{enumerate}
+We say that $\gamma_1$ and $\gamma_2$ are  saturated bisimilar ($\gamma_1  \sim_{\mathit{s}} \gamma_2$) if there exists a  saturated  bisimulation $R$ such that $(\gamma_1 , \gamma_2 ) \in R$. We write $A \sim_{\mathit{s}} B$ if $\langle A, \bot\rangle \sim_{\mathit{s}} \langle B, \bot \rangle$.
+\end{definition}
+
+We now let $\longrightarrow^*$ denote the reflexive and transitive closure of $\longrightarrow$, restricted to increasing computations.
+We say that  $\gamma \Downarrow_c$ holds if there exists $\gamma' = \langle A, \sigma \rangle$ such that 
+$\gamma \longrightarrow^* \gamma'$ and $c \leq \exists_{X} \sigma$ for $X = fv(\gamma') \setminus fv(\gamma)$.
+
+\begin{definition}[Weak saturated bisimilarity]\label{def:weaksb}
+Weak saturated bisimilarity
+($\approx_{\mathit{s}}$) is obtained from Definition~\ref{def:strongsb} by replacing $\longrightarrow$ with $\longrightarrow^*$ and $\downarrow_c$ with $\Downarrow_c$.
+\end{definition}
+
+Since $\sim_{\mathit{s}}$ (and $\approx_{\mathit{s}}$) is itself a  saturated bisimulation, it is obvious that it is upward closed, and it is also a congruence with respect to all the contexts of SCCP (i.e., it is preserved under any context): indeed, a context $C[\bullet]$ can modify the behaviour of a configuration only by adding constraints to its store.
+%\marginpar{to be proved for $\exists_x-$ (not needed for Prop.3)}
+
+We now show that $\approx_{\mathit{s}}$, as given in Definition~\ref{def:weaksb}, coincides with the observational equivalence $\sim_o$ (see Definition~\ref{def:obequivalence}). First we recall the notion of and a classic result on \emph{cofinality}: two (possibly infinite) chains $c_0 \leq c_1 \leq \dots$ and  $d_0 \leq d_1 \leq \dots$ are said to be \emph{cofinal} if for all $c_i$ there exists a $d_j$ such that $c_i \leq d_j$ and, vice-versa, for all $d_i$ there exists a $c_j$ such that $d_i \leq c_j$.
+
+\begin{lemma}\label{lem:cofinality} Let $c_0 \leq c_1 \leq \dots$ and $d_0 \leq d_1 \leq \dots $ be two chains. \emph{(1)} If they are cofinal, then they have the same limit, i.e., $\bigvee_i c_i = \bigvee_i d_i$. \emph{(2)} If the elements of the chains are $\otimes$-compact and $\bigvee_i c_i = \bigvee_i d_i$, then the two chains are cofinal.\end{lemma}
+%\marginpar{questo richiede che tell inserisca solo compatti}
+\begin{proof}
+%[of Lemma~\ref{lem:cofinality}]
+Let us tackle $(2)$, and consider the sequence $e_0 = c_0$ and $e_{i} = c_{i+1} \odiv c_i$.
+Each $e_i$ is the difference between two consecutive elements of a chain.
+%
+Since the CLIM is invertible we have $c_k =  \bigotimes_{i \leq k} e_i$ and thus
+$\bigvee_i c_i = \bigotimes_i e_i$. Since each $d_j$ is $\otimes$-compact and
+$d_j \leq \bigotimes_i e_i$, there is a $k$ such that $d_j \leq \bigotimes_{i \leq k} e_i$.
+The same reasoning is applied to the chain $d_0 \leq d_1 \leq \dots $, thus
+the result holds. \qed
+\end{proof}
+
+For proving Proposition~\ref{prop:weaksbequivobs} we now relate weak barbs and fair computations.
+
+\begin{lemma}\label{lem:barbsfair}
+Let $\xi = \gamma_0 \longrightarrow \gamma_1 \longrightarrow \gamma_2 \longrightarrow \ldots$ be a (possibly infinite) fair computation. If $\gamma_0 \Downarrow_d$ then there exists a store $\sigma_i$ in $\xi$ such that $d \leq \exists_{X_i} \sigma_i$ for $X_i = fv(\gamma_i) \setminus fv(\gamma_0)$.
+\end{lemma}
+
+The lemma holds since the language is deterministic and computations fair.
+
+\begin{proposition}\label{prop:weaksbequivobs}
+$A \sim_o B$ if and only if $A \approx_{\mathit{s}} B$.
+\end{proposition}
+%\marginpar{L'unica cosa da provare \`e in realt\`a il Lemma 1}
+\begin{proof}%[of Proposition~\ref{prop:weaksbequivobs}]
+	The proof proceeds as follows.
+	\begin{description}
+		\item[From $\approx_{\mathit{s}}$ to $\sim_o$.] Assume  $\langle A, \bot \rangle \approx_{\mathit{s}} \langle B, \bot \rangle$ and take a $\otimes$-compact $c \in \mathcal{C}^\otimes$. Let
+		
+		\begin{equation}\label{comp:1}\langle A, c \rangle \longrightarrow \langle A_0, \sigma_0 \rangle \longrightarrow \langle A_1, \sigma_1 \rangle \longrightarrow \dots \longrightarrow \langle A_n, \sigma_n \rangle \dots \longrightarrow \dots
+		\end{equation}
+		\begin{equation}\label{comp:2}\langle B, c \rangle \longrightarrow \langle B_0, \rho_0 \rangle \longrightarrow \langle B_1, \rho_1 \rangle \longrightarrow \dots \longrightarrow \langle B_n, \rho_n \rangle \dots \longrightarrow \dots
+		\end{equation}
+		
+		be two fair computations. Since $\approx_{\mathit{s}}$ is upward closed, 
+		$\langle A, c \rangle \approx_{\mathit{s}} \langle B, c \rangle$ and thus $\langle B, c\rangle \Downarrow_{\sigma_i}$ for all $\sigma_i$. By Lemma~\ref{lem:barbsfair}, it follows that there exists an $\rho_j$ (in the above computation) such that 
+		$\exists_{\Gamma_i} \sigma_i \leq \sigma_i \leq \exists_{\Gamma'_j} \rho_j$, and analogously for all $\rho_i$.
+		%there exists a $\sigma_j$ such that $\rho_i \leq \sigma_j$. 
+		Then $\sigma_0 \leq \sigma_1 \leq \dots$  and $\rho_0 \leq \rho_1 \leq \dots$ are cofinal and by Lemma~\ref{lem:cofinality}, it holds that $\bigvee_i \exists_{\Gamma_i} \sigma_i = \bigvee_i \exists_{\Gamma'_i} \rho_i$, which means 
+		$\mathit{Result}(\langle A, c \rangle) = \mathit{Result}(\langle B, c \rangle)$.
+		%\marginpar{before it was $\bigvee_i \Gamma_i \sigma_i$, no $\exists$}
+		
+		\item[From $\sim_o$ to $\approx_{\mathit{s}}$.] Assume $A \sim_o B$. First, we show that $\langle A, c\rangle$ and $\langle B, c\rangle$ satisfy the same weak barbs  for all $c \in \mathcal{C}$. Let (\ref{comp:1}) and (\ref{comp:2}) be two fair computations. Since $A \sim_o B$, then $\bigvee_i \exists_{\Gamma_i} \sigma_i = \bigvee_i \exists_{\Gamma'_j} \rho_i$. Since all (the projections of) the intermediate stores of the computations are $\otimes$-compact,
+		%(by Lemma~\ref{comp}),
+		%\marginpar{da rivedere la sintassi per la tell}
+		then by Lemma~\ref{lem:cofinality}, for all $\sigma_i$ there exists an $\rho_j$ such that $\exists_{\Gamma_i} \sigma_i \leq \exists_{\Gamma'_j} \rho_j$. 
+		Now suppose that $\langle A, c \rangle \Downarrow_d$. By Lemma~\ref{lem:barbsfair}, there exists a $\sigma_i$ 
+		%(in the above computation) 
+		such that $d \leq \exists_{\Gamma_i} \sigma_i$. Thus 
+		%$d \leq \exists_{\Gamma_i} \sigma_i \leq \exists_{\Gamma_i} \rho_j$ that means 
+		$\langle B, c\rangle \Downarrow_d$.
+		
+		It is now easy to prove that
+		$R = \{(\gamma_1, \gamma_2) \mid \exists c. \langle A, c \rangle \longrightarrow^* \gamma_1 \& \langle B, c\rangle \longrightarrow^* \gamma_2\}$
+		is a weak saturated bisimulation (Definition~\ref{def:weaksb}). Take $(\gamma_1 , \gamma_2 ) \in R$.
+		If $\gamma_1 \Downarrow_d$ then $\langle A, c\rangle \Downarrow_d$ and, by the above observation, $\langle B, c\rangle \Downarrow_d$. Since \SCCP is
+		confluent, also $\gamma_2 \Downarrow_d$.
+		The fact that R is closed under $\longrightarrow^*$ is evident from the definition of $R$. While
+		for proving that R is upward-closed take $\gamma_1 = \langle A', \sigma'\rangle$ and $\gamma_2 = \langle B', \rho'\rangle$. By Lemma~\ref{opmonotonicity}  for all $a \in \mathcal{C}, \langle A, c \otimes a\rangle \longrightarrow^* \langle A', \sigma' \otimes a \rangle$ and $\langle B, c \otimes a\rangle \longrightarrow^* \langle B', \rho'  \otimes a \rangle$. Thus, by definition of $R$, $(\langle A',\sigma' \otimes a \rangle, \langle B',\rho' \otimes a\rangle) \in R$. \qed
+	\end{description} 
+\end{proof}
+\end{document}

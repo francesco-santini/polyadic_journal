@@ -1,0 +1,26 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\begin{abstract}
+We present a labelled semantics for Soft Concurrent Constraint Programming (SCCP), a meta-language
+where concurrent agents may synchronise on a shared store by either posting or checking the 
+satisfaction of (soft) constraints. 
+%
+SCCP generalises the classical formalism by parametrising the constraint system 
+over an order-enriched monoid, thus abstractly representing the store with an element 
+of the monoid, and the standard unlabelled semantics just observes store updates.
+%among the main differences with respect to the set-theoretical model, 
+%the monoid operator is not required to be idempotent, thus adding the same information several 
+%times may change the store.
+%
+%After redefining the notion of compactness, 
+The novel operational rules are shown to offer a sound and complete co-inductive 
+technique to prove the original equivalence over the unlabelled semantics.
+%
+Based on this characterisation, we provide an axiomatisation for finite agents.
+% with respect to the relation of  weak bisimilarity.
+\end{abstract}
+
+\end{document}
+%We present a new labelled operational-semantics for the Soft Concurrent Constraint Programming (Soft CCP) language, where concurrent agents synchronize on a shared store by posting and checking the satisfaction of soft constraints. This allows us to introduce a new complete and sound co-inductive reasoning technique to prove observational process-equivalence, where residuation elegantly helps in defining  labels. Clashes among fresh variables are avoided by remembering a global set of used variables. In the paper we also study product-compact elements, and we show how classical Soft CCP can be seen as a particular instance of our framework. 
+%Soft CCP generalizes CCP by parametrising the constraint system over an algebraic structure:  the satisfaction of (soft) constraints is  a score taken from a residuated-monoid enriched with a complete lattice. Since our tensor product is  not idempotent in general, adding the same information several times may change the store, differently from CCP.

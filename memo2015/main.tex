@@ -1,0 +1,334 @@
+\documentclass[submission,copyright,creativecommons]{eptcs}
+\providecommand{\event}{MeMo 2015} % Name of the event you are submitting to
+\usepackage{breakurl}             % Not needed if you use pdflatex only.
+
+\usepackage{latexsym,enumerate}
+\usepackage{amsmath, amssymb, amsxtra, amsfonts}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{marvosym}
+\usepackage{pxfonts}
+\usepackage{framed}
+%\usepackage{times}
+%% New package
+\usepackage{subfiles}
+\usepackage{color}
+
+\def\odiv{\, {\ominus\hspace{-6.8pt} \div} \,}
+\newcommand{\SCCP}{\texttt{SCCP}\xspace}
+\newcommand{\CCP}{\texttt{CCP}\xspace}
+\newcommand{\CCS}{\texttt{CCS}\xspace}
+
+\newcommand\remove[1]{}
+%to remove the proofs on exists and \otimes completeness
+\newcommand{\Exists}{\exists\!\!\exists}
+%\newcommand{\rrarrow}{\longrightarrow}
+\newcommand{\la}{\langle}
+\newcommand{\ra}{\rangle}
+\newcommand{\rarrow}{\rightarrow}
+\newcommand{\longar}{\longrightarrow}
+\newcommand\deff{\mathit{def}}
+\newcommand\conn{\mathit{con}}
+\newcommand\mahh{\mathit{mah}}
+\newcommand{\lan}{\langle}
+\newcommand{\ran}{\rangle}
+\newcommand{\os}{[\![}
+\newcommand{\cs}{]\!]}
+\newcommand{\rrarrow}{\longrightarrow}
+\newcommand{\hiding}{\\exists}
+\newcommand{\restr}{\mid}
+\newcommand{\lrarrow}{{\longrightarrow}}
+\newcommand{\tell}{{\bf tell}}
+\newcommand{\atell}{{\bf atell}}
+\newcommand{\ask}{{\bf ask}}
+\newcommand{\ostop}{{\bf stop}}
+\newcommand{\nask}{{\itshape nask}}
+\newcommand{\update}{{\bf update}}
+\newcommand{\sat}{{\itshape sat}}
+\newcommand{\nil}{{\itshape nil}}
+\newcommand{\true}{{\itshape true}}
+\newcommand{\false}{{\itshape false}}
+\newcommand{\vars}{{\itshape Var}}
+\newcommand{\form}{P \; sat \; \phi}
+\newcommand{\timeout}{{\bf timeout}}
+\newcommand{\NI}{\noindent}
+\newcommand{\bis}{\, \dot{\approx} \,}
+%\newenvironment{program}{\tt \begin{tabbing}pro\={\tt pro}\= clause \kill}{\end{tabbing}}
+\def\ent{\vdash}
+\def\ent{\vdash}
+\def\0{{\mathbf 0}}
+\def\1{{\mathbf 1}}
+\def\C{{\mathcal C}}
+
+%\addtolength{\floatsep}{-4mm}
+%\addtolength{\textfloatsep}{-4mm}
+
+\makeatletter
+\renewcommand{\paragraph}{%
+	\@startsection{paragraph}{4}%
+	{\z@}{1ex \@plus 1ex \@minus .2ex}{-1em}%
+	{\normalfont\normalsize\bfseries}%
+}
+\makeatother
+
+
+%% Commands by Luis
+\usepackage{commands}
+
+
+%%  Tell me if you like this title. It's ok if you want to keep the old one.
+%%
+\title{Recovering a Labelled Semantics\\ for Soft CCP with Local Variables\thanks{Research 
+		partially supported 
+		%by the EU FP7-ICT IP 257414 ASCENS, 
+		by the MIUR PRIN 2010LHT4KM CINA
+		and 2010XSEMLC ``Security Horizons''.
+	}
+}
+
+
+
+\author{Fabio Gadducci
+	\institute{Dipartimento di Informatica, \\ Universit\`a di Pisa, Italy}
+	\email{gadducci@di.unipi.it}
+	\and
+	Francesco Santini
+	\institute{IIT-CNR, \\
+		Pisa, Italy}
+	\email{\quad francesco.santini@iit.cnr.it}
+}
+\def\titlerunning{Recovering a Labelled Semantics for Soft CCP}
+\def\authorrunning{F. Gadducci \& F. Santini}
+
+
+\begin{document}
+
+
+
+%\author{Fabio Gadducci\inst{1} and Francesco Santini\inst{2}}
+%\institute{Dipartimento di Informatica, Universit\`a di Pisa\\
+%\email{gadducci@di.unipi.it}
+%\and Istituto di Informatica e Telematica, CNR Pisa\\
+%\email{francesco.santini@iit.cnr.it}
+%}
+
+\maketitle
+
+
+\paragraph{Extended Abstract.}
+
+
+While the dynamics of a computational system is nowadays more often
+specified operationally by means of a reduction system (RS), a
+labelled semantics is needed in order to take advantage of the tools
+for checking observational properties and equivalences.  The
+methodological advance of the seminal paper \cite{Leifer:00:CONCUR} is
+the recognition that labelled semantics should be derivable from
+reduction semantics in a uniform and systematic way.  The proposal
+of~\cite{Leifer:00:CONCUR} is to build a labelled transition system
+(LTS) from a RS by identifying labels as the \emph{minimal contexts}
+needed to trigger a reduction.
+
+Unfortunately, this notion of minimality, called \emph{relative
+  pushout}, proved to be difficult to check and apply, also for most
+basic calculi such as CCS~\cite{BonchiGK09, Milner06}. A
+recent proposal~\cite{BonchiGM14} suggests to remove the requirement
+of minimality, in order to characterize a class of LTSs verifying
+weaker coherence properties, yet ensuring the adequacy of the
+observational equivalence.  
+
+One of the testbed of the proposal has been
+\emph{Concurrent Constraint Programming} (CCP)~\cite{popl91}, a
+language based on a shared-memory communication pattern: processes
+interact by either posting or checking partial information,
+represented as constraints in a global store.
+%
+CCP belongs to the larger family of process calculi, thus a syntax-driven operational semantics 
+represents the computational steps. For example, the term $\tellp{c}$ is the process that posts $c$ in the store, 
+and the term $\askp{c}{P}$ is the process that executes $P$ if $c$ can be derived from the information 
+in the store. 
+%Furthermore $P \parallel Q$ represents the parallel execution of $P$ and $Q$, and $\localp{x}{P}{}$ 
+%denotes a process $P$ with a private/local variable $x$.
+
+The formalism is parametric with respect to the entailment relation. Under the name of \emph{constraint system}, 
+the information recorded on the store is structured as a partial order (actually, a lattice) $\leq$, where $c\leq d$ means that $c$ can be derived from $d$.
+%
+Under a few requirements over such systems, CCP has been provided with (coincident) operational and denotational semantics. 
+
+
+
+A key aspect of CCP is the \emph{idempotency} of constraint composition:
+%(i.e., the lub $\sqcup$, given by the closure of the union~\cite{popl91}): 
+adding an information twice does not change the store. 
+%
+In the soft variant of the formalism (Soft CCP, SCCP~\cite{scc}),
+constraint systems may distinguish the number of occurrences of a  
+piece of information.
+% i.e., we may have $c \sqcup c \not= c$. 
+% and the lattice of information is replaced by an ordered monoid, there the monoidal operation represents information combination.
+%
+Dropping idempotency requires a full reworking of the theory. Although an operational semantics for SCCP has been devised \cite{scc},
+neither the denotational nor the labelled one has been reintroduced. 
+
+
+%As a language, SCCP has been used as a specification formalism for agents collaborating 
+%via a shared knowledge basis, possibly with temporal features~\cite{coordination08}, with applications to the negotiation of Service Level %Agreements~\cite{ccpi,fun11}, or the enforcement of ACL-based access control~\cite{fun14}.
+
+
+The work in \cite{popl91} establishes a denotational semantics
+for CCP and an equational theory for infinite agents. More recently, in \cite{pippo} the authors
+prove that the axiomatisation is underlying a specific weak bisimilarity among agents,
+thus providing a clear operational understanding.
+%
+The key ingredients are a complete lattice as the domain of the store, with least upper bound for constraint
+combination, and a notion of compactness such that domain equations for 
+the parallel composition of 
+recursive agents are well-defined.
+% (more on this later).
+%
+The soft version~\cite{scc} drops the upper bound for combination
+in exchange of a monoidal operator. Thus, the domain is just a (not
+necessarily complete) partial order, possibly with finite meets and a residuation operator (a kind of
+inverse of the monoidal one) in order to account for algorithms concerning constraint propagation.
+%
+Indeed, the main use of SCCP has been in the generalisation of classical constraint satisfaction
+problems, hence 
+%the emphasis on e.g. local consistency techniques~\cite[\S~3]{handbook}, and 
+the lack of investigation about denotational semantics.
+
+
+
+
+In~\cite{coord} we connected the works on the soft~\cite{scc} and the classical 
+(also indicated in the literature as ``crisp'')~\cite{pippo,popl91} 
+paradigm by investigating
+a labelled (and an unlabelled) semantics for a deterministic fragment of SCCP. In particular, the result 
+was a mix of those investigated in the two communities, namely, a monoid whose underlying set of elements
+form a complete lattice.  Residuation theory 
+provided an elegant way to define a weak inverse operator of tensor $\otimes$ with the purpose to  determine the 
+minimal information that enables the firing of actions in the LTS, thus distilling a suitable notion of labelled transition.
+
+The operational semantics chosen in~\cite{coord} favoured a global view of  variables, namely, the agent $\exists_x A$, roughly 
+corresponding to an existential quantification over the variable $x$ of the agent $A$, would evolve to the agent 
+$A[^y/_x]$, for $y$ a fresh variable (with respect to the agent $A$ and the store it is valued in).
+In this work we consider instead local variables, where the hiding operator carries some information on the variables it abstracts.
+More precisely, according to~\cite{extendedHiding} we consider an extended operator $\exists_x^\sigma$, for $\sigma$ the local store.
+Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide} in Tab.~\ref{fig:hiding}. The intuition is that variable $x$ may be local to a component $\exists_x \sigma'$ of the store $\sigma$, yet visible at a global level: we must then evaluate $A$ in the store
+when the local $x$ is hidden, yet the possible duplications are removed (e.g., $\exists_x \sigma'$ may already occur in the global store $\sigma$). The final store intuitively contains in $\sigma_1$ the original $\sigma'$ increased by what has been added by the step. 
+
+In the labelled version of the rule ({\bf L-Hide} in Tab.~\ref{fig:hiding}) we rename the global $x$ with a fresh variable $z$, instead of hiding $x$ in the global store, as we do in the corresponding unlabelled rule. We accomplish this in order
+to keep track of the global $x$ in $\alpha$: finally, in the result we restore the occurrences of $z$ back to $x$.
+%, i.e., $\alpha[x/z]$.
+
+The work is rounded up by a preliminary correspondence results between fair computations and bisimulation for soft CCP with 
+local variables.
+
+%In this setting CCP has much to offer, besides to other applications as the negotiation of Service Level Agreements~\cite{ccpi,fun11}, or the enforcement of ACL-based access control~\cite{sefm12}.
+%
+
+\vspace{-.5cm}
+\def\odiv{\; {\ominus\hspace{-7.1pt} \div} \;}
+\def\odivvv{\; {\ominus\hspace{-7.1pt} \div} \;}
+\begin{table}
+\begin{center}
+	\scalebox{0.9}{
+		\begin{tabular}{llll}
+			$\frac {\displaystyle \langle A, \sigma' \otimes \exists_x \sigma_0
+				\rangle \rrarrow \langle B, \sigma'' \rangle \ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'} 
+			{\displaystyle\langle \exists^{\sigma'}_x A,
+				\sigma \rangle \rrarrow \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv \exists_x \sigma_0}$
+			&\bf{Hide} &\vspace{0.2cm} \\ 
+ 			%$\frac {\displaystyle \la A[z/x], c[z/x] \otimes \sigma \ra \xrightarrow{\;  \alpha \;} \la
+			%B,  c' \otimes \sigma \otimes \alpha \ra} {\displaystyle\la \exists^c_x A,
+			%\sigma\ra \xrightarrow{\;  \alpha \;} \la \exists^{c'[x/z]}_x B[x/z], \exists_x(c'[x/z]) \otimes \sigma \otimes \alpha \ra} \ \
+			% {\it x\not\in fv(c'), z \not\in (fv(A) \cup fv(c \otimes \sigma \otimes \alpha)) }$
+			$\frac {\displaystyle \la A, \sigma' \otimes \sigma_0[^z/_x] \ra \xrightarrow{\;  \alpha \;}
+				\la B,  \sigma" \ra\ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma', 
+				                     x\not\in sv(\alpha), z \not\in fv(A) \cup sv(\sigma)\cup sv(\sigma')}
+			{\displaystyle\la \exists^{\sigma'}_x A, \sigma\ra \xrightarrow{\;  \alpha[^x/_z] \;}
+				\la \exists^{\sigma_1}_x B, \sigma_0 \otimes \alpha[^x/_z] \otimes \exists_x\sigma_1 \ra
+				\ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma" \odiv (\alpha \otimes \sigma_0[^z/_x])}$
+			&\bf{L-Hide}&
+		\end{tabular}
+	}
+\end{center}
+%\hfill
+\caption{Unlabelled and labelled version of the rule for the local hiding of variables.}
+\label{fig:hiding}
+\end{table}
+
+
+%We shall argue that one of the advantages of the new technique over the previous approach is that it may reduce 
+%the number constraint entailment checks that are needed to decide the equivalence. 
+
+%
+%We comply to our design criteria with the fact the processes in the extended language can be seen as extensive, monotonic functions as well as formulae of a persistent version of affine-linear logic.  We first introduce a notion of constraint systems with emphasis on multiplication of information. We then introduce a new complete and sound co-inductive reasoning technique to prove observational process equivalence. We show intuitive CCP equalities do not hold any longer in CCP.  We show that a family of soft-constraint languages can be seen as instances of the calculus here presented and hence they can benefit from the co-inductive techniques here proposed.  
+
+%For this reason we will refer to $ccp$ with multiplicity as soft $ccp$ (sccp).
+
+
+
+%
+%The advent of phenomena such as social networks have have changed substantially concurrent and distributed systems
+%
+% In past research on concurrent distributed systems the emphasis has mostly been on consistency, fault tolerance, resource management and related topics; these aspects were all characterized by interaction between processes. The new era of concurrent systems is marked by the importance of managing access to information to a much greater degree than before. 
+
+
+%% Argue CCP is the ideal calculus to model  posting in shared medium.
+
+%%The argue than posting multiplicity (non idempotency) is important
+
+
+%% Argue that multiplicity allows for wider phenomena without losing the declaretive nature
+%% of CCP:  Programs are formulae of a persistent version of (affine) linear logic. Also
+%% Confluence still holds.
+
+%%  Contribution: A co-inductive theory of the calculus. Technical issues: Subtle issue of copying stores.
+%%  
+
+%%
+
+
+
+
+%
+%The title, we agree, is a bit pretentious$\ldots$ It seems to wipe out, in a second, various years of work
+%on the soft paradigm!
+%%
+%Yet, it is an homage to the seminal paper by Prakash and others that still bears some relevance
+%for the current research.
+%%
+%Let us try to be more precise. The work in \cite{popl91} was establishing a denotational semantics
+%for~\textsc{ccp} and a equational theory for infinite agents. More recently, \cite{pippo} was able
+%to show that the equational axioms were underlying a specific weak bisimilarity among agents,
+%thus providing a clear operational understanding.
+%%
+%The key ingredients were a complete lattice as the domain of the store, with least upper bound for constraint
+%combination, and a notion of compactness such that domain equations for the parallel composition
+%of recursive agents would be well-defined (more on this later).
+%%
+%On the contrary, the soft version introduced in~\cite{scc} dropped the upper bound for combination
+%in exchange of a more general monoidal operator. Thus, the domain was potentially just a (not
+%necessarily complete) partial order, possibly with finite meets and a residuation operator (kind of
+%inverse of the monoidal one) in order to account for algorithms concerning constraint propagation.
+%%
+%Indeed, the main use of soft constraint has been as a generalisation of classical constraint satisfaction
+%problems, hence the emphasis on e.g. local consistency techniques~\cite[\S~3]{handbook}, and the
+%lack of investigation about e.g compactness and denotational semantics.
+%
+%The aim of the paper is thus to connect the work on the soft and crisp paradigm by investigating both
+%a denotational and an operational semantics for soft CCP with recursion. The do aim will be a mix of
+%those investigated in the two communities, namely, an infinitary monoid whose underlying set of elements
+%form a compete lattice. We will hone recast first of all the notion of compactness, and then the semantics,
+%for soft CCP, thus making the work a direct extension of the proposal for the crisp language.
+
+\bibliographystyle{eptcs}
+\bibliography{softccp}
+
+%\newpage
+%\subfile{appendix.tex}
+
+\end{document}

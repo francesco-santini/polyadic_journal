@@ -1,0 +1,143 @@
+\documentclass[festschrift13.tex]{subfiles}
+\begin{document}
+
+\section{Discussion}
+
+\subsection{Axiomatization}
+
+Consider the following axioms:
+\begin{equation} \label{eq:MP}
+(\tellp{c} \parallel (\askp{(d)}{A})) = (\tellp{c} \parallel A) \mbox{\ \ \ \ if } d \leq c
+\end{equation}
+
+\begin{equation}
+(\askp{(c)}{\stopp}) = \stopp
+\end{equation}
+
+\begin{equation}
+\askp{(c)}{(\askp{(d)}{A})} = \askp{(c \otimes d)}{A}
+\end{equation}
+
+\begin{equation}
+\tellp{\bot} = \stopp
+\end{equation}
+
+\begin{equation}
+A \parallel B = B \parallel A
+\end{equation}
+
+\begin{equation}
+A \parallel (B \parallel C) = (A \parallel B) \parallel C
+\end{equation}
+
+\begin{equation}
+A \parallel \stopp = A
+\end{equation}
+
+\begin{equation}
+(\tellp{c} \parallel \tellp{d}) =  \tellp{c \otimes d}
+\end{equation}
+
+\begin{equation}
+\askp{(c)}{(A \parallel B)} = (\askp{(c)}{A}) \parallel (\askp{(c)}{B})
+\end{equation}
+
+\begin{equation}
+\askp{(c)}{(A \parallel (\askp{d}{B}))} = \askp{(c)}{(A \parallel B)}
+\end{equation}
+
+Using the axioms above, we conjecture that any process (without existential quantifiers, for now) can be
+transformed into the following normal form:
+\begin{definition}
+We say that a process $A$ is in normal form iff $A = \stopp$ or:
+\[ \tellp{c} \parallel \Pi_{i=1}^n (\askp{(d_i)}{B_i}) \]
+where for each $i$: (1) $B_i$ is in normal form and (2) $d_i$ is greater than any guard in $B_i$
+(3) all $d_i$'s are pairwise different.
+\end{definition}
+Note: Condition (2) must be stated more formally. \\
+
+We can also see that the equivalent to L11 is false in this setting, namely consider the following axiom:
+\begin{equation} \label{eq:wrongMP}
+((\askp{(a)}{b}) \parallel (\askp{(c)}{d})) = ((\askp{(a)}{b}) \parallel (\askp{(c \otimes b)}{d})) \mbox{\ \ \ if } c \geq a
+\end{equation}
+If we take $a = \bot$ and $c \leq b$ then on can check that the process on the left side is able to produce $d$
+while the right side cannot since $b \not\geq (c \otimes b)$.
+
+Notice that Axiom \ref{eq:MP} is not present in the original ccp axioms, this is due to the fact
+that L11 works in a similar manner (check the step from the second to the third line):
+\begin{equation}
+\begin{split}
+(\tellp{c} \parallel \tellp{d}) = \\
+((\askp{\bot}{\tellp{c}}) \parallel (\askp{\bot}{\tellp{d}})) = \\
+((\askp{\bot}{\tellp{c}}) \parallel (\askp{(c \lub \bot)}{\tellp{d}})) = \\
+(\tellp{c} \parallel \askp{(c)}{\tellp{d}})
+\end{split}
+\end{equation}
+In ccp, L11 is a more general rule than Axiom \ref{eq:MP}, however as we have seen
+L11 does not hold in the soft constraint setting, thus we need Axiom \ref{eq:MP} instead.
+
+\subsection{alternative normal form}
+Using the axioms above, any process (without existential quantifiers, for now) can be
+transformed into the following normal form:
+\begin{definition}
+A process $A$ is in normal form if wither $A = \stopp$ or it has the shape
+\[ \Pi_{i=1}^n \askp{(c_i)}{\tellp{d_i}} \]
+such that $d_i \neq \bot$ and moreover $c_i \leq c_j \implies c_j \odiv c_i \not \leq d_i$.
+\end{definition}
+
+Note that this implies that all $c_i$'s are pairwise different. As a remark, note that axioms $1$ and $4$ imply that
+$\askp{(\bot)}{\tellp{c}} = \tellp{c}$.
+
+
+\begin{proposition}
+Using axioms $1$ to $9$, each process (without quantifiers) is equivalent to another one in normal form.
+\end{proposition}
+\begin{proof}
+It is relatively easy to prove that each process is either $\stopp$ or it is equivalent to one of the shape 
+\[ \Pi_{i=1}^n \askp{(c_i)}{\tellp{d_i}} \]
+Indeed, axiom $9$ allows to distribute asks with respect to parallel composition, and axiom $3$ aggregate them.
+Instead, axioms $8$ aggregates tells. Now, axioms $2$ and $4$ guarantees that $d_i \neq \bot$.
+Finally, let us assume that we have $\askp{(c_1)}{\tellp{d_1}} \parallel \askp{(c_2)}{\tellp{d_2}}$ such that
+$c_1 \leq c_2$. Since the semiring is invertible, thanks to $3$ and $9$, this is equivalent to $\askp{(c_1)}{(\tellp{d_1} \parallel \askp{(c_2\odiv c_1)}}{\tellp{d_2})}$. 
+%
+Now, should $c_2\odiv c_1 \leq d_1$, thanks to axiom $1$ we would get that the process is now equivalent to 
+$\askp{(c_1)}{\tellp{d_1} \parallel \tellp{d_2}}$, hence to $\askp{(c_1)}{\tellp{d_1 \oplus d_2}}$.
+\end{proof}
+
+\subsection{Functional Interpretation of soft ccp}
+
+The following function allows us to interpret a soft ccp process:
+\begin{definition}
+Let us define $f_A: \Con_0 \rrarrow \Con_0 \times \Proc$ as follows:
+\begin{itemize}
+ \item Case $A = \stopp$: $f_A(e) = (e, \stopp)$
+ \item Case $A = \tellp{c}$: $f_A(e) = (c \otimes e, \stopp)$
+ \item Case $A = \askp{(c)}{B}$: $f_A(e) =$ If $c \leq e$ then $f_B(e)$ else $(e, A)$
+ \item Case $A = B \parallel C$: $f_A(e) =$
+\begin{itemize}
+  \item Let $(e_B, B') = f_B(e)$ and $(e_C, C') = f_C(e)$.\\
+  If $B'=\stopp$ then $f_C(e_B)$. \\
+  If $C'=\stopp$ then $f_B(e_C)$. \\
+  Else:
+  \begin{itemize}
+  \item Let $(e_C', C'') = f_C'(e_B \otimes e_C)$.\\
+  If $e_C' \neq (e_B \otimes e_C)$ then $f_{Q' \parallel R''}(e_C')$\\
+  Else:
+     \begin{itemize}
+      \item Let $(e_B', B'') = f_B'(e_B \otimes e_C)$.\\
+      If $e_B' \neq (e_B \otimes e_C)$ then $f_{Q'' \parallel R''}(e_B')$\\
+      Else $(e_B \otimes e_C, B'' \parallel C'')$
+     \end{itemize}
+  \end{itemize}
+\end{itemize}
+\end{itemize}
+\end{definition}
+
+We claim that this function fully characterizes the observable behavior in soft ccp.
+
+\begin{theorem}
+Let $P$ be a soft ccp process. $Obs(P)(c) = d$ iff $f_P(c) = d$.
+\end{theorem}
+
+
+\end{document}

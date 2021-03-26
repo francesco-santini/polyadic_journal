@@ -1,0 +1,205 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{Introduction}\label{sec:introduction}
+
+%% First paragraph: Let's say something motivating about posting on social networks, no channels.
+
+%Recently, multi-agent systems have changed substantially with the advent of phenomena such as \emph{social networks}.  These systems can be roughly described as (group of) agents that interact with each other by \emph{posting} information in a shared-medium.  The posted information can be partial (e.g., ``I am somewhere in Europe'') and it can be factual (``today is Friday") and even doxastic (e.g.,  beliefs, opinion, lies).  We believe that any model of this new era of systems should single out these inherent aspects rather than encode them indirectly.
+
+\emph{Concurrent Constraint Programming} (CCP)~\cite{popl91} is  a language based on a shared-memory communication pattern: processes may interact 
+by either posting or checking partial information, which is represented as constraints in a global store. 
+%
+CCP belongs to the larger family of process calculi, thus a syntax-driven operational semantics 
+represents the computational steps. For example, the term $\tellp{c}$ represents a process that posts $c$ in the store, 
+and the term $\askp{c}{P}$ is the process that executes $P$ if $c$ can be derived from the information 
+in the store. 
+%Furthermore $P \parallel Q$ represents the parallel execution of $P$ and $Q$, and $\localp{x}{P}{}$ 
+%denotes a process $P$ with a private/local variable $x$.
+
+The formalism is parametric with respect to the entailment relation. Under the name of \emph{constraint system}, 
+the information recorded on the store is structured as a partial order (in fact, a lattice) $\leq$, where $c\leq d$ means that $c$ can be derived from $d$.
+%
+Under a few requirements over such systems, CCP has been provided with (coincident) operational and denotational semantics. Recently, a
+labelled semantics has also been provided, and the associated weak bisimilarity proved to coincide with the original semantics~\cite{pippo}.
+
+
+%Another distinctive feature of CCP is its dual operational and declarative view of of processes: 
+%they can be thought of as both specifications and concurrent computing agents. 
+%As a specifications, a process $P$ can be viewed as first-order logic formula $F_P$. E.g., if $P = \localp{x}{Q}{}$ then $F_P = \exists x: F_Q$ and $P \parallel Q$ corresponds to
+%$F_P \wedge F_Q$.  As computing agents, each CCP process $P$ seen as as closure operator $f_P$ wrt $\leq$: i.e. (1) $c \leq f_P(c)$ (extensive), (2)  $f_P(f_P(c))=f_P(c)$
+%(idempotence) and (3) $f_P(c)\leq f_P(d)$ whenever $c\leq d$ (monotonic). 
+
+A key aspect of CCP is the \emph{idempotency} of the operator for composing constraints:
+%(i.e., the lub $\sqcup$, given by the closure of the union~\cite{popl91}): 
+adding the same information twice does not change the store. 
+%
+On the contrary, the soft variant of the formalism (Soft CCP, or just SCCP~\cite{scc}) drops idempotency: 
+constraint systems in SCCP may distinguish the number of occurrences of a  
+piece of information.
+%; i.e., we may have $c \sqcup c \not= c$. 
+% and the lattice of information is replaced by an ordered monoid, there the monoidal operation represents information combination.
+%
+Dropping idempotency requires a complete reworking of the theory. Although an operational semantics for SCCP has been devised \cite{scc}, hitherto 
+neither the denotational nor the labelled one has been reintroduced. 
+%
+This is unfortunate since due to its generality, suitable SCCP instances has been successfully applied as a specification formalism for 
+negotiation of Service Level Agreements~\cite{ccpi}, or the enforcement of ACL-based access control~\cite{sefm12,fun14}. 
+
+%Furthermore,  other meaningful families of complex concurrent
+%systems such a social networks, whose agents' interaction via posting in a shared  medium are reminiscent of the CCP model, 
+%may benefit from a more general theory of SCCP. In fact, in 
+%social networks multiple and single posting (of the same information) may be distinguished.
+%
+
+
+
+%
+%Our general goal is to generalise the theory as well as the reasoning techniques of CCP to make it into a more robust model for multi-agent concurrent systems like those above-mentioned. Our design criteria is that the extended model should be conservative as possible, and in particular  it should preserve a dual operational declarative view of processes.
+%
+%In this paper we wish to address an issue that has been hitherto little considered in CCP: the multiplicity of posting information in CCP.  Multiplicity of messages is crucial in social networks.  Consider for example breaking news,  commercial information, and political opinions, and in general repetitive messages. They all may cause a different reaction than if it occurred only a few times.
+%
+%Nevertheless, allowing for multiplicity of information in CCP implies  renouncing, in general, to the idempotence of the CCP processes (2) as well as the correspondence between $P \parallel Q$ and $F_P \wedge F_Q$. This leads to technical challenges as  much of the simplicity of CCP is based on the premise that posting multiple times is the same as posting once: (2) implies that $f_P(c)$ is a fixed point of $f_P(\cdot)$ and that $P \parallel P$ equals $P$.  Interestingly, just as its CCP,  CCP with multiplicity is still a confluent calculus: the final result of the computation is the same regardless of the execution order of parallel components. 
+%
+%In this setting CCP has much to offer, besides to other applications as the negotiation of Service Level Agreements~\cite{ccpi,fun11}, or the enforcement of ACL-based access control~\cite{sefm12}.
+%
+
+As a language, SCCP has been used as a specification formalism for agents collaborating 
+via a shared knowledge basis, possibly with temporal features~\cite{coordination08,tplp15}.
+Thus, on a methodological level, the development of behavioural equivalences for SCCP may result in the improvement	
+on the analysis techniques for agents that need to reason guided by their preferences, more so if their knowledge 
+ is not complete. 
+%
+%Indeed, the paper shows that systems specified by SCCP may benefit from the feasible proof and verification methods 
+%typically associated with bisimilarity, compared with the classical analysis based on (possibly infinite) sequences of computations.
+%%
+%This is true also whenever agents have to coordinate despite the global problem being over-constrained (i.e., admitting no solution),
+%and \emph{simulation} may serve as a powerful mechanism for distilling suitable approximated solutions.
+
+In more general terms, SCCP  represents, by its parametric nature, a formal meta-model where to develop different constraint-languages over different (weighted or crisp) logics, as it will clearly appear from Section~\ref{sec:detSCCP}.
+
+%Agents negotiating Quality of Service can benefit from this new language, by coordinating among 
+%themselves and mediating their preferences.
+%
+%Degrading relaxations can be used to find still-acceptable solutions, e.g., in case agents have to coordinate despite the global problem is over-constrained (i.e., no crisp solution). The underlying high-complexity \emph{Constraint Satisfaction Problem} usually requires a combination of heuristics and combinatorial search~\cite{handbook} to be efficiently solved. At the same time, such form of declarative programming allows for a plain listing of needs on the agents' side. Checking if two such agents behave the same can be adopted to replace one with another with the purpose to accomplish a given task, e.g., in case an agent stops working during a (combinatorial) auction~\cite{coordination08}, but the bidder has a backup agent.}
+
+ 
+The work in \cite{popl91} establishes a denotational semantics
+for CCP and an equational theory for infinite agents. More recently, in \cite{pippo} the authors
+prove that the axiomatisation is underlying a specific weak bisimilarity among agents,
+thus providing a clear operational understanding.
+%
+The key ingredients are a complete lattice as the domain of the store, with least upper bound for constraint
+combination, and a notion of compactness such that domain equations for 
+the parallel composition of 
+recursive agents would be well-defined.
+On the contrary, the soft version~\cite{scc} drops the upper bound for combination
+in exchange of a more general monoidal operator. Thus, the domain is potentially just a (not
+necessarily complete) partial order, possibly with finite meets and a residuation operator (a kind of
+inverse of the monoidal one) in order to account for algorithms concerning constraint propagation.
+%
+Indeed, the main use of SCCP has been in the generalisation of classical constraint satisfaction
+problems, hence 
+%the emphasis on e.g. local consistency techniques~\cite[\S~3]{handbook}, and 
+the lack of investigation about e.g compactness and denotational semantics. 
+
+
+The objective of our work is the development of a general theory for the operational %as well as the denotational 
+semantics
+% generalize the theory as well as the reasoning techniques 
+of SCCP, via the introduction of suitable observational and behavioural equivalences.
+%
+Reaching this objective is technically challenging, since most of the simplicity of CCP is based precisely 
+on the premise that posting an information multiple times is the same as posting it only once. The first step consists in recasting the notion of compactness from crisp to soft;
+we  then introduce a novel labelled semantics for SCCP which will allow us to give a sound and complete  
+technique to prove the  equivalence over the unlabelled semantics.
+
+
+%\textcolor{red}{
+We will build our framework by supposing to have a global store, that is shared by all the agents. Such a premise is required by how we design the  transition system: in fact, it is labelled with a shared set of variables (i.e., $\Delta$)  as a means to keep track of variables' name after renaming them through the hiding operator. Since variables support the constraints posted to the store, renaming is more subtle than in other algebras: the store retains a memory of former names. In the future we plan to investigate how hiding can be performed in case of stores local to each agent (see Sec.~\ref{sec:conclusions}).
+%}
+
+
+
+This paper details the work in \cite{coordination15} and extends it  by  reconnecting the presented framework with the classical work on  soft 
+constraint systems~\cite{scc} (see Section~\ref{sec:softconstraints}). Section~\ref{sec:background} opens the paper with the technical background, presenting also some novelty as $\otimes$-compact elements. Section~\ref{sec:detSCCP} presents the semantics of a deterministic fragment of a constraint language, together with fundamental concepts, e.g., observables, confluence, observational equivalence, and, in Section~\ref{sec:saturated}, the notion of saturated bisimulation. Section~\ref{sec:ltsSCCP} derives a labelled transition system for SCCP, soundness and completeness with respect to the unlabelled one, and weak/strong bisimilarity relations. Section~\ref{sec:axiomatiastion} shows a sound and complete axiomatisation for a finite fragment of the language. Section~\ref{sec:softconstraints} presents a case study concerning classical SCCP~\cite{scc}, while Section~\ref{sec:examples} presents some related examples.
+Finally, Section~\ref{sec:conclusions} wraps up the paper with conclusions and future work.
+	
+	 
+%(also indicated in the literature as ``crisp'')~\cite{popl91,pippo} 
+%paradigm by investigating
+%a labelled semantics for SCCP. In particular, the results will be a mix of
+%those investigated in the two communities, namely, a monoid whose underlying set of elements
+%form a complete lattice.  We will recast the notion of compactness, and afterwards the SCCP semantics, thus making the work 
+%a direct extension of the proposal for the crisp language. 
+%We will then introduce a novel labelled semantics for SCCP which will allow us to give a sound and complete  
+%technique to prove the  equivalence over the unlabelled semantics. 
+
+
+
+%We shall argue that one of the advantages of the new technique over the previous approach is that it may reduce 
+%the number constraint entailment checks that are needed to decide the equivalence. 
+
+%
+%We comply to our design criteria with the fact the processes in the extended language can be seen as extensive, monotonic functions as well as formulae of a persistent version of affine-linear logic.  We first introduce a notion of constraint systems with emphasis on multiplication of information. We then introduce a new complete and sound co-inductive reasoning technique to prove observational process equivalence. We show intuitive CCP equalities do not hold any longer in CCP.  We show that a family of soft-constraint languages can be seen as instances of the calculus here presented and hence they can benefit from the co-inductive techniques here proposed.  
+
+%For this reason we will refer to $ccp$ with multiplicity as soft $ccp$ (sccp).
+
+
+
+%
+%The advent of phenomena such as social networks have have changed substantially concurrent and distributed systems
+%
+% In past research on concurrent distributed systems the emphasis has mostly been on consistency, fault tolerance, resource management and related topics; these aspects were all characterized by interaction between processes. The new era of concurrent systems is marked by the importance of managing access to information to a much greater degree than before. 
+
+
+%% Argue CCP is the ideal calculus to model  posting in shared medium.
+
+%%The argue than posting multiplicity (non idempotency) is important
+
+
+%% Argue that multiplicity allows for wider phenomena without losing the declaretive nature
+%% of CCP:  Programs are formulae of a persistent version of (affine) linear logic. Also
+%% Confluence still holds.
+
+%%  Contribution: A co-inductive theory of the calculus. Technical issues: Subtle issue of copying stores.
+%%  
+
+%%
+
+
+
+
+%
+%The title, we agree, is a bit pretentious$\ldots$ It seems to wipe out, in a second, various years of work
+%on the soft paradigm!
+%%
+%Yet, it is an homage to the seminal paper by Prakash and others that still bears some relevance
+%for the current research.
+%%
+%Let us try to be more precise. The work in \cite{popl91} was establishing a denotational semantics
+%for~\textsc{ccp} and a equational theory for infinite agents. More recently, \cite{pippo} was able
+%to show that the equational axioms were underlying a specific weak bisimilarity among agents,
+%thus providing a clear operational understanding.
+%%
+%The key ingredients were a complete lattice as the domain of the store, with least upper bound for constraint
+%combination, and a notion of compactness such that domain equations for the parallel composition
+%of recursive agents would be well-defined (more on this later).
+%%
+%On the contrary, the soft version introduced in~\cite{scc} dropped the upper bound for combination
+%in exchange of a more general monoidal operator. Thus, the domain was potentially just a (not
+%necessarily complete) partial order, possibly with finite meets and a residuation operator (kind of
+%inverse of the monoidal one) in order to account for algorithms concerning constraint propagation.
+%%
+%Indeed, the main use of soft constraint has been as a generalisation of classical constraint satisfaction
+%problems, hence the emphasis on e.g. local consistency techniques~\cite[\S~3]{handbook}, and the
+%lack of investigation about e.g compactness and denotational semantics.
+%
+%The aim of the paper is thus to connect the work on the soft and crisp paradigm by investigating both
+%a denotational and an operational semantics for soft CCP with recursion. The do aim will be a mix of
+%those investigated in the two communities, namely, an infinitary monoid whose underlying set of elements
+%form a compete lattice. We will hone recast first of all the notion of compactness, and then the semantics,
+%for soft CCP, thus making the work a direct extension of the proposal for the crisp language.
+
+\end{document}
+

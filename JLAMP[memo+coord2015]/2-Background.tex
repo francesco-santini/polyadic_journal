@@ -1,0 +1,444 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{The Algebraic Background}\label{sec:background}
+
+This section recalls the main notions we are going to need later on. First of all, we present some basic facts 
+concerning monoids~\cite{CLIM} enriched over complete lattices. These are used to recast the standard 
+presentation of the soft constraints paradigm, and to generalise the classical crisp one.
+%
+% some constructions that are needed later on
+%(such as resolution operator). Then, we present soft constraints systems~\cite{jacm} and the deterministic
+%fragment of recursive soft concurrent constraint programming(thus extending~\cite{scc}).
+
+\subsection{Lattice-enriched Monoids}\label{sec:lem}
+\begin{definition}[Complete lattices]
+A partial order (PO) is a pair $\langle A, \leq \rangle$ such that
+$A$ is a set of values and $\leq \,\,\subseteq A \times A$ is a reflexive, transitive, and
+anti-symmetric  relation.
+A complete lattice (CL) is a PO such that any subset of $A$ has a least upper bound (LUB).
+\end{definition}
+
+We denote as $\bigvee X$ the necessarily unique LUB of a subset $X \subseteq A$, and explicitly $\bot$ and $\top$ if
+we are considering the empty set and the whole $A$, respectively: the former is the bottom and
+the latter is the top of the PO.
+%
+Obviously, CLs also have the greatest lower bound (GLB) for any subset $Y \subseteq A$, denoted as $\bigwedge Y$.
+In the following we fix a CL ${\mathbb C} = \langle A, \leq \rangle$.
+
+\begin{definition}[Compact elements]
+An element $a \in A$ is compact (or finite) if whenever $a \leq \bigvee Y$ there exists a finite subset
+$X \subseteq Y$ such that $a \leq \bigvee X$.
+%
+%Let $A^C \subseteq A$ be the set of compact elements of ${\mathbb C}$.
+%Then ${\mathbb C}$ is algebraic if $\forall c \in A. c = \bigvee \{ d \in A^C \mid d \leq c\}$.
+\end{definition}
+
+
+Note that for complete lattices the definition of compactness given above coincides with the one using
+directed subsets. It will be easier to generalise it, though, to compactness with respect to the monoidal operator (see Definition~\ref{def:compactness}).
+%
+We let $A^C \subseteq A$ denote the set of compact elements of ${\mathbb C}$. 
+
+\begin{example}
+Note that $A^C$ might be trivial. Consider e.g. the CL $\langle [0, 1], \geq \rangle$ (the segment of the reals
+with the inverse of the usual order), used for probabilistic constraints~\cite{probabilistic}:
+%so that 
+only the bottom element $1$ is compact. 
+%
+As we will see, the situation for the soft paradigm is more nuanced.
+\end{example}
+%\marginpar{is algebraicity needed?}
+%
+
+\begin{definition}[Monoids]
+A commutative monoid with identity (IM) is a triple
+$\langle A, \otimes, \1 \rangle$ such that $\otimes: A \times A \rightarrow A$ is
+a commutative and associative function and 
+ \begin{description}
+ \item[(identity)] $\forall a \in A.\otimes (a, \1) = a$
+ \end{description}
+\end{definition}
+
+We will often use an infix notation, such as $a \otimes b$ for $a, b \in A$.
+%
+The monoidal operator can be defined for any multi-set: it is given 
+for a family of elements $a_i \in A$ indexed over a finite, non-empty
+set $I$, and it is denoted by
+$\bigotimes_{i \in I} a_i$.
+%
+If for an index set $I$ the $a_i$'s are different,
+we write $\bigotimes S$ instead of $\bigotimes_{i \in I} a_i$
+for the set $S = \{a_i \mid i \in I\}$.
+%
+Conventionally, we denote $\bigotimes \emptyset = \bot$.
+
+%smallskip
+%In the following we fix a IM ${\mathbb M} = \langle A, \otimes, \1 \rangle$.
+
+We now move our attention to our choice for the domain of values.
+
+\begin{definition}[CL-enriched IMs]
+A CL-enriched IM (CLIM) is a triple ${\mathbb S} = \langle A, \leq, \otimes \rangle$ such that
+ $\langle A, \leq \rangle$ is a CL,  $\langle A, \otimes, \bot \rangle$ is an IM,
+ and
+ \begin{description}
+ \item[(distributivity)] $\forall a \in A. \forall X \subseteq A.\, a \otimes  \bigwedge X = \bigwedge \{a \otimes x \mid x \in X\}$
+ \end{description}
+\end{definition}
+
+\begin{remark}
+The reader who is familiar with the soft constraint literature may have noticed that we have 
+basically rewritten the standard presentation using a CLIM instead of an absorptive 
+semiring, recently popularised as c-semiring~\cite{jacm}, where the $a \oplus b$ operator is 
+replaced by the binary LUB $a \vee b$. 
+%
+Besides what we consider a streamlined presentation, the main advantage in the use of 
+CLIMs is the easiness in defining the LUB of infinite sets and, as a consequence, the notion of 
+$\otimes$-compactness given below. 
+%
+An alternative solution using infinite sums can be found in~\cite[Section~3]{golan}, 
+and a possible use is sketched in \cite{ecai06}.
+\end{remark}
+
+
+%\marginpar{distributivity wrt. $\vee$ or wrt. $\wedge$ coincide?}
+%Thanks to distributivity, we can show that
+%$\bigotimes$ is monotone, i.e., $\forall j \in I. a_j \leq b_j \implies
+%\bigotimes_{i \in I} a_i \leq \bigotimes_{i \in I} b_i$.
+%%
+%And since $\bot$ is the identity of the monoid,
+%monotonicity implies that the combining of the constraints is increasing, i.e.,
+%$\forall j \in I. a_j \leq \bigotimes_{i \in I} a_i$.
+Thanks to distributivity, we can show that
+$\otimes$ is monotone, and since $\bot$ is the identity of the monoid,
+monotonicity implies that the combination of constraints is increasing, i.e.,
+$\forall a, b \in A. a \leq a \otimes b$ holds.
+%
+Finally, we recall that by definition $\bigwedge \emptyset = \top$, so that 
+$\forall a \in A. a \otimes  \top = \top$ also holds.\footnote{A symmetric 
+choice $\langle A, \otimes, \top \rangle$
+with distributivity with respect to $\bigvee$ (and thus
+$a \otimes \bot = \bot$)
+is possible: the monoidal operator would be decreasing, so that for
+example $a \otimes b \leq a$. Indeed, this is the usual order in the
+semiring-based approach to soft constraints~\cite{ecai06}.}
+%
+%$\bigotimes \emptyset = \bigwedge \emptyset$ $( = \top)$
+
+%\smallskip
+In the following, we fix a CLIM ${\mathbb S} = \langle A, \leq, \otimes \rangle$.
+%
+The next step is to provide an infinite composition. Our definition is from~\cite{CLIM}
+(see also~\cite[p.~42]{golan}).
+
+\begin{definition}[Infinite composition]
+Let $I$ be a (countable) set of indexes. Then, the composition $\bigotimes_{i \in I} a_i$
+is defined as $\bigvee_{J \subseteq I} \bigotimes_{j \in J} a_j$ for all finite subsets $J$.
+\end{definition}
+
+Should $I$ be finite, the definition gives back the usual multi-set composition,
+since $\otimes$ is monotone and increasing.
+%
+As the infinitary composition is also monotone and increasing, by construction 
+%$\bigotimes \emptyset = \bigvee \emptyset = \bot$ and 
+$\bigotimes A = \bigvee A = \top$.
+%
+We now provide a notion of compactness with respect to the
+monoidal operator.
+% via the infinite composition.
+
+\begin{definition}[$\otimes$-compact elements]\label{def:compactness}
+Let $a \in A$. It is $\otimes$-compact 
+(or $\otimes$-finite) 
+if whenever $a \leq \bigotimes_{i \in I} a_i$
+then there exists a finite subset $J \subseteq I$ such that $a \leq \bigotimes_{j \in J} a_j$.
+\end{definition}
+
+We let $A^\otimes \subseteq A$ denote the set of $\otimes$-compact elements of ${\mathbb S}$.
+%
+It is easy to show that a compact element is also $\otimes$-compact, i.e. $A^C \subseteq A^\otimes$.
+Indeed, the latter notion is definitively more flexible.
+
+\begin{example}
+%
+Consider the CLIM $\langle [0, 1], \geq, \times \rangle$ examined above, which corresponds to  
+the segment of the reals with the inverse of the usual order and multiplication 
+as monoidal product.
+Since any infinite multiplication tends to $0$, then all the elements are
+$\otimes$-compact, except the top element itself, that is, precisely $0$.
+\end{example}
+%
+%Instead of the LUB, an alternative monoidal product is multiplication.
+%%
+%Since any infinite multiplication tends to $0$, then all the elements are
+%$\otimes$-compact, except the top element itself, that is, precisely $0$.
+%\marginpar{is $\otimes$-algebraicity needed?}
+
+\begin{remark}
+%Requiring that $\otimes$ is idempotent means that $a \otimes a = a$ for all elements.
+%
+It is easy to show that idempotency implies that $\bigotimes$ 
+%is now defined on sets, and 
+%moreover, that it 
+coincides with LUBs, that is,
+$\bigotimes S = \bigvee S$ for all subsets $S \subseteq A$.
+%\marginpar{check infinite ones}
+%
+In other words, the whole soft structure collapses to a
+complete distributive lattice.
+%
+Indeed, requiring distributivity makes the soft paradigm not fully comparable with the crisp one.
+We are going to discuss it again in the concluding remarks.
+\end{remark}
+
+\subsection{Residuation}
+Our first operator on CL-enriched IMs
+%The first 
+is a simple construction for a weak inverse of the
+monoidal operator in CL-enriched monoids, known in the literature
+on enriched monoid as residuation~\cite{golan,residuated}.
+% residuation is a standard technique in enriched monoids~\cite{golan}, and
+%it can be easily derived for CL-enrichment.
+
+\begin{definition}[Residuation]
+Let $a, b \in A$. The residuation of $a$ with respect to $b$ is defined as
+$a \odiv b = \bigwedge \{ c \in A \mid a\leq b \otimes c\}$.
+%\marginpar{check $a$ comp. implies $a \odiv b $ comp.}
+\end{definition}
+
+The definition conveys the intuitive meaning of a division operator: indeed,
+$a \leq b \otimes (a \odiv b)$, thanks to distributivity.
+%
+Also,
+$(a \otimes b) \odiv b \leq a$ and $a \odiv (b \otimes c) = (a \odiv b) \odiv c$.
+%should $\otimes$ be idempotent, $b \leq a$ implies $a \odiv b = a$.
+%
+Residuation is monotone on the first argument: if $a \leq b$ then $a \odiv c \leq b \odiv c$
+and 
+%if $a \leq b$, then 
+$a \odiv b = \bot$.
+%
+For more properties of residuation we refer to~\cite[Table~4.1]{resbook}.
+%Here. we just note that it preserves the LUBs:
+%$(\bigvee A) \odiv b = \bigvee_{a \in A} a \odiv b$.
+%\marginpar{check $\leq$}
+
+
+Most important for our formalism is the following result on $\otimes$-compactness.
+%, which extends compactness to residuation for the first time.
+
+\begin{lemma}
+\label{preres}
+Let $a, b \in A$. If $a$ is $\otimes$-compact, so is $a \odiv b$.
+\end{lemma}
+
+\begin{proof}%[of Lemma~\ref{preres}]
+	If $a \odiv b \leq \bigotimes_{i\in I} a_i$, then by monotonicity
+	$a \leq \bigotimes_{i \in I \uplus \{*\} } a_i$ for $a_* = b$.
+	By $\otimes$-compactness of $a$ there exists a finite $J \subseteq I$
+	such that $a \leq \bigotimes_{j \in J \uplus \{*\} } a_j$, and by the definition
+	of division $a \odiv b \leq \bigotimes_{j \in J} a_j$, hence the result holds.
+\end{proof}
+
+Most standard soft instances (boolean, fuzzy, probabilistic, weighted, and so on)
+%(i.e.\emph{Classical} $\langle \{\mathit{true},\mathit{false}\}, \vee, \wedge, \mathit{true}, \mathit{false}\rangle$, 
+%\emph{Fuzzy} $\langle [0..1], \mathit{max}, \mathit{min}, 1, 0 \rangle$, \emph{Probabilistic} $\langle [0..1], \mathit{max}, \mathit{times}, 1, 0 \rangle$
+%and \emph{Weighted CSPs} $\langle \mathbb{R}^+ \cup\{+\infty\}, min, \mathit{sum}, 0, +\infty \rangle$) 
+are described by CL-enriched monoids and are  residuated: see e.g.~\cite{ecai06}.
+% ($\mathit{times}$ and $\mathit{sum}$ are the corresponding arithmetic operations).
+%
+For these instances the $\odiv$ operator is used to (partially) remove constraints from the store,
+and as such is going to be used in Section~\ref{sec:4}.
+%\marginpar{not in the ex.1 so far}
+%
+In fact, in the soft literature it is usually required a tighter relation of (full) invertibility, 
+also satisfied by all the previous CLIMs instances,
+%that $b \otimes (a \odiv b) = a$ for $b \leq a$,
+%in order to have what are called local consistency algorithms 
+%that preserves the solution of
+%a problem~\cite{ecai06}.
+stated in our framework by the definition below.
+%Yet, in our presentation we can relax this condition.
+%\marginpar{maybe not: we'll see}
+
+\begin{definition}
+${\mathbb S}$ is invertible if
+%and preserves $\otimes$-compactness if
+%\begin{itemize}
+%\item $\forall a, b \in A. 
+$b \leq a$ implies $b \otimes (a \odiv b) = a$
+for all $a, b \in A^\otimes$.
+%\item $\forall a, b \in A. a, b \in C^\otimes$ implies $(a \odiv b) \in C^\otimes$
+%\end{itemize}
+\end{definition}
+
+%In the following, we assume that our CLIM is invertible.
+%% and preserves $\otimes$-compactness.
+%%\marginpar{Maybe, item 2 can be derived}
+
+\subsection{Cylindrification}
+We now consider two families of operators for modellng
+the hiding of variables and the passing of parameters in soft CCP.
+%
+They can be considered as generalised notions of existential quantifier
+and diagonal element~\cite{popl91}, which are expressed in terms of operators 
+of cylindric algebras~\cite{monk}.~\footnote{However, since we consider monoids instead of groups, 
+the set of axiom of diagonal operators is included in the standard one for cylindric algebras.}
+
+
+\begin{definition}[Cylindrification]
+Let $V$ be a set of variables.
+%
+A cylindric operator $\exists$ over ${\mathbb S}$ and $V$ is a family of monotone, 
+$\otimes$-compactness preserving functions
+$\exists_x: A \rightarrow A$ indexed by elements in $V$ such that for all $a, b \in A$ and $x, y \in V$
+\begin{enumerate}
+ \item $\exists_x a \leq a$;
+ \item $\exists_x(a \otimes \exists_x b) = \exists_x a \otimes \exists_x b$; 
+ \item $\exists_x\exists_y a = \exists_y\exists_x a$.
+ \end{enumerate}
+
+\noindent Let $a \in A$. The \emph{support} of $a$ is the set of variables $sv(a) = \{ x \in V \mid \exists_x a \neq a\}$. 
+% and the set of unsupported variables of $a$ is the set of variables $uv(a) =  V \setminus sv(a)$.
+\end{definition}
+
+%In the following, we will often refer to the elements in the support of $a$ as the \emph{free} variables of $a$.
+%
+%We will often use the definition of support in Section~\ref{sec:detSCCP} and Section~\ref{sec:ltsSCCP}, together with the definition of free variables.
+
+%Each function of the cylindric operator is contractive and idempotent.
+%
+%Given their commutativity, 
+For a finite $X \subseteq V$, let
+$\exists_X a$ denote any sequence of function applications.
+%
+%now part of the definition
+\remove{
+\begin{lemma}
+Let $a \in A$, $V$ a set of variables, $x \in V$ and $\exists$ a cylindric operator over ${\mathbb S}$ and $V$.
+If $a$ is $\otimes$-compact, so is $\exists_x a$.
+\end{lemma}
+%\marginpar{da provare}
+
+\begin{proof}
+%TO DO
+
+Let us assume that $\exists_x a \leq \bigotimes_{i \in I} a_i$ we need to prove that there is a finite set $J$ s.t.
+$J \subseteq I$ and $\exists_x a \leq \bigotimes_{j \in J} a_j$.
+First let $a_* = a \odiv \exists_x a$ now by monotonicity and our hypothesis 
+we have $(\exists_x a) \otimes a_* \leq \bigotimes_{i \in I \uplus \{*\}} a_i$,
+now by definition of $\odiv$ we know that $(\exists_x a) \otimes a_* = (\exists_x a) \otimes (a \odiv \exists_x a) \geq a$,
+thus $a \leq \bigotimes_{i \in I \uplus \{*\}} a_i$.
+
+Since $a$ is $\otimes$-compact then there exists $J$ s.t. $J \subseteq I$ and $a \leq \bigotimes_{j \in J \uplus \{*\}} a_j$,
+namely $a \leq \bigotimes_{j \in J} a_j \otimes a_*$.
+Then by monotonicity $a \odiv a_* \leq (\bigotimes_{j \in J} a_j \otimes a_*) \odiv a_*$ in addition 
+$(\bigotimes_{j \in J} a_j \otimes a_*) \odiv a_* \leq \bigotimes_{j \in J} a_j$ by definition of $\odiv$,
+hence $a \odiv a_* \leq \bigotimes_{j \in J} a_j$.
+Now notice that $a \odiv a_* = a \odiv (a \odiv \exists_x a)$ and by definition of $\odiv$ we get
+$a \odiv (a \odiv \exists_x a) \geq (a \odiv \exists_x a) \otimes \exists_x a \geq \exists_x a$,
+therefore since $a \odiv a_* \geq \exists_x a$ then we can conclude that $\exists_x a \leq \bigotimes_{j \in J} a_j$
+as wanted. \qed
+\end{proof}
+}
+%
+%In the following, w
+We now fix a set of variables $V$ and a cylindric operator $\exists$ over ${\mathbb S}$ and $V$.
+%~\footnote{We are not going to need the other standard component proposed in the literature , i.e., \emph{diagonals}: a %family of elements $d_{x, y} \in A$ indexed by pairs of elements in $V$.}
+
+\begin{definition}[Diagonalisation]\label{def:diagonalisation}
+A diagonal operator $\delta$ for $\exists$ is
+a family of idempotent elements
+$\delta_{x, y} \in A$ indexed by pairs of elements in $V$ such that
+$\delta_{x, y} = \delta_{y, x}$ and
+%$sv(\delta_{x, y}) = \{x,y\}$ for $x \neq y$ and
+%
+for all $a \in A$ and $x, y, z \in V$
+%\marginpar{more axioms?}
+ \begin{enumerate}
+ \item $\delta_{x,x} = \bot$;
+ \item if $z \not \in \{x, y\}$ then $\delta_{x,y} = \exists_z (\delta_{x,z} \otimes \delta_{z,y})$;
+ \item if $x \not= y$ then $a \leq \delta_{x,y} \otimes \exists_x (a \otimes \delta_{x,y})$.
+\end{enumerate}
+\end{definition}
+
+Axioms $1$ and $2$ above plus idempotency imply that $\exists_x \delta_{x,y} = \bot$,
+which in turn implies (by axiom $2$ and idempotency of $\exists$) that $sv(\delta_{x,y}) = \{x,y\}$ for $x \neq y$.
+%With respect to the literature, we added an axiom: the right equation in item~1.
+%
+Diagonal operators are used for modeling
+variable substitution and parameter passing.
+%
+In the following, we fix a diagonal operator $\delta$ for $\exists$.
+
+\begin{definition}[Substitution]
+\label{def:sub}
+Let $x, y \in V$ and $a \in A$.
+%
+The substitution $a[^y/_x]$ is defined as $a$ if $x = y$ and as
+$\exists_x(\delta_{x,y} \otimes a)$ otherwise.
+\end{definition}
+
+Substitution behaves correctly with respect to $\exists$.
+
+\begin{lemma}
+\label{lemmaSubs0}
+Let $x, y, w \in V$ and $a \in A$. Then it holds
+\begin{itemize}
+\item $(\exists_x a) [^y/_x] = a$
+\item $\exists_x a = \exists_y (a [^y/_x])$ for $y \not \in sv(a)$
+\item $(\exists_w a) [^y/_x] =  \exists_w (a [^y/_x])$ if $w \not \in \{x, y\}$
+\end{itemize}
+\end{lemma}
+
+Finally, we rephrase some further laws of the crisp case 
+%It is easy to prove that the following laws hold 
+(see~\cite[p.140]{pippo}).
+
+\begin{lemma}
+\label{lemmaSubs}
+Let $x, y \in V$ and $a \in A$. Then it holds
+\begin{enumerate}
+\item $(a[^y/_x])[^x/_y] = a$ for $y \not \in sv(a)$
+\item $a[^y/_x] \otimes b[^y/_x] = (a \otimes b)[^y/_x]$
+\item $x \not \in sv(a[^y/_x])$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+	Consider e.g. the most difficult item $2$.
+	By definition $a[^y/_x] \otimes b[^y/_x] = \exists_x (\delta_{x,y} \otimes a) \otimes \exists_x (\delta_{x,y} \otimes b)$, which in turn coincides with $\exists_x (\delta_{x,y} \otimes a \otimes \exists_x (\delta_{x,y} \otimes b))$ by axiom $2$ of $\exists$; by axiom $3$ of $\delta_{x,y}$ we have that $(a \otimes b) [^y/_x] = \exists_x (\delta_{x,y} \otimes a \otimes b) \leq \exists_x (\delta_{x,y} \otimes a \otimes \exists_x (\delta_{x,y} \otimes b))$, while the vice versa holds by the monotonicity of $\exists_x$.
+\end{proof}
+
+
+
+\end{document}
+
+%\subsection{Possibly useful stuff}
+ %
+%\begin{lemma}
+%label{undercomp}
+%Let $a$, $b \in A$ such that $a \leq b$. If $b$ is $\otimes$-compact, so is $a$.
+%\end{lemma}
+%\begin{proof}
+%TO DO. Needed in Lemma~\ref{comp}.
+%\end{proof}
+%\marginpar{To keep or to cut?}
+%
+% \begin{lemma}
+% \label{preserve}
+% If $\sigma_1$ and $\exists_x\sigma_2$ are $\otimes$-compact, then $\exists_x(\sigma_1 \otimes \sigma_2)$
+% is so.
+ %\end{lemma}
+ %\begin{proof}
+%TO DO. Needed in Lemma~\ref{comp}.
+%\ \end{proof}
+ %
+  %\begin{lemma}
+ %\label{preserve2}
+ %If $\exists_x\sigma_2$ is $\otimes$-compact, then $\exists_x(\sigma_1 \odiv \exists_x \sigma_2)  = \exists_x \sigma_1 \odiv \exists \sigma_2$. 
+ %is so.
+ %end{lemma}
+ %\begin{proof}
+%TO DO. Needed in Lemma~\ref{comp}.
+% \end{proof}

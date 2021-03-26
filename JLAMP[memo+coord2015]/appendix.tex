@@ -1,0 +1,50 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+
+
+\begin{proof}[of Lemma~\ref{lemmaSubs}]
+Consider e.g. the most difficult item $2$.
+By definition $a[^y/_x] \otimes b[^y/_x] = \exists_x (\delta_{x,y} \otimes a) \otimes \exists_x (\delta_{x,y} \otimes b)$, which in turn coincides with $\exists_x (\delta_{x,y} \otimes a \otimes \exists_x (\delta_{x,y} \otimes b))$ by axiom $2$ of $\exists$; by axiom $3$ of $\delta_{x,y}$ we have that $(a \otimes b) [^y/_x] = \exists_x (\delta_{x,y} \otimes a \otimes b) \leq \exists_x (\delta_{x,y} \otimes a \otimes \exists_x (\delta_{x,y} \otimes b))$, while the vice versa holds by the monotonicity of $\exists_x$.
+ \end{proof}
+
+
+%%% PREVIOUS PROOF SOUNDNESS
+% \begin{proof} (TO FINISH)
+% The proof proceeds by induction on (the depth) of the inference of $\langle A, \sigma\rangle \xrightarrow{\;  \alpha \: } \langle A', \sigma' \rangle$. The only relevant cases are  {\bf LR2} and  {\bf LR7}.
+%
+% As for {\bf LR2}, it is a consequence of the property $c \leq \sigma \otimes (c \odiv \sigma)$ (i.e., $\alpha = c \odiv \sigma$).
+%
+% In case of {\bf LR7}, for technical reason we slightly modify {\bf R7} by renaming $x$
+% %instead of hiding it in $\sigma$, and we modify {\bf LR5} as well, by renaming the global $x$
+% %instead of the local one (new information on $z$ is renamed to $x$, i.e., $\alpha[x/z]$):
+% \marginpar{does it coincide with R7?}
+% \small
+% \def\odiv{\, {\ominus\hspace{-6pt} \div} \,}
+% $${\bf R7'} \; \frac {\displaystyle \langle A, \sigma' \otimes \sigma_0[^z/_x] \rangle \rrarrow
+%                        \langle B, \sigma'' \rangle\ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'}
+%                       {\displaystyle\langle \exists^{\sigma'}_x A, \sigma \rangle \rrarrow
+%                        \langle \exists^{\sigma_1}_xB, \sigma_0 \otimes \exists_x \sigma_1 \rangle
+%                        \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma" \odiv \sigma_0[^z/_x]}
+%                        \; \; \mathit{with} \; z \not\in fv(A) \cup sv(\sigma) \cup sv(\sigma')$$
+% \normalsize
+% \def\odiv{\, {\ominus\hspace{-6.8pt} \div} \,}
+% \def\odivvv{\; {\ominus\hspace{-4.7pt} \div} \;}
+%
+% Hence, $P= \exists^{c}_x B$ and $P'= \exists^{c'}_x B'$, $\alpha = \alpha'[x/z]$, and $\sigma' = \exists_x(c') \otimes \sigma \otimes \alpha[x/z]$,
+% with $\langle B, c \otimes \sigma[z/x] \rangle \xrightarrow{\;  \alpha' \;} \langle B', c' \otimes \sigma[z/x] \otimes \alpha' \rangle$
+% by a previous inference step. By induction thus we have $\langle B, c \otimes \sigma[z/x] \otimes \alpha' \rangle \rrarrow \langle B', c' \otimes \sigma[z/x] \otimes \alpha' \rangle$.
+% Note that $\alpha'  = (\alpha[x/z])[z/x] = \alpha[z/x]$. Therefore, $\langle B, c \otimes (\sigma \otimes \alpha)[z/x]  \rangle \rrarrow \langle B', c' \otimes (\sigma \otimes \alpha)[z/x] \rangle$.
+% According to this reduction, $\langle \exists^c_x B,
+% \sigma \otimes \alpha\rangle \rrarrow \langle \exists^{c'}_xB', \sigma \otimes (\exists_x c') \otimes \alpha \rangle$
+%  follows from {\bf R7'}, and then, $\langle A, \sigma \otimes \alpha \rangle \rightarrow \langle A', \sigma'\rangle$.
+% \marginpar{LR7 to redo}
+% \end{proof}
+
+
+
+
+
+
+
+\end{document}
