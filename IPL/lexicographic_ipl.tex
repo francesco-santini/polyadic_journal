@@ -1,0 +1,1120 @@
+\documentclass[a4paper]{elsarticle}
+
+\usepackage{booktabs} % For formal tables
+\usepackage{amsmath,amssymb,amsthm} 
+\usepackage{todonotes}
+\usepackage{amsfonts}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\monop}{\otimes}
+\newcommand{\1}{\mathbf{1}}
+
+
+\floatstyle{plain}
+\newfloat{myalgo}{tbhp}{mya}
+
+\newenvironment{Algorithm}[2][tbh]%
+{\begin{myalgo}[#1]
+		\centering
+		\begin{minipage}{#2}
+			\begin{algorithm}[H]}%
+			{\end{algorithm}
+		\end{minipage}
+\end{myalgo}}
+
+\newcommand{\proc}[1]{\textbf{procedure }\texttt{#1}}
+\newcommand{\func}[1]{\textbf{function }\texttt{#1}}
+\newcommand{\call}[1]{\texttt{#1}}
+\newcommand{\tabul}[1]{\hspace*{#1em}\hspace*{#1em}}
+\newcommand{\mywhile}{\textbf{while}}
+\newcommand{\mydo}{\textbf{do}}
+\newcommand{\myuntil}{\textbf{until}}
+\newcommand{\myswitch}{\textbf{switch}}
+\newcommand{\myif}{\textbf{if}}
+\newcommand{\myendif}{\textbf{endif}}
+\newcommand{\mythen}{\textbf{then}}
+\newcommand{\myelse}{\textbf{else}}
+\newcommand{\myfor}{\textbf{for each}}
+\newcommand{\myrepeat}{\textbf{repeat}}
+
+\newcommand{\myendfor}{\textbf{endfor}}
+\newcommand{\myendwhile}{\textbf{endwhile}}
+\newcommand{\myor}{\textbf{or}}
+\newcommand{\myand}{\textbf{and}}
+\newcommand{\myno}{\textbf{no}}
+\newcommand{\myret}{\textbf{return}}
+\newcommand{\myendf}{\textbf{endfunction }}
+\newcommand{\myendp}{\textbf{endprocedure }}
+
+
+
+\def\odiv{{ \ominus\hspace{-8pt}:}\;}
+\def\odivsmall{{ \ominus\hspace{-7.5pt}:}\;}
+\def\smallodiv{{ \ominus\hspace{-7.45pt}:}\;}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{frontmatter}
+
+
+
+
+
+\title{Residuation for Lexicographic Orders}
+
+
+		\author[pisa]{Fabio Gadducci}
+		\ead{fabio.gadducci@unipi.it}
+		\author[perugia]{Francesco Santini\corref{cor1}}
+		\ead{francesco.santini@unipg.it}
+		
+		\address[pisa]{Dipartimento di Informatica, Universit{\`a} degli Studi di Pisa, Italy}	
+		\address[perugia]{Dipartimento di Matematica e Informatica, Universit{\`a} degli Studi di Perugia, Italy}	
+		\cortext[cor1]{Corresponding author}
+
+
+
+\begin{abstract} 
+	Residuation theory concerns the study of partially ordered algebraic structures, most often just monoids,
+	equipped with a weak inverse for the monoidal operator.
+	%
+	One of its area of application has been Constraint Programming, whose 
+	key requirement is the presence of an aggregator operator for combining preferences.
+	%
+	Given a residuated monoid of preferences, the paper shows how to build a new residuated monoid 
+	of (possibly infinite) tuples based on the lexicographic order. 
+\end{abstract}
+        \begin{keyword}
+        	Residuation theory, Lexicographic orders, Soft constraints. %\sep Bucket Elimination.
+        \end{keyword}
+    \end{frontmatter}
+
+
+
+
+
+\section{Introduction}\label{sec:intro}
+Residuation theory~\cite{residuation} concerns the study of partially ordered algebraic structures, most often just monoids, 
+equipped with an operator that behaves as a weak inverse to the monoidal one, without the structure being necessarily a group.
+%Such structures have since long be investigated in mathematics and computer science. %Concerning e.g. logics, residuated monoids form the basis for the semantics of substructural logics~\cite{onoETC}.
+%As for e.g. discrete event systems such as weighted automata, the use of tropical semirings put forward the adoption of residuals for 
+%the approximated solution of inequalities~\cite{resbook}. 
+%
+%Related to the latter, o
+One of the recent area of application of residuation theory is constraint programming. 
+%
+Roughly, a soft constraint satisfaction problem
+%(\emph{SCSP}) 
+is given by a relation on a set of variables and a preference 
+score to each assignment of the variables~\cite{jacm97,schiex}. 
+%
+A key requirement is the presence of an aggregator operator for combining preferences, making their set a monoid: a large body 
+of work has been devoted to enrich such a structure, guaranteeing that resolution techniques are generalised by 
+a parametric formalism for designing metrics and algorithms.
+%
+%An example are \emph{local-consistency} algorithms~\cite{arconsistency}, devised for safely moving costs  towards constraints involving a smaller number of variables, 
+%without changing the set of solutions and their preference.  In order to ``move'' quantities, we need to  ``subtract'' costs somewhere and ``add'' them elsewhere. 
+
+%The paper focuses on residuated monoids for constraint programming. 
+The relevance of residuated monoids for local consistency algorithms, where in order ``move'' costs they must be ``subtracted'' somewhere and ``added'' elsewhere,
+ has been spotted early on~\cite{residuation1,resCS}, and various extensions  has been proposed~\cite{ipl}.
+ Also, residuated monoids found applications in languages based on the Linda paradigm, such as 
+soft concurrent constraint programming,  where a process  ``tells'' and ``asks'' constraints to a centralised store~\cite{labelled}. 
+%We consider lexicographic orders, as used in contexts with multi-objective
+%problems. That is, the preference values are obtained by the combination of separate concerns, and the order of the combination matters. 
+%We identify suitable conditions to show how to effectively build 
+%On the other side, we introduce a soft version of \emph{Bucket} and \emph{Mini-bucket} elimination algorithms, well-known exact and approximated techniques for inference,
+%which exploits the presence of a residuated monoid: in order to have an estimation of  the approximation on the preference level of a solution, it is necessary to use a removal operator. Finally we present a \emph{Depth-First Branch-and-Bound} algorithm, which exploits upper and lower bounds to prune search. 
+%Our proposals generalise the original soft versions of these approximation techniques presented in~\cite{bucketsemiring}.
+%
+%[OLD STUFF]
+%Preference structures in the Constraint-programming literature have been historically equipped with a monotone aggregation-operator~\cite{chapterrossi}: when \emph{soft} constraints are composed in a \emph{Soft Constraint Satisfaction Problem} (\emph{SCSP}), the cost, or alternatively the reward, for satisfying such constraints needs to be aggregated.\footnote{We instead refer to \emph{hard} constraints, when constraints can be either ``fully'' satisfied, or just not satisfied, thus having no associated preference.} In soft constraints,
+%an assignment of the variables on which the constraint relation is defined, is associated with a preference score. Some well-known examples of such preference structures in constraints are [2] and [22]. Besides these two seminal works, a large body of work has been devoted to the study of algebraic structures for sets of preferences, guaranteeing that techniques can be generalised by having a parametric and formal tool to design metrics and operators
+%
+%
+%Some  well-known  examples of such preference structures in constraints  are \cite{jacm97}  and \cite{schiex}. Besides these two seminal works, a  large body of work has been devoted to the study of algebraic structures for sets of preferences, guaranteeing that  techniques can be generalised by having a parametric and formal tool to design metrics and operators.
+%
+%The motivation  is due to its use in algorithms that solve CSPs: for instance, the idea behind \emph{local-consistency} algorithms~\cite{arconsistency} is to safely move costs  towards smaller arity constraints, without changing the set of solutions and their preference.  Hence, we need to ``subtract'' costs somewhere, and then ``add'' them somewhere else.
+%
+%In \cite{ipl} we have extended \cite{residuation1} with the purpose to have  an inverse operator to work on bipolar preference values (i.e., positive and negative ones). In \cite{labelled} we have used residuation to give a labelled semantics to a process algebra \emph{telling} and \emph{asking} soft constraints to a centralised store. In  \cite{catuscia}, some of the authors of this paper provided a novel formalisation of soft constraints in terms of \emph{polyadic algebras} whose carrier is a residuated monoid.
+%
+%In this paper  we turn our attention to the property of residuation in lexicographic orders.  
+Lexicographic orders are useful in applications that involve multiple objectives and attributes,
+and they have been extensively investigated in the literature on soft constraints.
+%,  where feasibility constraints impose restrictions on assignments that are actually possible.  
+%\emph{Multi-objective combinatorial optimisation} (MOCO) is concerned with finding optimal solutions of systems as  $\min_{x \in  X} f(x) = (f_1(x), f_2(x), \dots, f_p(x))$, where $X$ is a feasible set of solutions, and $f_i$ are the objectives, $f_i: X \longrightarrow \mathbb R$ in a vector $f$.
+%Lexicographic orders in SCSPs have been extensively investigated in the literature. 
+However, usually the connection has been established by encoding a lexicographic \emph{hard} constraint problem, where the preference structure is a Boolean algebra, 
+into a soft constraint formalism. 
+%
+%For example, in \cite{freuderlexi} the authors show how to encode a lexicographic order and how the resulting structure
+%can support specialised algorithms such as \emph{Branch-and-bound}. 
+%In \cite{jheuristics}  the expressivity distance between soft constraints embedded in 
+%lexicographic orderings is measured against \emph{CP-nets}: the core notions exploited by the (conditional) CP-nets model are  \emph{ceteris paribus}  
+%statements, e.g., ``I prefer red wine to white wine when meat is served''.
+%
+%In \emph{Constraint Logic Programming}~\cite{clp},  in place of \emph{unification}  constraints are accumulated and tested for satisfiability over the common domain where they are interpreted.  
+%\emph{Hierarchical Constraint Logic Programming}~\cite{hierarchicalclp} frameworks allow to handle %over-constrained problems by considering 
+%both hard constraints  and several preference levels of soft constraints, whose violations need to be minimised, and such levels are usually managed 
+%following a lexicographic order~\cite{valuation}. 
+%For example, in \cite{valuation} the authors  exploit the lexicographic ordering in constraint hierarchies by mapping layers to partially-ordered valuation structures. 
+%
+However, while lifting the algebraic structure of a preference set to the associated set of (possibly infinite) tuples with a point-wise order is straightforward, 
+doing the same for the lexicographic order is not, and it cannot be directly achieved for the formalisms in \cite{jacm97,schiex}. 
+%
+The solution advanced in~\cite{GadducciHMW13,valuation} is to drop some preference values from the domain carrier of the set of tuples. 
+%
+The present work builds on
+this proposal by dealing with sets of preferences that form residuated monoids, systematise and extending the case of infinite tuples tackled in~\cite{sca} 
+to tuples of any length.
+
+
+The paper extends those results in~\cite{jelia2021} concerning lexicographic orders, and it has the following structure. 
+In Section~\ref{sec:om} we present  the background on partially ordered residuated monoids, the structure 
+we adopt to model preferences. 
+%
+In Section~\ref{sec:collapsing} we consider the collapsing elements of a monoid, which are used to define an ad-hoc algebraic structure representing 
+(possibly infinite) lexicographically ordered tuples of elements of the chosen monoid, as given in Section~\ref{sec:lexico}. 
+The latter section also presents our main construction, introducing residuation for these lexicographically ordered monoids.  
+Finally, in Section~\ref{sec:conclusion} we wrap up the paper with concluding remarks and ideas about future works.
+%
+
+\section{Preliminaries}\label{sec:om}
+
+%In contrast to Boolean constraints, a soft constraint is a constraint that needs 
+%not be fully satisfied~\cite{jacm97}.
+%nstead, such a constraint assigns a \emph{preference value} that measures 
+%the degree of satisfaction of a solution.
+
+This section recalls some of the basic algebraic structures needed for defining
+the set of preference values. We propose elements of \emph{ordered monoids} 
+to serve as preferences, which allows us to compare and compose preference values.
+
+
+
+\subsection{Ordered Monoids}
+\label{sec:lem}
+
+The first step is to define an algebraic structure for modelling preferences. 
+We refer to~\cite{ipl} %for the missing proofs as well as 
+for an introduction and a comparison with other proposals.
+% such as~\cite{xxx}\todo{Manca citazione}.
+
+\begin{definition}[Orders]
+	A partial order (PO) is a pair $\langle A, \leq \rangle$ such that
+	$A$ is a set %of values 
+	and $\leq \,\,\subseteq A \times A$ is a reflexive, transitive, and
+	anti-symmetric  relation.
+	% and $\forall a \in A. \bot\leq a$.
+	%
+	%A partial order with bottom (POT) is a triple
+	%$\langle A, \leq, \bot \rangle$ such that $\langle A, \leq \rangle$ is a PO and
+	%$\forall a \in A. \bot \leq a$.
+	%
+	A join semi-lattice (simply semi-lattice, SL) is a POs
+	such that any finite subset of $A$ has a least upper bound (LUB);
+	a complete lattice (CL) is a PO such that any subset of A has a LUB.
+\end{definition}
+
+%We write 
+The LUB of a subset $X \subseteq A$ is denoted $\bigvee X$, and it is unique. 
+Note that we require the existence of $\bigvee \emptyset$, which is the bottom
+of the order, denoted as $\bot$, and sometimes we will talk about a PO with bottom element
+(POB).
+The existence of LUBs for any subset of $A$ (thus including $\emptyset$) guarantees that 
+CLs also have greatest lower bounds (GLBs) for any subset $X$ of $A$: 
+it will be denoted by $\bigwedge X$. 
+Whenever it exists, 
+%and it always does in a CL, 
+$\bigvee A$ corresponds to the top of the order, denoted as $\top$.
+%
+
+%We considered the LUBs of possibly infinite sets just for the sake of simplicity: 
+%our proposal would fit also the finite case.
+%
+%Obviously, Ls also have the greatest lower bound for any subset $Y \subseteq A$.
+%In the following we fix a BL ${\mathbb L} = \langle A, \leq, \1 \rangle$.
+
+%\begin{definition}[compact elements]
+%An element $a \in A$ is compact (or finite) if whenever $a \leq \bigvee Y$ there exists a finite subset
+%$X \subseteq Y$ such that $a \leq \bigvee X$.
+%%
+%%Let $A^C \subseteq A$ be the set of compact elements of ${\mathbb C}$.
+%%Then ${\mathbb C}$ is algebraic if $\forall c \in A. c = \bigvee \{ d \in A^C \mid d \leq c\}$.
+%\end{definition}
+
+
+%Note that for complete lattices the definition of compactness given above coincides with the one using
+%directed subsets. It will be easier to generalize it, though, to compactness with respect to the monoidal operator (see Def.~\ref{def:compactness}).
+%
+%We let $A^C \subseteq A$ denote the set of compact elements of ${\mathbb C}$. Note however
+%that $A^C$ might be trivial: indeed, in the the segment $[0, 1]$ of the reals
+%with the usual order, only $0$ is a compact element. As we are going to see, the situation for the soft paradigm
+%can be more nuanced.
+%\marginpar{is algebraicity needed?}
+%
+
+\begin{definition}[Ordered monoids]\label{defn:clm}
+	A (commutative) monoid is a triple
+	$\langle A, \monop,$ $\1 \rangle$ such that $\monop: A \times A \rightarrow A$ is
+	a commutative and associative function and $\1 \in A$ is its \emph{identity} element,
+	i.e., $\forall a \in A. a \monop \1 = a$.
+	
+	A partially ordered monoid (POM) is a 4-tuple
+	$\langle A, \leq, \monop, \1 \rangle$ such that 	
+	$\langle A, \leq \rangle$ is a PO and $\langle A, \monop, \1 \rangle$ a monoid.
+	%
+	A semi-lattice monoid (SLM) and a complete lattice monoid (CLM) are 
+	POMs such that their underlying PO is a SL, a CL respectively.
+\end{definition}
+
+For ease of notation, we use the infix notation: $a \monop b$ stands for $\monop(a,b)$.
+
+\begin{example}[Power set]\label{ex:powerset}
+	Given a (possibly infinite) set $V$ of variables, we consider
+	the monoid $\langle 2^V, \cup, \emptyset \rangle$
+	of (possibly empty) subsets of $V$, with union as the monoidal operator.
+	Since the operator is idempotent (i.e., $\forall a\in A.\, a \monop a = a$), 
+	the natural order ($\forall a, b \in A.\, a \leq b$ iff $a \monop b = b$) 
+	is a partial order, and 
+	it coincides with subset inclusion:
+	in fact, $\langle 2^V, \subseteq, \cup, \emptyset \rangle$
+	is a CLM.
+\end{example}
+
+In general, the partial order $\leq$ and the multiplication $\otimes$ can be unrelated.
+This is not the case for distributive CLMs.
+
+\begin{definition}[Distributivity]
+	\label{dist}
+	A SLM $\langle A, \leq, \monop, \1 \rangle$ is finitely distributive if
+	$\forall X \subseteq_f A.\, \forall a \in A.\, \quad a \monop  \bigvee X = \bigvee \{a \monop x \mid x \in X\}$.
+	A CLM is distributive is the equality holds also for any subset.
+\end{definition}
+
+%Being distributive means that the equality hold whenever both side are defined.
+%As for CLMs, the appropriate LUBs always exist.
+In the following, we will sometimes write $a \otimes X$ for the set  $\{a \monop x \mid x \in X\}$.
+
+\begin{remark}
+	Note that $a \leq b$ is equivalent to $\bigvee \{a,b\} = b$ for all $a, b \in A$.
+	Hence, finite distributivity implies that $\otimes$ is monotone with respect to $\leq$ 
+	(i.e., $\forall a, b, c \in A.\, a \leq b \Rightarrow a \otimes c \leq  b \otimes c$)
+	and that $\bot$ is the zero element
+	of the monoid (i.e., $\forall a \in A.\, a\otimes  \bot = \bot$).
+	The power-set CLM in Example~\ref{ex:powerset} is distributive.
+\end{remark}
+
+\begin{example}[Extended integers]\label{ex:bipolar}
+	The extended integers $\langle \mathbb{Z} \cup \{\pm \infty\}, \leq, +, 0 \rangle$, where 
+	$\leq$ is the natural order. For $k \in \mathbb{Z}$ we have $-\infty \leq k \leq +\infty$, $+$ is the natural addition. For $k \in \mathbb{Z} \cup \{+\infty\}$ we have $\pm\infty + k = \pm \infty, +\infty + (-\infty) = -\infty$,
+	and $0$ the identity element constitutes a distributive CLM,
+	and $+\infty$ and $-\infty$ are respectively the top and the bottom 
+	element of the CL.
+\end{example}
+
+%We now state a fundamental property of the least upper bound:
+% 
+% \begin{lemma}
+% 	\label{lem:join_ineq}
+% 	Let $X,Y \subseteq A$ be subsets of a CLM $\langle A, \leq \mult, \1 \rangle$.
+% 	If for every $x \in X$, there exists some $y \in Y$, such that $x \leq y$, then $\bigvee X \leq \bigvee Y$.
+% \end{lemma}
+% 
+% \begin{proof}
+% 	The premise implies that that every upper bound of $Y$ is an upper bound of $X$, which shows that $\bigvee X \leq \bigvee Y$.
+% \end{proof}
+
+\begin{remark}
+	Finitely distributive SLMs precisely corresponds to \emph{tropical} semirings 
+	by defining the (idempotent) sum operator as
+	$a \oplus b = \bigvee \{a, b\}$ for all $a,b \in A$.
+	If, moreover, $\1$ is the top of the SLM we end up 
+	with \emph{absorptive} semirings~\cite{golan}, 
+	which are known as $c$-semirings 
+	in the soft constraint jargon~\cite{jacm97}.
+	Together with monotonicity, imposing $\1$ to coincide with $\top$ means 
+	that preferences are negative (i.e., $a \leq \1$ for all $a \in A$).
+	Distributive CLMs are also known as \emph{quantales}~\cite{quantales}.
+\end{remark}
+
+\begin{remark}
+	\label{remark}
+	Given two distributive CLMs, it is easy to show that their Cartesian product, whose elements are pairs and where the partial order and the monoidal operator are 
+	defined point-wise, is a distributive CLM.
+	%
+	In particular, in the following we consider the Cartesian product of
+	$\langle \mathbb{Z} \cup \{\pm \infty\}, \leq, +, 0 \rangle$ with itself: its set of
+	elements is $(\mathbb{Z} \cup \{\pm \infty\})^2$, the identity element is $(0,0)$,
+	and the top and bottom elements are $(+\infty, +\infty)$ and $(-\infty, -\infty)$, respectively.
+\end{remark}
+
+\subsection{Residuated monoids}
+
+We first introduce \emph{residuation}, which allows us to define a ``weak'' inverse 
+operator with respect to the monoidal operator $\otimes$. 
+In this way, besides aggregating values together, it is also possible to remove one from 
+another. Residuation theory~\cite{golan} is concerned with the study of sub-solutions of the 
+equation $b \otimes x = a$, where $x$ is a ``divisor'' of $a$ with respect to $b$. 
+The set of sub-solutions of an equation contains also the 
+possible solutions, whenever they exist, and in that case the maximal element is also a 
+solution.
+
+\begin{definition}[residuation]
+	A residuated POM is a 5-tuple $\langle A,$ $\leq, \otimes,  \odiv, \1 \rangle$ such that
+	$\langle A, \leq \rangle$ is a PO,  $\langle A, \otimes, \1 \rangle$ is a monoid, and
+	$\odiv: A \times A \rightarrow A$ is a function such that: $\forall a, b, c \in A.\ b \otimes c \leq a \iff c \leq a \odiv b$.
+\end{definition}
+
+In the following, we will sometimes write $a \odiv X$ and $X \odiv a$
+for the set  $\{a \odiv x \mid x \in X\}$ and  $\{x \odiv a \mid x \in X\}$,
+respectively.
+
+\begin{remark}
+	It is easy to show that residuation is monotone on the first argument and
+	anti-monotone on the second. In fact, in a SML 
+	$\bigvee (X \odiv a) \leq \bigvee X \odiv a$,
+	and the same in a CLM with respect to infinite sub-sets.
+	However, the equality does not hold,
+	%as suggested by Lemma~\ref{someProps},
+	e.g. in the Cartesian product of the CLM  
+	$\langle N \cup \{\infty\}, \geq, +, 0 \rangle$ with itself.
+	Also, 
+	$a \odiv \bigvee X \leq \bigwedge (a \odiv X)$
+	whenever the latter exists, as it does in CLMs.
+\end{remark}
+
+\begin{remark}
+	\label{remarkC}
+	As for distributivity, given two residuated POMs, it is easy to show that their Cartesian product
+	is a residuated POM.
+\end{remark}
+
+Residuation implies distributivity (see e.g.~\cite[Lemma 2.2]{ipl}).
+
+\begin{lemma}
+	Let $\langle A, \leq, \monop, \1 \rangle$ be a residuated POM. 
+	Then it is monotone.
+	If additionally it is a SLM (CLM), then it is finitely distributive
+	(distributive).
+\end{lemma}
+%\begin{proof}
+%xxx
+%\end{proof}
+
+Conversely, it is noteworthy that CLMs are always residuated,
+and the following folklore fact holds.
+%
+%The proofs of the following lemmas come from \cite{catuscia,ipl}.
+
+\begin{lemma}
+	\label{resCLM}
+	Let $\langle A, \leq, \monop, \1 \rangle$ be a distributive CLM. 
+	%
+	It is residuated and 
+	$\forall a, b \in A.\ a \odiv b = \bigvee \{c \mid b \otimes c \leq a\}$.
+\end{lemma}
+
+%We close with a simple lemma relating residuation with the top and the bottom elements of a POM.
+%
+%\begin{lemma}
+%	\label{someProps}
+%	Let $\langle A, \leq, \monop, \odiv, \1 \rangle$ be a residuated POM. 
+%	If it has the bottom element $\bot$, then it also has the top element $\top$and
+%	$\forall a \in A.\ a \odiv \bot = \top$.
+	%
+%	Viceversa, if it has the top element $\top$ then
+%	$\forall b \in A.\ \top \odiv b = \top$.
+%\end{lemma}
+
+%\begin{remark}
+%	Nothing can be stated for $\bot \odiv a$, since there could be elements that are 
+%	$\bot$-divisors: see again the Cartesian product of the CLM  
+%	$\langle \mathbb N \cup \{\infty\}, \geq, +, 0 \rangle$ with itself, where 
+%	$\langle \infty, 3\rangle  \otimes \langle 4, \infty \rangle = \langle \infty,\infty \rangle$. 
+	
+%	Similarly, nothing can be stated for $a \odiv \top$: see the Cartesian 
+%	product of the CLM  
+%	$\langle \mathbb N \cup \{\infty\}, \geq, +, 0 \rangle$ with its dual CLM
+%	$\langle \mathbb N \cup \{\infty\}, \leq, +, 0 \rangle$.
+%\end{remark}
+
+%(see e.g.~\cite{ecai06} 
+%for a brief survey on residuation for such semirings)
+%\marginpar{sistemare da qualche parte}
+%\begin{definition}
+%Let $C$ be a sub-monoid of $A$. $C$ is an ideal of $A$ if 
+%$\forall a \in A, c \in C.\ a \otimes c \in C$.
+%\end{definition}
+
+\section{The ideal of collapsing elements}
+\label{sec:collapsing}
+As shown in~\cite{GadducciHMW13}, the first step for obtaining SLMs based on a lexicographic order 
+is to restrict the carrier of the monoid. 
+
+\begin{definition}
+	Let $\langle A, \monop, \1 \rangle$ be a monoid. Its sub-set $I(A)$ 
+	of \emph{cancellative} elements is defined as 
+	$\{ c \mid \forall a, b \in A.\ a \otimes c = b \otimes c \implies a = b \}$.
+\end{definition}
+
+We  recall a well-known fact.
+% ($C(A)$ is the set of collapsing elements of $A$).
+
+\begin{lemma}
+	\label{ideal}
+	Let $\langle A, \monop, \1 \rangle$ be a monoid.
+	%
+	Then $I(A)$ is a sub-monoid of $A$ and $C(A) = A\setminus I(A)$ 
+	is a prime ideal of $A$.
+\end{lemma}
+
+Explicitly, $C(A) = \{ c \mid \exists a, b \in A.\ a \neq b \wedge a \otimes c = b \otimes c\}$.
+%
+Being an ideal means that $\forall a \in A, c \in C( A).\ a \otimes c \in C(A)$,
+and being prime further states that 
+$\forall a, b \in A.\ a\otimes b \in C( A) \implies a \in C(A) \vee b \in C(A)$.
+%
+All the proofs are straightforward, and we denote $C(A)$ as the set of \emph{collapsing} 
+elements of $A$. 
+
+Note that an analogous closure property does not hold for LUBs.
+
+\begin{example}\label{flat}
+	Consider the monoid of natural numbers $\langle \mathbb N, +, 0 \rangle$ and 
+	the (non distributive) CLM with elements $\mathbb N \cup \{\bot,\top\}$ obtained by lifting 
+	the flat order (i.e., $a \not \leq b$ for any $a, b \in \mathbb N$ as well as 
+	$a + \bot = \bot = \top + \bot$ and $a + \top = \top$  for any $a \in \mathbb N$).
+	Then, $I(\mathbb N \cup \{\bot,\top\}) = \mathbb N$ is not closed under finite LUBs. 
+	
+	Now, let us consider the distributive CLM with elements $\mathbb N \cup \{\infty\}$ 
+	obtained by lifting the natural order induced by addition.
+	We have that $I(\mathbb N \cup  \{\infty\}) = \mathbb N$ is a (finitely distributive) SLM, yet
+	it is not closed with respect to infinite LUBs.
+\end{example}
+
+We now present a simple fact that is needed later on.
+
+\begin{lemma}
+	Let $A_1, A_2$ be POMs and $A_1 \times A_2$ their Cartesian product.
+	Then we have $C(A_1 \times A_2) = C(A_1) \times A_2 \cup A_2 \times C(A_2)$. 
+\end{lemma}
+
+\begin{example}
+	Let us consider the tropical SLM $\langle \mathbb N \cup \{\infty\}, \geq, +, 0 \rangle$ 
+	and the Cartesian product with itself. 
+	Clearly, $C(\mathbb N\times \mathbb N)$ is not closed under finite LUBs: it suffices to consider 
+	$X= \{\langle \infty, 3 \rangle, \langle 4, \infty \rangle\} \subseteq C(\mathbb N\times \mathbb N)$,
+	since $\bigvee X  = \langle 3,4 \rangle \not \in C(\mathbb N\times \mathbb N)$.
+	%
+	Neither is $C(\mathbb N\times \mathbb N)$ closed under residuation, 
+	%as suggested by 
+	%Lemma~\ref{someProps}, 
+	since the top element is not necessarily collapsing.
+	Indeed, in $C(\mathbb N\times \mathbb N)$ we have 
+	$\langle \infty, 4 \rangle  \odiv \langle \infty, 3 \rangle = \langle 0,1\rangle$.
+\end{example}
+
+\begin{remark}
+	In an absorptive CLM $A$ we have that $a \odiv b = 1$ 
+	whenever $b \leq a$. Hence $C(A)$ is usually not closed under residuation, since 
+	$1$ is cancellative.
+\end{remark}
+
+\subsection{A different view on collapsing elements}
+
+When the first presentation of lexicographic 
+SLMs was provided~\cite{GadducciHMW13}, a different 
+set of collapsing elements was considered.
+
+\begin{definition}[\cite{GadducciHMW13}]
+	Let $\langle A, \leq, \monop, \1 \rangle$ be a POM. Its sub-set $C'(A)$ 
+	is defined as 
+	$\{ c \mid \exists a, b \in A.\ a < b \wedge a \otimes c = b \otimes c\}$.
+\end{definition}
+
+Clearly, $C'(A) \subseteq C(A)$. However, we can replicate Lemma~\ref{ideal}.
+%
+%First, we say that $\times$ is tone preserving i 
+
+\begin{lemma}
+	Let $\langle A, \monop, \1 \rangle$ be a monoid.
+	%
+	Then $C'(A)$ is an ideal of $A$.
+	If $\monop$ is monotone, then 
+	$I'(A) = A \setminus C'(A) $ is a sub-monoid of $A$
+	and $C'(A)$ a prime ideal of $A$.
+\end{lemma}
+
+Explicitly, $I'(A) = \{ c \mid \forall a, b \in A.\ a \otimes c = b \otimes c \implies a \not < b \}$.
+%
+The definitions we encounter in the next section 
+could then be rephrased using 
+$I'(A)$ and $C'(A)$ with minimal adjustments, thus confirming the proposal
+in~\cite{GadducciHMW13}.\footnote{And in fact, the lemma holds also for 
+	a property that is weaker than monotonicity: it suffices that 
+	$\forall a, b, c.\ a \leq b \implies (a \otimes c \leq b \otimes c) \vee (b \otimes c \leq a \otimes c)$.
+}
+
+However, what is in fact noteworthy is that the two approaches are coincident
+whenever distributivity holds, as shown by the lemma below.
+%\todo{dire dove differiscono}
+
+\begin{lemma}
+	Let $\langle A, \leq, \monop, \1 \rangle$ be a finitely distributive SLM.
+	%
+	Then $C'(A) = C(A)$.
+\end{lemma}
+\begin{proof}
+	We already noted that $C'(A) \subseteq C(A)$ always holds. Now, let $a, b, c$ such that
+	$a \neq b \wedge a \otimes c = b \otimes c$: it suffices to consider $a \vee b$, noting 
+	that it must be either $a < a \vee b$ or $b < a \vee b$ and that by distributivity 
+	$(a \vee b) \otimes c = a \otimes c = b \otimes c$.
+\end{proof}
+
+\begin{remark}
+	Consider the (non distributive) CLM $\langle \mathbb [0 \ldots n] \cup \{\bot,\top\}, +, 0 \rangle$ 
+	obtained by lifting the initial segment $[0 \ldots n]$ of the natural numbers with the flat order (as done for
+	the CLM of natural numbers in Example~\ref{flat}). Here addition is capped, so that 
+	e.g. $n + m = n$ for all $m$. Hence, $C([0 \ldots n] \cup \{\bot,\top\}) = [1 \ldots n] \cup \{\bot,\top\}$
+	that is, all elements except $0$. Instead, $C'([0 \ldots n] \cup \{\bot,\top\})) =  \{\bot,\top\}$.
+\end{remark}
+
+\section{On lexicographic orders}\label{sec:lexico}
+We now move to lexicographic orders, considering the results in Section~\ref{sec:collapsing}.
+
+\begin{proposition}\label{def:lexilist}
+	Let $\langle A, \leq, \monop, \1 \rangle$ be a POM with bottom element $\bot$.
+	%
+	Then we can define a family $\langle Lex_k(A), \leq_k, \monop^k, \1^k \rangle$ 
+	of POMs with bottom element $\bot^k$ such that $\monop^k$ is defined point-wise, 
+	$Lex_1(A) = A$ and $\leq_1 = \leq$, and
+	
+	\begin{itemize}
+		\item $Lex_{k+1}(A) = I(A) Lex_k(A) \cup C(A) \{\bot\}^k$,
+		\item $a_1 \ldots a_k \leq_k b_1 \ldots b_k$ if $a_1 < b_1$ or $a_1 = b_1$ 
+		and  $a_2 \ldots a_k \leq_{k-1} b_2 \ldots b_k$.
+	\end{itemize}
+\end{proposition}
+
+\begin{proof}
+	Monoidality of $\monop^k$ as well as reflexivity and symmetry of $\leq_k$ are straightforward.
+	As for transitivity, let $a_1 \ldots a_k \leq_k b_1 \ldots b_k$ and $b_1 \ldots b_k \leq_k c_1 \ldots c_k$.
+	If $a_1 \leq b_1 < c_1$ or $a_1 < b_1 \leq c_1$, it follows immediately; if $a_1 = b_1 = c_1$, then it
+	holds by induction.
+\end{proof}
+
+Note that $Lex_k(A)$ is contained in the $k$-times Cartesian product $A^k$, 
+and the definitions of $\monop^k$, $\1^k$, and $\bot^k$ coincide.
+%
+Also, the bottom element is needed for padding the tuples, in order to make
+simpler the definition of the order.
+
+We can provide an alternative definition for such POMs.
+
+\begin{lemma}
+	Let $\langle A, \leq, \monop, \1 \rangle$ be a POM with bottom element $\bot$.
+	Then $Lex_{k+1}(A) = \bigcup_{i \leq k}I(A)^i A \{\bot\}^{k-i}$ for all $k$.
+\end{lemma}
+\begin{proof}
+	The proof is by induction on $k$. For $k = 0$ it is obvious.
+	Let us assume it true for $k = n$, that is,
+	$Lex_{n+1}(A) = \bigcup_{i \leq n}I(A)^i A \{\bot\}^{n-i}$ .
+	Now, 
+	$Lex_{n+2}(A) =  I(A) Lex_{n+1}(A) \cup C(A) \{\bot\}^{n+1} =
+	\bigcup_{i \leq n}I(A)^{i+1} A \{\bot\}^{n-i} \cup C(A) \{\bot\}^{n+1} = \newline
+	\bigcup_{i \leq n+1}I(A)^{i} A \{\bot\}^{n+1-i}$
+	and we are done, where the latter equality holds since
+	$I(A)\{\bot\}^{n+1} \in \bigcup_{i \leq n}I(A)^{i+1} A \{\bot\}^{n-i}$
+	and $A = I(A) \cup C(A)$.
+\end{proof}
+
+Now, given a tuple $a$ of elements in $A^k$, for $i \leq k$ we denote with $a_i$ its 
+$i$-th component and with $a_{\mid i}$ its prefix $a_1 \ldots a_i$, with the obvious 
+generalisation for a set $X \subseteq A^k$, noting that $a_1 = a_{\mid 1}$.
+
+\begin{theorem}\label{theo:lexiSLM}
+	Let $\langle A, \leq, \monop, \1 \rangle$ be a finitely distributive SLM (distributive CLM).
+	Then so is $\langle Lex_k(A), \leq_k, \monop^k, \1^k \rangle$ for all $k$.
+\end{theorem}
+\begin{proof}
+	We inductively define the LUB $\bigvee X$ of a set $X \subseteq Lex_k(A)$ as
+	\begin{itemize}
+		\item $(\bigvee X)_1 = \bigvee X_1 = \bigvee \{ y \mid y \in X_{\mid 1}\}$
+		\item $(\bigvee X)_{i+1} = \bigvee \{ y \mid (\bigvee X)_1 \ldots (\bigvee X)_i y \in X_{\mid i+1}\}$
+	\end{itemize}
+	
+	Now, $\bigvee X$ is clearly a suitable candidate, since $x \leq_k \bigvee X$ for all 
+	$x \in X$. Minimality is proved inductively by exploiting the analogous 
+	definition of $\leq_k$.
+	
+	Concerning distributivity, we need to show that
+	$(\bigvee a \otimes^k X)_n = a_n \otimes (\bigvee X)_n$ holds for all $n \leq k$.
+	We proceed by induction on $n$. If $n = 1$, this boils down to the distributivity of 
+	the underlying monoid, since
+	$$(\bigvee a \otimes^k X)_1 = \bigvee (a \otimes^k X)_1 = \bigvee \{ y \mid y \in (a \otimes^k X)_{\mid 1}\} =$$
+	$$\bigvee \{ y \mid \exists z \in X_{\mid 1}.\ y = a_1 \otimes z\} = \bigvee \{ a_1 \otimes z \mid z \in X_{\mid 1}\}$$
+	and 
+	$$ a_1 \otimes (\bigvee X)_1 = a_1 \otimes \bigvee \{ y \mid y \in X_{\mid 1}\}  = \bigvee \{ a_1 \otimes y \mid y \in X_{\mid 1}\}$$
+	
+	Now, let us assume that it holds for $n$. Now we have 
+	$$(\bigvee a \otimes^k X)_{n+1} = \bigvee \{ y \mid (\bigvee a \otimes^k X)_1 \ldots (\bigvee a \otimes^k X)_n y \in (a \otimes^k X)_{\mid n+1}\} =$$
+	$$ \bigvee \{ y \mid \exists z \in X_{n+1}.\ y = a_{n+1} \otimes z \wedge a_1 \otimes (\bigvee X)_1 \ldots a_n \otimes (\bigvee X)_n y \in (a \otimes^k X)_{\mid n+1}\} =$$
+	$$ \bigvee \{ a_{n+1} \otimes z \mid (\bigvee X)_1 \ldots (\bigvee X)_n z \in X_{\mid n+1}\}$$
+	The latter equality obviously holds if $a_1 \ldots a_n$ are cancellative, yet it holds also otherwise since in that case 
+	$a_{n+1} = \bot$, hence both sides coincide with $\bot$. Finally
+	$$a_{n+1} \otimes (\bigvee X)_{n+1} = a_{n+1} \otimes \bigvee \{ y \mid (\bigvee X)_1 \ldots (\bigvee X)_n y \in X_{\mid n+1}\}  =$$
+	$$ \bigvee \{ a_{n+1} \otimes y \mid (\bigvee X)_1 \ldots (\bigvee X)_n y \in X_{\mid n+1}\}$$
+	%	which also coincides with $\bot$ if $a_{n+1} = \bot$.
+\end{proof}
+
+\subsection{On lexicographic residuation}
+Since $Lex_k(A)$ is a CLM if so is $A$ then $Lex_k(A)$ is
+also residuated. 
+
+\begin{example}
+	Let us consider the usual tropical CLM of natural numbers with inverse order,
+	and the CLM $Lex_{2}(\mathbb N)$. Clearly $C(\mathbb N) = +\infty$. We then have for example
+	that
+	$(3, 6) \odiv_2 (4, 2) = \bigvee \{(x, y) \mid (4 + x, 2 + y) \leq_2 (3, 6)\} = (0,0)$.
+	Indeed, $(4 + x, 2 + y) \leq_2 (3, 6)$ holds for any possible choice of $(x, y)$,
+	since $4 + x < 3$ for all $x$, hence $(0,0)$ as the result.
+	%
+	Note that  for the CLM obtained via the Cartesian product $\mathbb N \times \mathbb N$, the 
+	result would have been $(0, 4)$.
+\end{example}
+
+Indeed, this can be proved in general for POMs. First, we need some additional definitions and technical lemmas.
+
+\begin{definition}
+	Let $\langle A, \leq, \monop, \odiv, \1 \rangle$
+	be a residuated POM with bottom and $a, b \in Lex_k(A)$. Then 
+		%		\item $\beta(a) = min\{ i \mid a_i \in C(A)\}$
+		we define $\gamma(a, b) = min\{ i \mid (a_i \odiv b_i) \in C(A)\}$
+		and $\delta(a, b) = min\{ i \mid (a_i \odiv b_i) \otimes b_i < a_i\}$,
+	with the convention that the result is $k+1$ whenever the set if empty.
+\end{definition}
+
+%Recall that if $\langle A, \leq, \monop, \1 \rangle$ be a residuated POM, then 
+%so is its Cartesian product $A^k$, with division defined point-wise.
+
+\begin{lemma}\label{limit}
+	Let $\langle A, \leq, \monop, \odiv, \1 \rangle$
+	be a residuated POM with bottom and $a, b \in Lex_k(A)$. Then 
+	either $\delta(a,b) = k+1$ or $\delta(a,b) \leq \gamma(a,b)$.
+\end{lemma}
+\begin{proof}
+	If $\gamma(a,b) < \delta(a,b) \leq k$ then 
+	$a_{\gamma(a,b)}  = 
+	(a_{\gamma(a,b)} \odiv b_{\gamma(a,b)}) \otimes b_{\gamma(a,b)}$.
+	Since $C(A)$ is an ideal of $A$, it holds that $a_{\gamma(a,b)} \in C(A)$, 
+	which in turn implies that $a_{\delta(a,b)} = \bot$,
+	hence a contradiction.
+\end{proof}
+
+We can then present the definition of residuation for lexicographic POMs only
+for the cases identified by the proposition above.
+%The key remark for the following propositions is that since in a residuated POM 
+%the $\otimes$ operator is monotone, 
+%we have that $c \leq a \odiv b$ implies $b \otimes c \leq (a \odiv b) \otimes b$.
+
+
+\begin{proposition}
+	\label{div0}
+	Let $\langle A, \leq, \monop, \odiv, \1 \rangle$
+	be a residuated POM with bottom and $a, b \in Lex_k(A)$.
+	If $\delta(a,b) = \gamma(a,b) = k+1$
+	then their residuation $a \odiv_k b$ 
+	in $Lex_k(A)$ exists and it is given by 
+	%$a \odiv^k b$, that is
+	$(a_1 \odiv b_1) \ldots  (a_k \odiv b_k)$.
+\end{proposition}
+
+\begin{proof}
+	First of all, note that 
+	$a \odiv_k b \in I(A)^k \subseteq Lex_k(A)$.
+	% and recall that 
+	%$\forall i < \delta(a,b).\ a_i = (a_i \odiv b_i) \otimes b_i$.
+	%
+	So, given $c \in Lex_k(A)$, we need to prove that
+	$b\otimes^k c \leq_k a$ iff $c \leq_k a \odiv_k b$.
+	
+	\begin{description}
+		\item[$\mathbf{[b\otimes^k c \leq_k a].}$]
+		Let $l = min \{ i \mid b_i \otimes c_i < a_i\}$,
+		with the convention that the result is $k+1$ whenever the set if empty.
+		Also, let $m = min\{l, k\} < \delta(a,b)$.
+		
+		We have that $b_j \otimes c_j \leq a_j$ for all $j \leq m$, hence
+		$c_j \leq a_j \odiv b_j $ for all $j \leq m$. 
+		%
+		If $c_n < a_n \odiv b_n$ for some $n \leq m$
+		we are done. 
+		%
+		Otherwise, if $m = k < l$ then 
+		$c_n = a_n \odiv b_n$ for all $n \leq k$ and we are done.
+		%
+		Finally, if $m = l \leq k $ then 
+		$b_l \otimes c_l = b_l  \otimes (a_l \odiv b_l) = a_l$
+		since $l < \delta(a,b)$, a contradiction.
+		
+		\item[$\mathbf{[c \leq_k a \odiv_k b].}$]
+		Let $l = min \{ i \mid c_i < (a \odiv_k b)_i\}$,
+		with the convention that the result is $k+1$ whenever the set if empty.
+		Also, let $m = min \{l, k\} < \delta(a,b)$.
+		
+		We have that $c_j \leq (a \odiv_k b)_j = a_j \odiv b_j$ for all $j \leq m$, hence
+		$b_j \otimes c_j \leq a_j$ for all $j \leq m$.
+		%
+		If $b_n \otimes c_n < a_n$ for some $n \leq m$
+		we are done. 
+		%
+		Otherwise, if $m = k < l$ then 
+		$b_n \otimes c_n = a_n$ for all $n \leq k$	and we are done.
+		%
+		Finally, if $m = l \leq k$ then 
+		$b_l \otimes c_l = a_l = b_l \otimes (a_l \odiv b_l)$
+		since $l < \delta(a,b)$, hence either a contradiction
+		if $b_l \in I(A)$ or $b_p \otimes c_p = \bot = a_p$ for all $p > l$
+		if $b_l \in C(A)$ and consequently $a_l \in C(A)$. \qedhere
+	\end{description}
+\end{proof}
+
+Note that $a \odiv_k b$ here coincides with the residuation $a \odiv^k b$ 
+on the Cartesian product. Furthermore, we have 
+that $(a \odiv_k b) \otimes^k b = a$.
+
+\begin{proposition}
+	\label{div1}
+	Let $\langle A, \leq, \monop, \odiv, \1 \rangle$
+	be a residuated POM with bottom and $a, b \in Lex_k(A)$.
+	If $\delta(a,b) < \gamma(a,b)$ then their residuation $a \odiv_k b$ 
+	in $Lex_k(A)$ exists and it is given by
+	%	\[ \left\{
+	%	   \begin{array}{l}
+	%         	     (a_1 \odiv b_1) \ldots  (a_{\delta(a, b)}  \odiv b_{\delta(a, b)}) 
+	%	              \top^{k - \delta(a, b)} \mbox{  if  }  \top \in I(A) \\
+	%           	     (a_1 \odiv b_1) \ldots  (a_{\delta(a, b)}  \odiv b_{\delta(a, b)}) 
+	%	             \top \bot^{k - \delta(a, b) - 1} \mbox{  otherwise}
+	%	    \end{array}
+	%	\right
+	%	\]
+	%oppure
+$
+	(a_1 \odiv b_1) \ldots  (a_{\delta(a, b)}  \odiv b_{\delta(a, b)}) 
+	(\bigvee Lex_{k - \delta(a, b)}(A))
+$.
+	%	such that $x = \top$ if $\top \in I(A)$, and  $x = \bot$ otherwise.
+\end{proposition}
+
+\begin{proof}
+	First of all, note that 
+	$(a \odiv_k b)_{\mid \delta(a,b)} \in I(A)^{\delta(a,b)} \subseteq Lex_{\delta(a,b)}(A)$.
+	% and recall that 
+	%$\forall i < \delta(a,b).\ a_i = (a_i \odiv b_i) \otimes b_i$.
+	%
+	So, given $c \in Lex_k(A)$, we need to prove that
+	$b\otimes^k c \leq_k a$ iff $c \leq_k a \odiv_k b$.
+	
+	\begin{description}
+		\item[$\mathbf{[b\otimes^k c \leq_k a].}$]
+		Let $l = min \{ i \mid b_i \otimes c_i < a_i\}$,
+		with the convention that the result is $k+1$ whenever the set if empty.
+		Also, let $m = min \{l, \delta(a,b)\}$.
+		
+		We have that $b_j \otimes c_j \leq a_j$ for all $j \leq m$, hence
+		$c_j \leq a_j \odiv b_j $ for all $j \leq m$. 
+		%
+		If $c_n < a_n \odiv b_n$ for some $n \leq m$
+		we are done. 
+		%
+		Otherwise, if $m = \delta(a,b) \leq l$ then 
+		$c_j \leq a_j \odiv b_j $ for all $j \leq \delta(a,b)$ and we are done.
+		%
+		Finally, if $m = l < \delta(a,b)$ then 
+		$b_l \otimes c_l = b_l \otimes (a_l \odiv b_l) = a_l$,
+		 a contradiction.
+		
+		\item[$\mathbf{[c \leq_k a \odiv_k b].}$]
+		Let $l = min \{ i \mid c_i < (a \odiv_k b)_i\}$,
+		with the convention that the result is $k+1$ whenever the set if empty.
+		Also, let $m = min \{l, \delta(a,b)\}$.
+		
+		We have that $c_j \leq (a \odiv_k b)_j = a_j \odiv b_j$ for all $j \leq m$, hence
+		$b_j \otimes c_j \leq a_j$ and $b_j \otimes c_j \leq b_j \otimes (a_j \odiv b_j)$ 
+		for all $j \leq m$, the latter by monotonicity of $\otimes$.
+		%
+		If $b_n \otimes c_n < a_n$ for some $n \leq m$
+		we are done. 
+		%
+		Otherwise, if $m = \delta(a,b) \leq l$ then 
+		$b_{\delta(a,b)} \otimes (a_{\delta(a,b)} \odiv b_{\delta(a,b)}) <
+		a_{\delta(a,b)} = b_{\delta(a,b)} \otimes c_{\delta(a,b)} \leq
+		b_{\delta(a,b)} \otimes (a_{\delta(a,b)} \odiv b_{\delta(a,b)})$,
+		hence a contradiction.
+		%
+		Finally, if $m = l < \delta(a,b)$ then 
+		$b_l \otimes c_l = a_l = b_l \otimes (a_l \odiv b_l)$, 
+		hence either a contradiction
+		if $b_l \in I(A)$ or $b_p \otimes c_p = \bot = a_p$ for all $p > l$
+		if $b_l \in C(A)$ and consequently $a_l \in C(A)$. \qedhere
+	\end{description}
+\end{proof}
+
+Additionally, please note that $\bigvee Lex_n(A)$ can be easily characterised: 
+it coincides with $\top^n$
+if $\top \in I(A)$, and with $\top \bot^{n -1}$ otherwise.
+
+\begin{proposition}
+	\label{div2}
+	Let $\langle A, \leq, \monop, \odiv, \1 \rangle$
+	be a residuated POM with bottom element $\bot$ and $a, b \in Lex_k(A)$.
+	If $\delta(a,b) = \gamma(a,b) \leq k$ or $ \gamma(a,b) < \delta(a,b)$
+	then their residuation $a \odiv_k b$ 
+	in $Lex_k(A)$ exists: it is given by
+	$(a_1 \odiv b_1) \ldots  (a_{\gamma(a, b)}  \odiv b_{\gamma(a, b)}) 
+	\bot^{k - \gamma(a, b)}$.
+\end{proposition}
+
+\begin{proof}
+	First of all, note that 
+	$(a \odiv_k b)_{\mid \gamma(a,b)} \in I(A)^{\gamma(a,b)-1} C(A) \subseteq Lex_{\gamma(a,b)}(A)$.
+	Also, $\delta(a,b) >  \gamma(a,b)$ implies that 
+	$\delta(a,b) = k+1$ and $a_{\gamma(a,b)} \in C(A)$.
+	% and recall that 
+	%$\forall i < \delta(a,b).\ a_i = (a_i \odiv b_i) \otimes b_i$.
+	%
+	Given $c \in Lex_k(A)$, we need to prove that
+	$b\otimes^k c \leq_k a$ iff $c \leq_k a \odiv_k b$.
+	
+	\begin{description}
+		\item[$\mathbf{[b\otimes^k c \leq_k a].}$]
+		Let $l = min \{ i \mid b_i \otimes c_i < a_i\}$,
+		with the convention that the result is $k+1$ whenever the set if empty.
+		Also, let $m = min \{l, \gamma(a,b)\} \leq \delta(a,b)$.
+		
+		We have that $b_j \otimes c_j \leq a_j$ for all $j \leq m$, hence
+		$c_j \leq a_j \odiv b_j $ for all $j \leq m$. 
+		%
+		If $c_n < a_n \odiv b_n$ for some $n \leq m$
+		we are done. 
+		%
+		Otherwise, if $m = \gamma(a,b) \leq l$ then 
+		$c_{\gamma(a,b)} \in C(A)$ and we are done since
+		$c_p = \bot = (a \odiv_k b)_p$ for all $p > {\gamma(a,b)}$.
+		%
+		Finally, if $m = l < \gamma(a,b)$ then 
+		$b_l \otimes c_l = b_l \otimes (a_l \odiv b_l) = a_l$
+		since $l < \delta(a,b)$, a contradiction.
+		
+		\item[$\mathbf{[c \leq_k a \odiv_k b].}$]
+		Let $l = min \{ i \mid c_i < (a \odiv_k b)_i\}$,
+		with the convention that the result is $k+1$ whenever the set if empty.
+		Also, let $m = min \{l, \gamma(a,b)\} \leq \delta(a,b)$.
+		
+		We have that $c_j \leq (a \odiv_k b)_j = a_j \odiv b_j$ for all $j \leq m$, hence
+		$b_j \otimes c_j \leq a_j$ and $b_j \otimes c_j \leq b_j \otimes (a_j \odiv b_j)$ 
+		for all $j \leq m$, the latter by monotonicity of $\otimes$.
+		%
+		If $b_n \otimes c_n < a_n$ for some $n \leq m$
+		we are done. 
+		%
+		Otherwise, if $m = \gamma(a,b) < l$ then 
+		$c_{\gamma(a,b)} \in C(A)$ and we are done since
+		$b_p \otimes c_p = \bot \leq a_p$ for all $p > {\gamma(a,b)}$.
+		%
+		Finally, if $m = l \leq \gamma(a,b)$ then 
+		$b_l \otimes (a_l \odiv b_l) \leq a_l  = b_l \otimes c_l \leq b_l \otimes (a_l \odiv b_l)$
+		since $l \leq \delta(a,b)$, hence either a contradiction
+		if $b_l \in I(A)$ or $b_p \otimes c_p = \bot = a_p$ for all $p > l$
+		if $b_l \in C(A)$ and consequently $a_l \in C(A)$. \qedhere
+	\end{description}
+\end{proof}
+
+
+%Note that when $\delta(a,b) = \infty$ we have $\beta(a) \leq \gamma(a,b)$.
+%
+%\begin{remark}
+%	In fact, we can be a bit more specific.
+%	Since $\delta(a,b) = \infty$ we know that either $b_{\beta(a)} \in C(A)$ or 
+%	$a_{\beta(a)} \odiv b_{\beta(a)} \in C(A)$.
+%	In the latter case $\beta(a) = \gamma(a,b)$.
+%	If the latter case is false and the former one holds, then
+%	$a_{\beta(a)+1} \odiv b_{\beta(a)+1} = \bot \odiv \bot = \top$,
+%	so either $\gamma(a,b) = \beta(a)+1$ if  $\top \in C(A)$ or 
+%	$\gamma(a,b) = \infty$ otherwise.
+%\end{remark}
+
+From the propositions above it is straightforward to derive Theorem~\ref{prop:lexiRes}, 
+which states that, given a residuated POM, it is possible to define a lexicographic 
+order on its tuples, which is a residuated POM as well. 
+
+\begin{theorem}\label{prop:lexiRes}
+	Let $\langle A, \leq, \monop, \odiv, \1 \rangle$ be a residuated POM with bottom
+	element $\bot$.
+	Then so is $\langle Lex_k(A), \leq_k, \monop^k, \odiv_k, \1^k \rangle$ for all $k$,
+	with $\odiv_k$ defined as 
+	%\small
+	\[
+	a \odiv_k b = 	\begin{cases}
+	\begin{array}{lcl}
+	(a_1 \odiv b_1) \ldots
+	(a_k  \odiv b_k) & & \mbox{if  } k+1 = \gamma(a,b) = \delta(a,b) \\
+	(a_1 \odiv b_1) \ldots  (a_{\gamma(a, b)}  \odiv b_{\gamma(a, b)}) 	
+	\bot^{k - \gamma(a, b)} & & \mbox{if  } k+1 \neq \gamma(a,b) \leq \delta(a,b) \\
+	(a_1 \odiv b_1) \ldots  (a_{\delta(a, b)}  \odiv b_{\delta(a, b)})
+	(\bigvee Lex_{k-\delta(a,b)}(A)) & & \mbox{otherwise}
+	\end{array}
+	% versione compatta basata sui cartesiani \odiv^\omega
+	%	                                \begin{array}{lcl}
+	%        		                           a \odiv^k b & & \mbox{if  } k+1 = \gamma(a,b) = \delta(a,b) \\
+	%                                           (a \odiv^k b)_{\mid \gamma(a, b)}  	
+	%	                                   \bot^{k - \gamma(a, b)} & & \mbox{if  } k+1 \neq \gamma(a,b) \leq \delta(a,b) \\
+	%           	                         (a \odiv^k b)_{\mid \delta(a, b)}
+	%	                                  (\bigvee Lex_{k-\delta(a,b)}(A)) & & \mbox{otherwise}
+	%	                                 \end{array}
+	\end{cases}
+	\]
+\end{theorem}
+%\begin{itemize}
+%\item $(a \odiv_k b)_1 = a_1 \odiv b_1$
+%\item $(a \odiv_k b)_{i+1} = a_{i+1} \odiv b_{i+1}$ if $(a \odiv_k b)_i \in I(A)$
+%and $\bot$ otherwise
+%\end{itemize}
+%\end{proposition}
+%\begin{proof}
+%A straightforward consequence of Prop.~\ref{div1} and Prop.~\ref{div2}.
+%\end{proof}
+
+%\begin{remark}
+%Is the proposition true? Also, its proof above would be simplified should $I(A)$ 
+%be closed with respect to residuation.
+%\end{remark}
+
+\subsection{Infinite tuples}\label{sec:infinite}
+We can now move to POMs whose elements are tuples of infinite length.
+
+\begin{proposition}
+	Let $\langle A, \leq, \monop, \1 \rangle$ be a POM with bottom element $\bot$.
+	%
+	Then we can define a POM 
+	%$\langle Lex_\ast(A), \leq_\ast, \monop_\ast, \1 \rangle$ 
+	%and 
+	$\langle Lex_\omega(A), \leq_\omega, \monop^\omega, \1^\omega \rangle$ 
+	with bottom element $\bot^\omega$ such that $\monop^\omega$ is defined point-wise
+	and {\bf i)} $Lex_\omega(A) = I(A)^\omega \cup I(A)^\ast A \{\bot\}^\omega$, {\bf ii)} $a \leq_\omega b$ if $a_{\leq k} \leq_k b_{\leq k}$ for all $k$.
+\end{proposition}
+
+A straightforward adaptation of Proposition~\ref{def:lexilist}.
+%
+Thus, we can define a POM of infinite tuples simply by lifting the 
+family of POMs of finite tuples.
+
+\begin{remark}
+	Note that the seemingly obvious POM structure cannot be 
+	lifted to $\bigcup_k Lex_k(A) =  I(A)^\ast A \{\bot\}^\ast$: 
+	it would be missing the identity of the monoid.
+\end{remark}
+
+\begin{proposition}\label{prop:lexiSLM}
+	Let $\langle A, \leq, \monop, \1 \rangle$ be a finitely distributive SLM (distributive CLM).
+	Then so is $\langle Lex_\omega(A), \leq_\omega, \monop^\omega, \1^\omega \rangle$.
+\end{proposition}
+
+Also a straightforward adaptation, this time of Theorem~\ref{theo:lexiSLM}.
+
+\begin{proposition}\label{prop:lexiResOmega}
+	Let $\langle A, \leq, \monop, \odiv, \1 \rangle$ be a residuated POM with bottom.
+	Then so is $\langle Lex_\omega(A), \leq_\omega, \monop^\omega, \odiv_\omega, \1^\omega \rangle$,
+	with $\odiv_w$ defined as
+	\[
+	a \odiv_\omega b = \begin{cases}
+	\begin{array}{lcl}
+	(a_1 \odiv b_1) \ldots
+	(a_k  \odiv b_k) \ldots & & \mbox{if  } \infty = \gamma(a,b) = \delta(a,b) \\
+	(a_1 \odiv b_1) \ldots  (a_{\gamma(a, b)}  \odiv b_{\gamma(a, b)}) 	
+	\bot^\omega & & \mbox{if  } \infty \neq \gamma(a,b) \leq \delta(a,b) \\
+	(a_1 \odiv b_1) \ldots  (a_{\delta(a, b)}  \odiv b_{\delta(a, b)})
+	(\bigvee Lex_{\omega}(A)) & & \mbox{otherwise}
+	\end{array}
+	% versione compatta basata sui cartesiani \odiv^\omega
+	%	                                \begin{array}{lcl}
+	%        		                           a \odiv^\omega b & & \mbox{if  } \infty = \gamma(a,b) = \delta(a,b) \\
+	%                                           (a \odiv^\omega b)_{\mid \gamma(a, b)}  	
+	%	                                   \bot^{\omega} & & \mbox{if  } \infty \neq \gamma(a,b) \leq \delta(a,b) \\
+	%           	                         (a \odiv^\omega b)_{\mid \delta(a, b)}
+	%	                                  (\bigvee Lex_{\omega}(A)) & & \mbox{otherwise}
+	%	                                 \end{array}
+	%\right %\}
+	\end{cases}
+	\]
+\end{proposition}
+
+It follows from Theorem~\ref{prop:lexiRes}, via the obvious extension of Lemma~\ref{limit}.
+Note that $\bigvee Lex_\omega(A)$ is $\top^\omega$
+if $\top \in I(A)$, and  $\top \bot^\omega$ otherwise.
+
+
+
+\section{Conclusions}\label{sec:conclusion}
+In this paper we considered a framework for soft constraint formalisms based on a residuated monoid of partially ordered preferences.  
+%
+More specifically, our focus was to show that the framework can include also lexicographic orders.
+
+Despite the practical relevance of these orders, the valued structures for constraints proposed in the literature, 
+such as the pioneering~\cite{jacm97,schiex}, cannot straightforwardly deal 
+with such a class of preferences, and their modelling required some ingenuity~\cite{GadducciHMW13,valuation}. 
+%
+Generalising such proposals by using residuated monoids~\cite{residuation1} allows the extension of the classical solving algorithms 
+that need preference removal, such as arc consistency, where values need to be moved from binary to unary constraints~\cite{ipl}.
+%
+The paper shows that the resolution techniques devised for this richer framework can tackle also lexicographic orders.
+
+Our current work is on the design of specific heuristics to specialise such techniques to constraint satisfaction problems involving these orders. 
+
+% (see Section~\ref{sec:bucket}). 
+%
+%The contribution of this paper is twofold. On the one side, we proved the adequacy of the formalism for modelling lexicographic orders. 
+%On the other side, we showed how it can enable heuristics for efficiently solving soft CSPs, such as the Nucket and Mini-bucket elimination.
+%
+%Notice that the work in \cite{bucketsemiring} uses  an $\odiv$ operator that cannot be used on lexicographic orders. 
+%Moreover, having provided a definition of residuation on infinite tuples enables the use of residuation in temporal reasoning formalisms 
+%(e.g., Allen's interval algebra and its fragments)~\cite{infinite} with lexicographic orders, as for example accomplished with 
+%soft constraint automata in \cite{sca}.
+
+%Our focus on soft CSP includes its computational counterparts based on constraints, such as soft CCP~\cite{labelled}, and in fact, considering infinite tuples 
+%enables to model temporal reasoning as shown for soft constraint automata in \cite{sca}. However, the framework is reminiscent, and is in fact an extension, 
+%of previous formalisms such as monotonic logic programming~\cite{residuatedlogic}, whose semantics is given in terms of residuated 
+%lattices of complete lattices of truth-values. And it fits in the current interests on the development of sequent systems for substructural logics, 
+%as witnessed by current research projects~\cite{ciabattoni}:
+%
+%where $\otimes$ and $\leftarrow$ (implication) form an adjoint pair. Possibilistic 
+%values are then represented through a residuated algebra on $[0, 1]$.
+%Residuated lattices can be used as algebraic structures for \emph{substructural logics}~\cite{ciabattoni} 
+%when they are formalised in sequent systems, thus lacking some or all of the structural rules: 
+%well-known examples are Lukasiewicz's many-valued logics, relevance logics and linear logics.
+%As can be The ultimate goal is often to generalise logic program results to richer algebraic structures.
+
+
+
+
+
+
+
+\bibliographystyle{elsarticle-num}
+\bibliography{main}
+
+
+
+
+\end{document}
