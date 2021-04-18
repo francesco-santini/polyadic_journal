@@ -5,7 +5,7 @@
 \usepackage{graphicx,paralist}
 \usepackage{url}
 \usepackage{tikz-cd}
-\usetikzlibrary{trees}
+\usetikzlibrary{trees, arrows}
 \usepackage{xspace}
 %\usepackage{hyperref}
 \usepackage{setspace}
@@ -1025,22 +1025,22 @@ and a set $V$ of variables, and we then define a family of operators axiomatisin
 
 \begin{definition}[cylindrification]\label{cyli}
 	A cylindric operator $\exists$ over $\mathbb{S}$ and $V$ is a pomonoid action
-	$\exists: 2^V_{fin} \times A \rightarrow A$ such that for all $X\in 2_{fin}^V$
+	$\exists: V \times A \rightarrow A$ such that for all $x \in V$
 	%\todo{$2_f^V$ non e' stato definito prima e/o f non si sa cosa e' qui}
 	\begin{enumerate}
 %	     \item $\forall a \in A.\ \exists(\emptyset, a) = a$,
 %             \item $\forall a \in A.\ \exists(X, \exists(Y, a)) = \exists(X \cup Y, a)$,
  %            \item $\forall a, b \in A.\ X \subseteq Y\wedge a \leq b \implies  \exists(X, a) = \exists(Y, b)$,
-	     \item $\exists(X, \monid) = \monid$,
-	     \item $\forall a,b \in A.\ \exists(X, a \monop \exists(X, b)) = \exists(X, a) \monop \exists(X, b)$.
+	     \item $\exists(x, \monid) = \monid$,
+	     \item $\forall a,b \in A.\ \exists(x, a \monop \exists(X, b)) = \exists(x, a) \monop \exists(x, b)$.
 	\end{enumerate}
 	
-	\noindent Let $a \in A$. The \emph{support} of $a$ is the set of variables $sv(a) = \{ x \mid \exists(\{x\}, a) \neq a\}$. 
+	\noindent Let $a \in A$. The \emph{support} of $a$ is the set of variables $sv(a) = \{ x \mid \exists(x, a) \neq a\}$. 
 	% and the set of unsupported variables of $a$ is the set of variables $uv(a) =  V \setminus sv(a)$.
 \end{definition}
 
-Note that, since by Definition~\ref{pomo} we have $\exists(\emptyset, a) = a$, the requirements of Definition~\ref{cyli} trivially hold 
-whenever $X$ is the empty set.
+%Note that, since by Definition~\ref{pomo} we have $\exists(\emptyset, a) = a$, the requirements of Definition~\ref{cyli} trivially hold 
+%whenever $X$ is the empty set.
 %
 %The first two conditions tell us that $\exists$ is a monoid action of $M(V)$ over $A$. Condition $3$ states
 %that $\exists$ is a monotone function. Finally, the last two conditions state how $\exists$ interacts with the 
@@ -1052,13 +1052,13 @@ whenever $X$ is the empty set.
 %\end{remark}
 %
 %
-Note also that $\exists(X, \monid) = \monid$ would be a consequence of monotonicity,
-should $\monid$ be the top element. Also, the support is not necessarily finite.
-Finally, and importantly, note that 
-$X \cap sv(\exists(X, a)) = \emptyset$.
+%Note also that $\exists(X, \monid) = \monid$ would be a consequence of monotonicity,
+%should $\monid$ be the top element. Also, the support is not necessarily finite.
+%Finally, and importantly, note that 
+%$X \cap sv(\exists(X, a)) = \emptyset$.
 
-\smallskip
-In the following, we often use $\exists_X a$ for $\exists(X, a)$, and $\exists_x a$ whenever $X = \{x\}$.
+%\smallskip
+%In the following, we often use $\exists_X a$ for $\exists(X, a)$, and $\exists_x a$ whenever $X = \{x\}$.
 
 \subsubsection{Polyadic operators.}
 We now move to define a family of operators axiomatising substitutions.  
@@ -1076,13 +1076,18 @@ by $\sigma^{c}(X) \subseteq V$ the counter-image of $X$ along $\sigma$.
 	A polyadic operator $s$ for $\exists$ is a pomonoid action $s: F(V) \times A \rightarrow A$
 	such that for all $X \in 2_{fin}^V$ and $\sigma, \tau\in F(V)$
 	\begin{enumerate}
-	\item $\forall a, b \in A.\ s(\sigma, a \monop b) = s(\sigma, a) \monop s(\sigma, b)$,
-        \item $\forall a \in A.\ \sigma \mid_{sv(a)} = \tau \mid_{sv(a)} \implies s(\sigma, a) = s(\tau, a)$,
-        \item $\sigma \mid_{\sigma^{c}(X)} \mbox{ injective } \implies \forall a \in A.\ \exists(X, s(\sigma, a)) = s(\sigma, \exists(\sigma^{c}(X), a))$.
-        \end{enumerate}
+		\item $\forall a, b \in A.\ s(\sigma, a \monop b) = s(\sigma, a) \monop s(\sigma, b)$,
+        \item $\forall a \in A.\ \sigma \mid_{sv(a)} = \tau \mid_{sv(a)} \implies s(\sigma, a) 
+        = s(\tau, a)$,
+        \item $\forall a \in A.\ \exists_x s_\sigma a =
+  			\begin{cases}
+    			s_\sigma \exists_y a \ if \ \sigma^c(x) = {y} \\
+        		s_\sigma a \ if \ \sigma^c(x) = \emptyset.
+  			\end{cases}$	
+    \end{enumerate}
 \end{definition}
 
-Clearly item $3$ always holds for an empty $X$.
+%Clearly item $3$ always holds for an empty $X$.
 %
 We usually denote $s(\tau,a)$ as $s_\tau a$.
 Now, being an action implies that $s_\iota a = a$, and 
@@ -1117,13 +1122,13 @@ $s(\sigma, \exists (Y \setminus sv(a), a)) = s(\tau, \exists (Y \setminus sv(a),
 Since by definition we have $\exists (Y \setminus sv(a), a)) = a$, the result follows.
 \end{remark}
 
-\begin{remark}
-Note also that $\sigma(\sigma^{c}(X)) \subseteq X$, so, when restricted to singleton, we have that item $3$ in Definition~\ref{def:poly} is equivalent to
-\begin{itemize}
-          \item[\emph{3'}.] $\forall a\in A.\ \sigma^{c}(x) = \{y\} \implies \exists_x s_{\sigma} a =  s_\sigma \exists_y a$,
-          \item[\emph{3''}.] $\forall a\in A.\ \sigma^{c}(x) = \emptyset \implies \exists_x s_{\sigma} a =  s_\sigma a$.
-\end{itemize}
-\end{remark}
+%\begin{remark}
+%Note also that $\sigma(\sigma^{c}(X)) \subseteq X$, so, when restricted to singleton, we have that item %$3$ in Definition~\ref{def:poly} is equivalent to
+%\begin{itemize}
+%          \item[\emph{3'}.] $\forall a\in A.\ \sigma^{c}(x) = \{y\} \implies \exists_x s_{\sigma} a =  %s_\sigma \exists_y a$,
+%          \item[\emph{3''}.] $\forall a\in A.\ \sigma^{c}(x) = \emptyset \implies \exists_x s_{\sigma} %a =  s_\sigma a$.
+%\end{itemize}
+%\end{remark}
 
 %\noindent As we did for $\exists$, we define the support of $\sigma$ as follows:
 %\begin{itemize}
@@ -1190,11 +1195,13 @@ DIRE DI PIU'
 
 \begin{lemma}
 	\label{lemmaSubs0}
-	Let $\sigma \in F(V)$ be invertible and $W \subseteq V$ finite. Then it holds
+	Let $\sigma \in F(V)$ be invertible and $x \in V$. Then it holds
 	\begin{enumerate}
-		\item $\forall a\in A.\ s_{\sigma} \exists_{sv(\sigma)} a = \exists_{sv(\sigma)} a$,
-		\item $\forall a\in A.\ \sigma(sv(\sigma)) \cap sv(a) = \emptyset \implies \exists_{sv(\sigma)} a = \exists_{\sigma(sv(\sigma))} s_{\sigma} a$,
-		\item $W \cap (sv(\sigma) \cup \sigma(sv(\sigma))) = \emptyset \implies \forall a\in A.\ s_{\sigma} \exists_W a =  \exists_W s_{\sigma} a$.
+		\item $\forall a\in A.\ s_\sigma \exists_x a = \exists_x a$,
+		\item $\forall a\in A.\ \sigma(x) = y \land y \not \in sv(a) \implies \exists_x a =
+		\exists_y s_\sigma a$,
+		\item $\forall a \in A.\ z \not \in (sv(\sigma) \cup \sigma(sv(\sigma)))
+		\implies s_\sigma \exists_z a = \exists_z s_\sigma a$.
 	\end{enumerate}
 \end{lemma}
 
@@ -1460,8 +1467,8 @@ original constraints to the appropriate sub-tuples.
 \begin{lemma}[cylindric and polyadic operators for (soft) constraints]
 	The ReSL of constraints $\mathbb{C}$ admits cylindric and polyadic operators, defined as
 	\begin{itemize}
-		\item  $(\exists_X c) \eta = \bigvee_\rho \{c \rho \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\}$ 
-		         for all $c \in {\mathcal C}, X \subseteq V$,
+		\item  $(\exists_x c) \eta = \bigvee_\rho \{c \rho \mid \eta\mid_{V \setminus \{x\}} = \rho\mid_{V \setminus \{x\}}\}$ 
+		         for all $c \in {\mathcal C},x \in V$,
 		%\item if $\sigma$ is an injective substitution, then $(s_{\sigma}c)\eta = c(\sigma \circ \eta)$ for all $c \in \mathcal{C}$
 		\item  $(s_\sigma c) \eta = c (\eta \circ \sigma)$ for all $c \in {\mathcal C}, \sigma \in F(V)$.	
 %		\item $\delta_{x,y}\eta = \left\{
@@ -1542,6 +1549,362 @@ To this end, we close the section by adding the simple result below to the soft 
 }
 
 
+\section{Deterministic Soft CCP}\label{sec:detSCCP}
+This section introduces our (meta-)language.
+We fix a set of variables $V$, ranged over by $x$, $y$, $\ldots$ , and 
+an invertible CLIM $\mathbb S = \langle {\mathcal C}, \leq, \otimes\rangle$, which is 
+cylindric over $V$ and whose compact elements
+are ranged over by $c$, $d$, $\ldots$.
+
+\begin{definition}[Agents]%
+The set $\mathcal{A}$ of all agents, %which is
+parametric with respect to a set $\mathcal{P}$ of (unary) procedure declarations $p(x)$,
+is given by the following grammar
+\[ A \Coloneqq \: \: \mathit{\ostop} \mid \textit{\tell}(c)  \mid \textit{\ask}(c) \rightarrow A \mid A \parallel A \mid \exists_x A \mid %Z \mid \mu_Z A
+p(x).\]  
+\end{definition}
+
+We denote by $fv(A)$ the set of free variables of an agent, defined in the expected way 
+by structural induction, assuming that $fv(\tell(c)) = sv(c)$ and
+ $fv(\ask(c) \rightarrow A) = sv(c) \cup fv(A)$.
+ %
+ In the following, we restrict our attention to 
+ procedure declarations $p(x) = A$ such that $fv(A) = \{x\}$.
+
+%
+%
+%%Given a soft constraint system $S_C=\langle \C, \otimes,\bot,\top ,
+%%\exists_x, d_{xy}\rangle$ as defined in
+%%Section~\ref{sec:softconstraints}, the syntax
+%%of  deterministic \SCCP agents is defined as
+%
+%
+%\def\odivv{\; {\ominus\hspace{-4pt} \div} \;}
+%\def\odivvv{\; {\ominus\hspace{-6pt} \div} \;}
+%\begin{table}
+%%\footnotesize
+%\begin{center}
+%%P \Coloneqq \: \: F.A \; \; \; \; \; \; \; \;
+%%F \Coloneqq \: \: p(\hat{x})::A \mid F.F \; \; \; \; \; \; \; \;
+%$A \Coloneqq \: \: \mathit{\ostop} \mid \textit{\tell}(c)  \mid \textit{\ask}(c) \rightarrow A \mid A \parallel A \mid \exists_x A \mid %Z \mid \mu_Z A$
+%p(x)$
+%\end{center}
+%%\normalsize
+%\caption{The syntax of deterministic soft CCP}
+%\label{syntax}
+%\end{table}
+%
+%In Tab.~\ref{syntax} we recall the deterministic fragment of soft CCP,
+%with respect to the standard proposal, we replaced the procedure call with the
+%simpler to handle recursion operator $\mu_Z$.
+%%\marginpar{A che servono F e P?}
+%%
+%Let $\mathcal{A}$ be the set of all agents, which is
+%parametric with respect to a set $\mathcal{P}$ of (unary) procedure declarations 
+%$p(x) = A$ such that $fv(A) = \{x\}.$\footnote{The set of free variables of an agent is defined in the
+ %expected way by structural induction, assuming that $fv(\tell(c)) = sv(c)$ and $fv(\ask(c) 
+ %\rightarrow A) = sv(c) \cup fv(A)$.}
+%
+%$\mathcal{P}$ is the class of programs, $\mathcal{F}$ is the class of sequences of procedure
+%declarations,
+%$\mathcal{A}$ is the set of agents and
+%$\mathcal{Z} = \{Z, Z_1, Z_2 \ldots\}$ is the set of recursion variables, 
+%$c \in \C^\otimes$ with $sv(c) \in V$.
+%
+%, and $\hat{x}$ is a tuple of variables in $Var$ passed in a procedure call.
+%
+%In $p(\hat{x}) :: A$ we assume that the variables in
+%$\mathit{vars}(A)$, i.e. the set of variables occurring either as parameters of procedure calls or belonging
+%to the support of
+%the constraints in agent $A$, also occur
+%among $\hat{x}$.
+%\footnote{Note that, with respect to the standard proposals, we require only for the
+%$\textit{ask}$ operator to have a compact constraint, while the $\textit{tell}$ ranges over all constraints.
+%Intuitively, we allow to require to the store the removal of certain constraint, while compactness allow
+%for obtaining a simpler relation when checking the entailment of a constraint.}
+
+We now move to consider the reduction semantics of our language.
+
+\begin{definition}[Substitutions]
+Let $\phi \in F(V)$. 
+Substitution $[^y/_x]: \mathcal{A} \rarrow \mathcal{A}$ is defined by structural induction as 
+
+\begin{itemize}
+	\item $s_\phi \ostop = \ostop$
+	\item $s_\phi\tell(c) = \tell(s_\phi c)$
+	\item $s_\phi p(w) =  p(\phi(w))$
+	\item $s_\phi (\ask(c) \rightarrow A) = \ask(s_\phi(c)) \rightarrow s_\phi A$
+	\item $s_\phi (\exists_w A)  = 
+		\begin{cases} 
+			\exists_w A & \text{if $w \not \in sv(a)$} \\
+            \exists_z (s_\psi s_\phi A) & \text{with $\psi(w) \not \in sv(s_\psi a)$}
+        \end{cases}$
+\item $s_\phi(A_1 \parallel A_2)  = (s_\phi A_1 \parallel s_\phi A_2)$
+\end{itemize}
+\end{definition}
+
+The substitution on compact elements is the one given in Definition~\ref{def:sub}: thanks to Lemma~\ref{lemmaSubs0}, 
+the choice of the intermediate variable is immaterial.
+% NO
+% $A[^y/_z][^z/_x] = A[^y/_x]$, since each syntactical substitution in $A$ involves all the variables with the same name.
+
+
+
+\begin{definition}[Reductions]\label{def:reductions}
+Let $\Gamma = {\mathcal A} \times \C$ be the set of \emph{configurations}.
+The \emph{direct reduction semantics} for SCCP is the pair 
+$\langle \Gamma,  \mapsto \rangle$
+such that $\mapsto \, \, \subseteq \, \,\Gamma \times   \Gamma$ is the family 
+ of binary relations indexed over sets of variables,
+%$2^V$,
+%between them, 
+i.e., $\mapsto = \bigcup_{\Delta \subseteq V} \mapsto_\Delta$ and 
+$\mapsto_\Delta \, \, \subseteq \, \,\Gamma \times \Gamma$, obtained by the rules in 
+Table~\ref{fig:operational}.
+
+The \emph{reduction semantics} for SCCP is the pair 
+$\langle \Gamma,  \rightarrow \rangle$
+such that $\rightarrow \, \, \subseteq \, \,\Gamma \times   \Gamma$ is the family 
+ of binary relations indexed over sets of variables,
+%$2^V$,
+%between them, 
+i.e., $\rightarrow = \bigcup_{\Delta \subseteq V} \rarrow_\Delta$ and 
+$\rarrow_\Delta \, \, \subseteq \, \,\Gamma \times \Gamma$, obtained by the rules in 
+Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
+\end{definition}
+
+%\vspace{-.25cm}
+\def\odiv{\; {\ominus\hspace{-6pt} \div} \;}
+\def\odivvv{\; {\ominus\hspace{-6pt} \div} \;}
+
+\begin{table}  %\hfil5
+  %\scalebox{0.9}{
+   \begin{center}
+   \begin{tabular}{llll} 
+   %
+   \mbox{\bf A1}& $\frac{\displaystyle sv(\sigma) \cup sv(c) \subseteq \Delta } {\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \mapsto_\Delta  \langle \hbox{\ostop},
+                                               \sigma \otimes c\rangle}$
+   \ \ \ & \bf{Tell}&
+  \\ 
+  &\mbox{   }&\mbox{   } &\mbox{   }
+  \\
+  \mbox{\bf A2}& $\frac {\displaystyle sv(\sigma) \cup sv(c) \cup fv(A) \subseteq \Delta \wedge c \leq \sigma}{\displaystyle
+  	\begin{array}{l} \langle \hbox{\ask}(c) \rightarrow A, \sigma \rangle \mapsto_\Delta \langle A, \sigma \rangle   	\end{array}}$
+    \ \ \ & \bf{Ask}&
+    \\
+    &\mbox{   }&\mbox{   }&
+    \\
+  \mbox{\bf A3}& $\frac {\displaystyle sv(\sigma) \cup \{\phi(x)\} \subseteq \Delta \wedge \displaystyle p(x) = A \in  \mathcal{P} \wedge \phi(x) = y }
+  {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle  s_\phi A, \sigma\rangle}$ 
+  &\bf{Rec}&
+    \\
+   &\mbox{   }&\mbox{   }&
+  \\
+    \mbox{\bf A4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq \Delta 
+    \wedge w = \phi(x) \not \in \Delta }
+    {\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle s_\phi A, \sigma\rangle}$
+    &\bf{Hide}&
+  \end{tabular}
+  \end{center}
+\caption{Axioms of the reduction semantics for SCCP.}
+\label{fig:operational}
+\end{table}
+
+\begin{table}  %\hfil5
+  %\scalebox{0.9}{
+   \begin{center}
+   \begin{tabular}{llll} 
+   %
+  \mbox{\bf R1}& $\frac {\displaystyle \langle A,\sigma \rangle \rarrow_\Delta \langle A', \sigma' \rangle
+  \wedge fv(B) \subseteq \Delta} 
+  {\displaystyle \begin{array}{l}
+                          \langle A\parallel B, \sigma \rangle \rarrow_\Delta \langle A'\parallel B, \sigma' \rangle
+                          \end{array}}$ 
+    & \bf{Par1}&
+  \\
+  & \mbox{   }&\mbox{   }&
+  \\
+    \mbox{\bf R2}& $\frac {\displaystyle \langle A,\sigma \rangle \rarrow_\Delta \langle A', \sigma'   \rangle
+    	\wedge fv(B) \subseteq \Delta} 
+    {\displaystyle 
+    	\begin{array}{l} \langle B\parallel A, \sigma \rangle \rarrow_\Delta \langle B\parallel A', \sigma' \rangle
+    	\end{array}}$& \bf{Par2}&
+  \end{tabular}
+  \end{center}
+\caption{Contextual rules of the reduction semantics for SCCP.}
+\label{fig:operational2}
+\end{table}
+
+\def\odiv{\, {\ominus\hspace{-7.8pt} \div} \,}
+\def\odivvv{\; {\ominus\hspace{-4.7pt} \div} \;}
+
+
+The split distinguishes between axioms and rules guaranteeing the closure with respect to the parallel operator. Indeed, rules {\bf  R1}  and {\bf  R2} model the interleaving of two agents in parallel.
+%
+%
+In {\bf A1} a constraint $c$ is added to the store $\sigma$.
+%, which in the next step will be $\sigma \otimes c$.
+%
+{\bf A2} checks if $c$ is entailed by  $\sigma$: if not, the computation is blocked.
+% until this condition holds, and then continuation $A$ is executed.
+%
+%provides the standard unfolding step for the recursion operator: the mechanisms of variable.
+%substitution and scope are defined as usual.
+%
+%Rules {\bf  R3}  and {\bf  R4} model the interleaving of two agents in parallel.
+%% symmetric rules (on agent $B$) are not shown in Fig.~\ref{fig:operational}.
+%\marginpar{Either $\exists_x \ostop = \ostop$ is missing or R4 is basically useless}
+%
+Axiom {\bf A3} replaces a procedure identifier with the associated body, renaming the formal parameter with the actual one:
+%$A[^y/_x]$ stands for the agent obtained by replacing all the occurrences of $x$ with $y$.
+%
+Axiom {\bf A4} hides the variable $x$ occurring in $A$, replacing it  
+with a globally fresh variable,
+as ensured by $w \not \in \Delta$.
+The latter is more general than just requiring that 
+$w \not \in fv(\exists_x A) \cup sv(\sigma)$, since
+$\langle B, \rho \rangle   \rarrow_\Delta$ implies that 
+$fv(B) \cup sv(\rho) \subseteq \Delta$.\footnote{Our rule is  reminiscent of 
+$(8)$ in~\cite[p.~342]{popl91}.}
+%
+%
+%(as $(9)$ in~\cite{popl91}), assuming a set of variables $Var_{\mathcal{P}}$
+%(one for each procedure definition) that cannot occurr either in the support nor in the syntax of any agent.
+%
+%\marginpar{R5 may add non-determinsm!!}
+%\marginpar{R5 is much more difficult now: the problem was in the superscript $\sigma''$ for non-idempotent CLIMs}
+%Finally, rule {\bf R6} calls a procedure $p(\hat{x})$ by passing the (global) parameters $\hat{y}$:
+%%$d_{\hat{x},\hat{y}}$ is a shorthand for the composition of the $d_{x_i,y_i}$'s.
+%$A[\hat{y}/\hat{x}]$ is the pairwise renaming in $A$ of variables in  $\hat{y}$ with variables in $\hat{x}$.
+%\marginpar{The use of $d_{x,y}$ for R6 would be nicer, but maybe problematic (compactness)}
+%Finally, rule {\bf R6} provides the standard unfolding step for the recursion operator: the mechanisms of variable
+%substitution and scope are defined as usual.
+
+%\smallskip
+Let $\gamma = \langle A, \sigma \rangle$ be a configuration.
+%
+We denote by $fv(\gamma)$ the set $fv(A) \cup sv(\sigma)$ and by
+$\gamma[^z/_w]$ the component-wise application of substitution $[^z/_w]$.
+
+\begin{lemma}[On monotonicity]
+\label{mono}
+Let $\langle A, \sigma \rangle \rightarrow_\Delta \langle B, \sigma' \rangle$ be a reduction. 
+Then
+\begin{enumerate}
+\item $sv(\sigma') \subseteq sv(\sigma)\cup fv(A) \subseteq \Delta$;
+\item $\sigma \leq \sigma'$;
+\item $\langle A, \sigma \rangle \rightarrow_{\Delta'} \langle B, \sigma' \rangle$
+         for all $\Delta'. sv(\sigma)\cup fv(A) \subseteq \Delta' \wedge fv(B) \cap \Delta' \subseteq fv(A)$;
+\item $\langle A, \sigma \otimes \rho \rangle \rightarrow_\Delta \langle B, \sigma' \otimes \rho \rangle$
+         for all $\rho \in  \C^\otimes. sv(\rho) \subseteq \Delta$. 
+\end{enumerate}
+ \end{lemma}
+ 
+ All statements are straightforward. 
+%
+%\begin{lemma}[Mono]\label{mono}
+%Let $\langle A, \sigma \rangle \rightarrow_\Delta \langle B, \sigma' \rangle$
+%be a reduction. Then, $\sigma \leq \sigma'$ and $sv(\sigma') \subseteq \Delta$.
+%\end{lemma}
+%
+As for item 1, by construction $sv(\sigma)\cup fv(A) \subseteq \Delta$: since 
+only rule {\bf A1} can modify the store
+and $sv(\sigma \otimes c) \subseteq sv(\sigma) \cup sv(c)$, then the statement holds.
+Similarly for item 2, since $\sigma \leq \sigma \otimes c$.
+Item 3 is again true by construction. 
+As for item 4, it suffices to also note that 
+$\sigma, \rho \in  \C^\otimes$ ensure that $\sigma \otimes \rho \in  \C^\otimes$
+and clearly {\bf A2} will still be executable. 
+%%The difficult case is  {\bf  R7}, 
+%%which is solved since $\sigma \leq  \sigma_0 \otimes \exists_x \sigma'$ and by monotonicity 
+%%of $\exists_x$ and $- \odiv \exists_x \sigma_0$. 
+%%
+%Note that 
+%%$A$ may be an extended agent, and 
+%$\sigma$ is not necessarily $\otimes$-compact.
+
+%A simple fact to establish is that if 
+%$\langle A, \sigma \rangle \rightarrow \langle \exists_x^{\sigma'} B, \sigma" \rangle$
+%is a reduction, then $\exists_x \sigma' \leq \sigma"$.
+%More can be said by restraining $A$ and $\sigma$. 
+%
+%\begin{definition}[extended agents, admissible configurations]
+%An extended agent $A \in \mathcal{A}^+$ is either an agent $A \in \mathcal{A}$ or it has the shape 
+%$A = A_1 \parallel A_2$ and both $A_i$'s are extended agents or it has the shape 
+%$\exists_x^\rho A_0$ and $A_0$ is an extend agent and $\exists_x \rho \in \mathcal{C}^\otimes$.
+%
+%A configuration $\langle A, \sigma \rangle$ is admissible if $A \in \mathcal{A}^+$ and if its shape is 
+%$A = A_1 \parallel A_2$ then both $\langle A_i, \sigma \rangle$ are admissible or if its shape is
+%$\exists_x^\rho A_0$ then $\langle A_0, \rho \otimes \exists_x (\sigma \odiv \exists \rho) \rangle$ is admissible.
+%\end{definition}
+
+%So, let $\mathcal{A}^+$ denote the set of agents obtained by including 
+%the extended operators $\exists_x^{\sigma'} -$ such that $\exists_x\sigma'$ is $\otimes$-compact, and let 
+%$\langle A, \sigma \rangle$ be admissible if $A \in \mathcal{A}^+$ and whenever $A = A_0 \parallel \ldots \parallel A_n$ %such that $A_i =\exists_x^{\sigma'} A'_i$ then $\exists \sigma' \leq \sigma$ and $\langle A'_i, \sigma' \otimes \exists_x 
+%(\sigma \odiv \exists \sigma') \rangle$ is admissible.
+
+%\begin{lemma}\label{comp}
+%Let $\langle A, \sigma \rangle \rightarrow \langle B, \sigma' \rangle$ be
+%a reduction. If $\langle A, \sigma \rangle$ is admissible, then $\langle B, \sigma' \rangle$ is so and $\sigma' \odiv \sigma \in \mathcal{C}^\otimes$.
+%\end{lemma}
+%\begin{proof}
+%[TO FINISH]
+%We proceed by induction on the length of the proof. 
+%The axioms {\bf R2}, {\bf R5}, and {\bf R6} are straightforwardly checked, so, the only one 
+%to be verified is if the last inference rule applied 
+%%in the $n$-th step 
+%is {\bf R7}.
+%%
+%So, let $\langle \exists^{\sigma'}_x A,
+%\sigma \rangle \rrarrow \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle$ with the construction of rule {\bf R7}. By hypothesis, $up = \sigma'' \odiv (\sigma' \otimes \exists_x \sigma_0) =  (\sigma'' \odiv \sigma') \odiv \exists_x \sigma_0 = \sigma_1 \odiv \sigma'$ is $\otimes$-compact. Now, $\sigma_1 \leq up \otimes \sigma'$, so that 
+%$\exists_x \sigma_1 \leq \exists_x (up \otimes \sigma')$: by Lemma~\ref{preserve} $\exists_x (up \otimes \sigma')$ is 
+%$\otimes$-compact, and by Lemma\ref{undercomp} so is $\exists_x \sigma_1$, hence $\exists_x^{\sigma_1} B \in \mathcal{A}^+$.
+%
+%Since $\langle B, \sigma''\rangle$ is admissible, and $\sigma_1 \otimes \exists_x [(\sigma_0 \otimes \exists_x \sigma_1) \odiv \exists_x \sigma_1)]$
+%
+%Now, consider $up' = (\sigma_0 \otimes \exists_x \sigma_1) \odiv \sigma$. By hypothesis we have that 
+%$\sigma = \sigma_0 \otimes \exists_x \sigma'$, thus 
+%$up' = (\sigma_0 \otimes \exists_x \sigma_1) \odiv (\sigma_0 \otimes \exists_x \sigma') = 
+%[(\sigma_0 \otimes \exists_x \sigma_1) \odiv \sigma_0] \odiv \exists_x \sigma') \leq \exists_x \sigma_1 \odiv \exists_x\sigma'$, 
+%and since $\exists_x \sigma_1$ is $\otimes$-compact, so is $\exists_x \sigma_1 \odiv \exists_x \sigma'$ 
+%by Lemma~\ref{preres} and thus $up'$ by Lemma\ref{undercomp}.
+%\end{proof}
+
+%We now establish two important results concerning computations.
+%
+%\begin{proposition}
+%Let $\langle A, \sigma \rangle \rightarrow^* \langle B, \sigma' \rangle$
+%be a computation. If $A \in \mathcal{A}$ and $\sigma \in {\mathcal C}^\otimes$, then
+%$B \in \mathcal{A}^+$, $\sigma' \in {\mathcal C}^\otimes$ and $\sigma \leq \sigma'$.
+ %\end{proposition}
+%
+%We now establish an additional result on the operational monotonicity.
+% but first, we say that for a reduction $\xi: 
+%The proposition is an immediate consequence of the lemmata above.
+%
+%\begin{lemma}[Operational mono]\label{opmonotonicity}
+%Let $\langle A, \sigma \rangle \rightarrow_\Delta \langle B, \sigma' \rangle$
+%be a reduction and $\rho \in  \C^\otimes$ such that $sv(\rho) \subseteq \Delta$. Then,
+% there exists a reduction $\langle A, \sigma \otimes \rho \rangle \rightarrow_\Delta \langle B, \sigma' 
+%\otimes \rho \rangle$.
+%\end{lemma}
+%
+%The proof is straightforward, since as before $sv(\sigma \otimes \rho) \subseteq sv(\sigma) 
+%\cup sv(\rho)$ and 
+%moreover $\sigma, \rho \in  \C^\otimes$ ensure that $\sigma \otimes \rho \in  \C^\otimes$.
+\begin{definition}[Increasing computations]\label{def:min}
+Let $\gamma_0  \rightarrow_{\Delta_1} \gamma_1  \rightarrow_{\Delta_2} \gamma_2 \rightarrow_{\Delta_3} \dots$ be a
+(possibly infinite) computation. 
+%\marginpar{added ``infinite'' before computation}
+It is increasing if $\Delta_k \subseteq \Delta_{k+1}$ for any $k >1$, and
+it is minimally increasing if $\Delta_k + fn(\gamma_k) = \Delta_{k+1}$ for any $k>1$.
+\end{definition}
+
+What is noteworthy is that in such computation the sets $\Delta$'s are always uniquely identified,
+once $\Delta_1$ is fixed.
+Thanks to Lemma \ref{mono}, for the sake of simplicity and without loss of generality 
+in the following we restrict our attention to minimally increasing computations, dropping
+altogether the subscripts $\Delta$'s whenever they are irrelevant.
 
 \section{Concluding Remarks}\label{sec:conclusion}
 Polynomial constraints are used in many areas of system analysis and verification. For instance, when synthesising program invariants or analysing reachability of hybrid systems. A further application is represented by the generation of measures for proving termination of symbolic programs, as well as rewrite systems. This work strives in the direction of bringing polynomial constraints in the soft constraints framework. 
