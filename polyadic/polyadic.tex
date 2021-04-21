@@ -89,7 +89,7 @@
 \title{Polyadic Soft Constraints~\thanks{Research partially supported by the MIUR PRIN 2017FTXR7S ``IT-MaTTerS''.}}
 
 
-\author{Filippo Bonchi\inst{1}, Laura Bussi\inst{1}, Fabio Gadducci\inst{1}, 
+\author{Laura Bussi\inst{1}, Fabio Gadducci\inst{1}, 
 Francesco Santini\inst{2}
 } 
 	\institute{Dipartimento di Informatica, University of Pisa, Italy \\
@@ -99,7 +99,7 @@ Francesco Santini\inst{2}
 		}
 	
 \titlerunning{Polyadic Soft Constraints}
-\authorrunning{Bonchi, Bussi, Gadducci, and Santini}
+\authorrunning{Bussi, Gadducci, and Santini}
 
 \maketitle
 
@@ -1003,8 +1003,9 @@ Let $\mathbb{M} = \langle A, \leq, \monop, \monid \rangle$ be a partially ordere
 A pomonoid action of $\mathbb{M}$ on $\mathbb{P}$ is a function $\phi: A \times S \rightarrow S$ such that
 	\begin{itemize}
 	     \item $\forall s \in S.\ \phi(\monid, s) = s$,
-             \item $\forall a, b \in A,\ s \in S.\ \phi(a, \phi(b, s)) = \phi(a \otimes b, s)$,
-             \item $\forall a, b \in A,\ s, t \in S.\ a \leq b\, \wedge\, s \leq t \implies \phi(a, s) \leq \phi (b, t)$.
+         \item $\forall a, b \in A,\ s \in S.\ \phi(a, \phi(b, s)) = \phi(a \otimes b, s)$,
+         \item $\forall a, b \in A,\ s, t \in S.\ a \leq b\, \wedge\, s \leq t \implies \phi(a, s) 
+         \leq \phi (b, t)$.
             % \item $\forall a, b \in A,\ s \in S.\ a \leq b \implies \phi(a, s) \leq \phi (b, s)$.
 	\end{itemize}
 \end{definition}
@@ -1012,32 +1013,27 @@ A pomonoid action of $\mathbb{M}$ on $\mathbb{P}$ is a function $\phi: A \times 
 The first two requirements just state
 that $\phi$ is a monoid action of $\mathbb{M}$ on $S$, while the latter states that $\phi$ is monotone. Sometimes, we say that $\mathbb{P}$ is an $\mathbb{M}$-PO.
 
-\comment{
-\begin{remark}
-Note that, since $\phi$ is monotone, it behaves correctly on any SL and preserves its LUBs: given an SL $\mathbb{M} = \langle A, \leq, \monop, \monid \rangle$, a finite subset $X \subseteq A$ and a partial order $\mathbb{P} = \langle S, \leq \rangle$, we have $\bigvee \{ \phi(x,s) \mid x \in X \} = \phi(\bigvee X,s)$.
-\end{remark}
-\marginpar{davvero? Fai attenzione}
-}
-
 \subsubsection{Cylindric operators.}
 We fix a partially ordered monoid $\mathbb{S} = \langle A, \leq, \monop, \monid \rangle$
-and a set $V$ of variables, and we then define a family of operators axiomatising existential quantifiers.
+and a set $V$ of variables, and we then define a family of cylindric operators axiomatising existential quantifiers.
 
 \begin{definition}[cylindrification]\label{cyli}
 	A cylindric operator $\exists$ over $\mathbb{S}$ and $V$ is a pomonoid action
-	$\exists: V \times A \rightarrow A$ such that for all $x \in V$
+	$\exists: V \times A \rightarrow A$ such that for all $X \subseteq V$
 	%\todo{$2_f^V$ non e' stato definito prima e/o f non si sa cosa e' qui}
 	\begin{enumerate}
 %	     \item $\forall a \in A.\ \exists(\emptyset, a) = a$,
 %             \item $\forall a \in A.\ \exists(X, \exists(Y, a)) = \exists(X \cup Y, a)$,
  %            \item $\forall a, b \in A.\ X \subseteq Y\wedge a \leq b \implies  \exists(X, a) = \exists(Y, b)$,
-	     \item $\exists(x, \monid) = \monid$,
-	     \item $\forall a,b \in A.\ \exists(x, a \monop \exists(X, b)) = \exists(x, a) \monop \exists(x, b)$.
+	     \item $\exists(X, \monid) = \monid$,
+	     \item $\forall a,b \in A.\ \exists(X, a \monop \exists(X, b)) = \exists(X, a) \monop \exists(X, b)$.
 	\end{enumerate}
 	
-	\noindent Let $a \in A$. The \emph{support} of $a$ is the set of variables $sv(a) = \{ x \mid \exists(x, a) \neq a\}$. 
+	\noindent Let $a \in A$. The \emph{support} of $a$ is the set of variables $sv(a) = \{ x \mid \exists(\{x\}, a) \neq a\}$. 
 	% and the set of unsupported variables of $a$ is the set of variables $uv(a) =  V \setminus sv(a)$.
 \end{definition}
+
+If $X = {x}$, we write $\exists_x$.
 
 %Note that, since by Definition~\ref{pomo} we have $\exists(\emptyset, a) = a$, the requirements of Definition~\ref{cyli} trivially hold 
 %whenever $X$ is the empty set.
@@ -1079,11 +1075,8 @@ by $\sigma^{c}(X) \subseteq V$ the counter-image of $X$ along $\sigma$.
 		\item $\forall a, b \in A.\ s(\sigma, a \monop b) = s(\sigma, a) \monop s(\sigma, b)$,
         \item $\forall a \in A.\ \sigma \mid_{sv(a)} = \tau \mid_{sv(a)} \implies s(\sigma, a) 
         = s(\tau, a)$,
-        \item $\forall a \in A.\ \exists_x s_\sigma a =
-  			\begin{cases}
-    			s_\sigma \exists_y a \ if \ \sigma^c(x) = {y} \\
-        		s_\sigma a \ if \ \sigma^c(x) = \emptyset.
-  			\end{cases}$	
+        \item if $\sigma \mid_{\sigma^{c}(X)}$ is injective then $\exists(X, s(\sigma, a)) = 
+        s(\sigma, \exists(\sigma^{c}(X), a))$.				
     \end{enumerate}
 \end{definition}
 
@@ -1195,16 +1188,15 @@ DIRE DI PIU'
 
 \begin{lemma}
 	\label{lemmaSubs0}
-	Let $\sigma \in F(V)$ be invertible and $x \in V$. Then it holds
+	Let $\sigma \in F(V)$ invertible, $a \in A$, and $W \subseteq V$ finite. Then it holds
 	\begin{enumerate}
-		\item $\forall a\in A.\ s_\sigma \exists_x a = \exists_x a$,
-		\item $\forall a\in A.\ \sigma(x) = y \land y \not \in sv(a) \implies \exists_x a =
-		\exists_y s_\sigma a$,
-		\item $\forall a \in A.\ z \not \in (sv(\sigma) \cup \sigma(sv(\sigma)))
-		\implies s_\sigma \exists_z a = \exists_z s_\sigma a$.
+		\item $s_{\sigma} \exists_{sv(\sigma)} a = \exists_{sv(\sigma)} a$
+		\item if $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ then 
+		$\exists_{sv(\sigma)} a = \exists_{\sigma(sv(\sigma))} s_{\sigma} a$
+		\item if $W \cap (sv(\sigma) \cup \sigma(sv(\sigma))) = \emptyset$ then 
+		$s_{\sigma} \exists_W a = \exists_W s_{\sigma} a$
 	\end{enumerate}
 \end{lemma}
-
 \begin{proof}
 Proofs are immediate.
 As for item $1$, it is a consequence of $\sigma \mid_{V \setminus sv(\sigma)} = id \mid_{V \setminus sv(\sigma)}$.
@@ -1464,13 +1456,14 @@ original constraints to the appropriate sub-tuples.
 %The ReSL of constraints also enjoys the cylindric properties, as shown by
 %the result below (for cylindric operators and diagonals in the idempotent case, see~\cite{scc}).
 
-\begin{lemma}[cylindric and polyadic operators for (soft) constraints]
+\begin{lemma}[Cylindric and polyadic operators for (soft) constraints]
 	The ReSL of constraints $\mathbb{C}$ admits cylindric and polyadic operators, defined as
 	\begin{itemize}
-		\item  $(\exists_x c) \eta = \bigvee_\rho \{c \rho \mid \eta\mid_{V \setminus \{x\}} = \rho\mid_{V \setminus \{x\}}\}$ 
-		         for all $c \in {\mathcal C},x \in V$,
-		%\item if $\sigma$ is an injective substitution, then $(s_{\sigma}c)\eta = c(\sigma \circ \eta)$ for all $c \in \mathcal{C}$
-		\item  $(s_\sigma c) \eta = c (\eta \circ \sigma)$ for all $c \in {\mathcal C}, \sigma \in F(V)$.	
+		\item  $(\exists_X c) \eta = \bigvee \{c \rho \mid \eta\mid_{V \setminus X} = 
+		\rho\mid_{V \setminus X}\}$ for all $c \in {\mathcal C}, X \subseteq V$
+		%\item if $\sigma$ is an injective substitution, then $(s_{\sigma}c)\eta = c(\sigma \circ \eta)$ 
+		%for all $c \in \mathcal{C}$
+		\item  $(s_\sigma c) \eta = c (\eta \circ \sigma)$ for all $c \in {\mathcal C}, \sigma \in F(V)$	
 %		\item $\delta_{x,y}\eta = \left\{
 %		\begin{array}{rcl} \bot & & \text{if } \eta(x) = \eta(y); \\
 %		\top & & \text{otherwise.}
@@ -1547,7 +1540,6 @@ To this end, we close the section by adding the simple result below to the soft 
 	$c\eta$ is $\monop$-compact for all $\eta$.
 \end{proposition}
 }
-
 
 \section{Deterministic Soft CCP}\label{sec:detSCCP}
 This section introduces our (meta-)language.
@@ -1626,32 +1618,38 @@ by structural induction, assuming that $fv(\tell(c)) = sv(c)$ and
 We now move to consider the reduction semantics of our language.
 
 \begin{definition}[Substitutions]
-Let $\phi \in F(V)$. 
-Substitution $[^y/_x]: \mathcal{A} \rarrow \mathcal{A}$ is defined by structural induction as 
+Let $[^y/_x] \in F(V)$, defined as: 
+\[ [^y/_x](w) = 
+		\begin{cases} 
+			y & \text{if $w = x$} \\
+            w & \text{otherwise}
+        \end{cases} \]
+The substitution operator $s_{[^y/_x]}: \mathcal{A} \rarrow \mathcal{A}$ on agents is defined by structural induction as 
 
 \begin{itemize}
-	\item $s_\phi \ostop = \ostop$
-	\item $s_\phi\tell(c) = \tell(s_\phi c)$
-	\item $s_\phi p(w) =  p(\phi(w))$
-	\item $s_\phi (\ask(c) \rightarrow A) = \ask(s_\phi(c)) \rightarrow s_\phi A$
-	\item $s_\phi (\exists_w A)  = 
+	\item $s_{[^y/_x]} \ostop = \ostop$
+	\item $s_{[^y/_x]}\tell(c) = \tell(s_{[^y/_x]}c)$
+	\item $s_{[^y/_x]} p(w) =  p([^y/_x](w))$
+	\item $s_{[^y/_x]} (\ask(c) \rightarrow A) = \ask(s_{[^y/_x]}(c)) \rightarrow s_{[^y/_x]} A$
+	\item $s_{[^y/_x]} (\exists_w A)  = 
 		\begin{cases} 
-			\exists_w A & \text{if $w \not \in sv(a)$} \\
-            \exists_z (s_\psi s_\phi A) & \text{with $\psi(w) \not \in sv(s_\psi a)$}
+			\exists_w A & \text{if $w = x$} \\
+            \exists_z (s_{[^z/_y]} s_{[^y/_x]} A) & \text{for z fresh if $w = y$} \\
+            \exists_x (s_{[^y/_x]} A) & \text{otherwise}
         \end{cases}$
-\item $s_\phi(A_1 \parallel A_2)  = (s_\phi A_1 \parallel s_\phi A_2)$
+\item $s_{[^y/_x]}(A_1 \parallel A_2)  = (s_{[^y/_x]} A_1 \parallel s_{[^y/_x]} A_2)$
 \end{itemize}
 \end{definition}
 
-The substitution on compact elements is the one given in Definition~\ref{def:sub}: thanks to Lemma~\ref{lemmaSubs0}, 
-the choice of the intermediate variable is immaterial.
+%The substitution on compact elements is the one given in Definition~\ref{def:sub}: thanks to Lemma~\ref{lemmaSubs0}, 
+%the choice of the intermediate variable is immaterial.
 % NO
 % $A[^y/_z][^z/_x] = A[^y/_x]$, since each syntactical substitution in $A$ involves all the variables with the same name.
 
 
 
 \begin{definition}[Reductions]\label{def:reductions}
-Let $\Gamma = {\mathcal A} \times \C$ be the set of \emph{configurations}.
+Let $\Gamma = {\mathcal A} \times \C^{\otimes}$ be the set of \emph{configurations}.
 The \emph{direct reduction semantics} for SCCP is the pair 
 $\langle \Gamma,  \mapsto \rangle$
 such that $\mapsto \, \, \subseteq \, \,\Gamma \times   \Gamma$ is the family 
@@ -1694,15 +1692,15 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
     \\
     &\mbox{   }&\mbox{   }&
     \\
-  \mbox{\bf A3}& $\frac {\displaystyle sv(\sigma) \cup \{\phi(x)\} \subseteq \Delta \wedge \displaystyle p(x) = A \in  \mathcal{P} \wedge \phi(x) = y }
-  {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle  s_\phi A, \sigma\rangle}$ 
+  \mbox{\bf A3}& $\frac {\displaystyle sv(\sigma) \cup \{y\} \subseteq \Delta \wedge \displaystyle p(x) = A \in \mathcal{P} }
+  {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle s_{[^y/_x]} A, \sigma \rangle}$ 
   &\bf{Rec}&
     \\
    &\mbox{   }&\mbox{   }&
   \\
     \mbox{\bf A4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq \Delta 
-    \wedge w = \phi(x) \not \in \Delta }
-    {\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle s_\phi A, \sigma\rangle}$
+    \wedge w \not \in \Delta }
+    {\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle s_{[^w/_x]} A, \sigma\rangle}$
     &\bf{Hide}&
   \end{tabular}
   \end{center}
