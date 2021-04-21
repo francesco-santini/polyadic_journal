@@ -1627,11 +1627,19 @@ Let $[^y/_x] \in F(V)$, defined as:
 The substitution operator $s_{[^y/_x]}: \mathcal{A} \rarrow \mathcal{A}$ on agents is defined by structural induction as 
 
 \begin{itemize}
+<<<<<<< Updated upstream
 	\item $s_{[^y/_x]} \ostop = \ostop$
 	\item $s_{[^y/_x]}\tell(c) = \tell(s_{[^y/_x]}c)$
 	\item $s_{[^y/_x]} p(w) =  p([^y/_x](w))$
 	\item $s_{[^y/_x]} (\ask(c) \rightarrow A) = \ask(s_{[^y/_x]}(c)) \rightarrow s_{[^y/_x]} A$
 	\item $s_{[^y/_x]} (\exists_w A)  = 
+=======
+	\item $s_\phi \ostop = \ostop$
+	\item $\tell(c)[^y/_x] = \tell(s_{[^y/_x]} c)$
+	\item $s_\phi p(w) =  p(\phi(w))$
+	\item $s_\phi (\ask(c) \rightarrow A) = \ask(s_\phi(c)) \rightarrow s_\phi A$
+	\item $s_\phi (\exists_w A)  = 
+>>>>>>> Stashed changes
 		\begin{cases} 
 			\exists_w A & \text{if $w = x$} \\
             \exists_z (s_{[^z/_y]} s_{[^y/_x]} A) & \text{for z fresh if $w = y$} \\
