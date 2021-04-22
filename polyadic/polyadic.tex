@@ -240,7 +240,7 @@ These results are used in Section~\ref{sec:softconstraints}, where we provide a 
 Finally, in Section~\ref{sec:polynomialsoftconstraints} we introduce a set of constraints that enjoy a polynomials representation 
 and we discuss the algebra of linear polynomials with coefficients in $\mathbb{N}$ as a case study.
 
-
+\comment{
 \paragraph{The (soft) constraints of Catuscia.}
 The word ``constraint'' occurs in the titles of 40 publications co-authored by Catuscia. Between 1991 and 1997, most of these papers were devoted to the semantics~\cite{boer1} and analysis~\cite{de1997proving} of Constraint Logic Programming and Concurrent Constraint Programming. In 2001, the latter language was extended to Temporal Concurrent Constraint Programming~\cite{nielsen2002temporal,palamidessi2001temporal}.
 %, a rather influential work, that led to the Ph.D. thesis of Frank Valencia. 
@@ -252,7 +252,7 @@ Also well-known among friends is her soft spot for the wee hours of the morning.
 %
 %The first author remembers that during his fellowship at \'Ecole Polytechnique, Catuscia helped him to solve many issues, personal, administrative, and technical. 
 %
-In particular, the first author recalls that, while working on the afore-mentioned bisimulation semantics for CCP~\cite{pippo}, after many weeks trying hard to prove the main theorem with the other collaborators, he spent one afternoon in Catuscia's office looking together for a proof. When he woke up the morning after, in his mail-box there was a message from her: a beautiful and crystal-clear proof of the long awaited result. This message was sent at about 3 am.
+In particular, the first author recalls that, while working on the afore-mentioned bisimulation semantics for CCP~\cite{pippo}, after many weeks trying hard to prove the main theorem with the other collaborators, he spent one afternoon in Catuscia's office looking together for a proof. When he woke up the morning after, in his mail-box there was a message from her: a beautiful and crystal-clear proof of the long awaited result. This message was sent at about 3 am.}
 
 \section{An Introduction to Residuated Monoids}\label{sec:bg}
 
@@ -299,7 +299,19 @@ we refer to~\cite{ipl17} for a detailed introduction and a comparison with other
 The LUB of a (possibly infinite or empty) subset $X \subseteq A$ is denoted $\bigvee X$, and it is clearly unique.
 Should  they exist, $\bigvee A$ and $\bigvee \emptyset$ correspond respectively to the top, denoted as 
 $\top$, and to the bottom, denoted as $\bot$, of the PO.
+
+\begin{definition}[Compact elements]
+An element $a \in A$ is compact 
+%(or finite) 
+if whenever $a \leq \bigvee Y$ for some $Y \subseteq A$
+there exists a finite subset
+$X \subseteq Y$ such that $a \leq \bigvee X$.
 %
+%Let $A^C \subseteq A$ be the set of compact elements of ${\mathbb C}$.
+%Then ${\mathbb C}$ is algebraic if $\forall c \in A. c = \bigvee \{ d \in A^C \mid d \leq c\}$.
+\end{definition}
+
+We let $A^C \subseteq A$ denote the set of compact elements of ${\mathbb C}$. 
 
 %We considered the LUBs of possibly infinite sets just for the sake of simplicity: 
 %our proposal would fit also the finite case.
@@ -348,6 +360,16 @@ $\top$, and to the bottom, denoted as $\bot$, of the PO.
 \end{definition}
 
 As usual, we use the infix notation: $a \monop b$ stands for $\monop(a,b)$.
+The monoidal operator can be defined for any multi-set: it is given 
+for a family of elements $a_i \in A$ indexed over a finite, non-empty
+set $I$, and it is denoted by
+$\bigotimes_{i \in I} a_i$.
+%
+If for an index set $I$ the $a_i$'s are different,
+we write $\bigotimes S$ instead of $\bigotimes_{i \in I} a_i$
+for the set $S = \{a_i \mid i \in I\}$.
+%
+Conventionally, we denote $\bigotimes \emptyset = \bot$.
 
 \begin{definition}[distributivity]
 \label{dist}
@@ -402,6 +424,37 @@ $F(V)$ as the set of functions $f\colon V \to V$ with finite support.
 The semi-lattice monoid of interest is  $\mathbb{F}(V) = \langle F(V), id, \circ, \iota \rangle$ where 
 $\iota$ is the identity function,  $\circ$ is function composition and $id$ is the discrete ordering on $F(V)$.
 \end{example}
+
+The next step is to provide an infinite composition. Our definition is from~\cite{CLIM}
+(see also~\cite[p.~42]{golan}).
+
+\begin{definition}[Infinite composition]
+Let $I$ be a (countable) set of indexes. Then, the composition $\bigotimes_{i \in I} a_i$
+is defined as $\bigvee_{J \subseteq I} \bigotimes_{j \in J} a_j$ for all finite subsets $J$.
+\end{definition}
+
+Should $I$ be finite, the definition gives back the usual multi-set composition,
+since $\otimes$ is monotone and increasing.
+%
+As the infinitary composition is also monotone and increasing, by construction 
+%$\bigotimes \emptyset = \bigvee \emptyset = \bot$ and 
+$\bigotimes A = \bigvee A = \top$.
+%
+We now provide a notion of compactness with respect to the
+monoidal operator.
+% via the infinite composition.
+
+\begin{definition}[$\otimes$-compact elements]\label{def:compactness}
+Let $a \in A$. It is $\otimes$-compact 
+%(or $\otimes$-finite) 
+if whenever $a \leq \bigotimes_{i \in I} a_i$ %for some family $I$
+then there exists a finite subset $J \subseteq I$ such that $a \leq \bigotimes_{j \in J} a_j$.
+\end{definition}
+
+We let $A^\otimes \subseteq A$ denote the set of $\otimes$-compact elements of ${\mathbb S}$.
+%
+It is easy to show that a compact element is also $\otimes$-compact, i.e., $A^C \subseteq A^\otimes$.
+Indeed, the latter notion is definitively more flexible.
 
 \bigskip
 %
@@ -914,8 +967,6 @@ both meetand divis
 
 the bounded sum $\oplus$ is here idempotent, $0$ is still 
 the identity. We can make it int
-
-
 of three otherwise unrelated elements, 
 so that for all elements $x$ we have $x \otimes x = \1 \otimes x = x$ \
 and furthermore $a \otimes b = a \otimes c = b \otimes c  = \1$.
@@ -1702,6 +1753,14 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
     \wedge w \not \in \Delta }
     {\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle s_{[^w/_x]} A, \sigma\rangle}$
     &\bf{Hide}&
+    \\
+   &\mbox{   }&\mbox{   }&
+  \\
+    \mbox{\bf A5}& $\frac {\displaystyle \langle A, \sigma' \otimes \exists_x \sigma_0
+				\rangle \rightarrow \langle B, \sigma'' \rangle \ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'} 
+			{\displaystyle\langle \exists^{\sigma'}_x A,
+				\sigma \rangle \rightarrow \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv \exists_x \sigma_0}$
+    &\bf{Hide-local}&
   \end{tabular}
   \end{center}
 \caption{Axioms of the reduction semantics for SCCP.}
@@ -1764,6 +1823,12 @@ $w \not \in fv(\exists_x A) \cup sv(\sigma)$, since
 $\langle B, \rho \rangle   \rarrow_\Delta$ implies that 
 $fv(B) \cup sv(\rho) \subseteq \Delta$.\footnote{Our rule is  reminiscent of 
 $(8)$ in~\cite[p.~342]{popl91}.}
+
+In axiom {\bf A5} In we consider instead local variables, where the hiding operator carries some information on the variables it abstracts.
+More precisely, according to~\cite{extendedHiding} we consider an extended operator $\exists_x^\sigma$, for $\sigma$ the local store.
+Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The intuition is that variable $x$ may be local to a component $\exists_x \sigma'$ of the store $\sigma$, yet visible at a global level: we must then evaluate $A$ in the store
+when the local $x$ is hidden, yet the possible duplications are removed (e.g., $\exists_x \sigma'$ may already occur in the global store $\sigma$). The final store intuitively contains in $\sigma_1$ the original $\sigma'$ increased by what has been added by the step. \\
+\medskip
 %
 %
 %(as $(9)$ in~\cite{popl91}), assuming a set of variables $Var_{\mathcal{P}}$
