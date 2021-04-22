@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2014)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: mainPreMarino.aux
+The style file: eptcs.bst
+Database file #1: softccp.bib
+You've used 9 entries,
+            2701 wiz_defined-function locations,
+            654 strings with 6367 characters,
+and the built_in function-call counts, 6239 in all, are:
+= -- 449
+> -- 177
+< -- 11
++ -- 72
+- -- 61
+* -- 769
+:= -- 706
+add.period$ -- 18
+call.type$ -- 9
+change.case$ -- 54
+chr.to.int$ -- 0
+cite$ -- 18
+duplicate$ -- 500
+empty$ -- 493
+format.name$ -- 70
+if$ -- 1247
+int.to.chr$ -- 0
+int.to.str$ -- 9
+missing$ -- 112
+newline$ -- 57
+num.names$ -- 26
+pop$ -- 75
+preamble$ -- 1
+purify$ -- 46
+quote$ -- 0
+skip$ -- 185
+stack$ -- 0
+substring$ -- 321
+swap$ -- 531
+text.length$ -- 11
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 45
+warning$ -- 0
+while$ -- 46
+width$ -- 10
+write$ -- 110
