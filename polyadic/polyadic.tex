@@ -93,7 +93,8 @@
 Francesco Santini\inst{2}
 } 
 	\institute{Dipartimento di Informatica, University of Pisa, Italy \\
-		\email{\{filippo.bonchi,laura.bussi,fabio.gadducci\}@unipi.it}
+		\email{laura.bussi@phd.unipi.it} \qquad
+		\email{fabio.gadducci@unipi.it}
 		\and Dipartimento di Matematica e Informatica, University of Perugia, Italy\\
 		\email{francesco.santini@unipg.it}
 		}
@@ -1678,19 +1679,11 @@ Let $[^y/_x] \in F(V)$, defined as:
 The substitution operator $s_{[^y/_x]}: \mathcal{A} \rarrow \mathcal{A}$ on agents is defined by structural induction as 
 
 \begin{itemize}
-<<<<<<< Updated upstream
 	\item $s_{[^y/_x]} \ostop = \ostop$
 	\item $s_{[^y/_x]}\tell(c) = \tell(s_{[^y/_x]}c)$
 	\item $s_{[^y/_x]} p(w) =  p([^y/_x](w))$
 	\item $s_{[^y/_x]} (\ask(c) \rightarrow A) = \ask(s_{[^y/_x]}(c)) \rightarrow s_{[^y/_x]} A$
 	\item $s_{[^y/_x]} (\exists_w A)  = 
-=======
-	\item $s_\phi \ostop = \ostop$
-	\item $\tell(c)[^y/_x] = \tell(s_{[^y/_x]} c)$
-	\item $s_\phi p(w) =  p(\phi(w))$
-	\item $s_\phi (\ask(c) \rightarrow A) = \ask(s_\phi(c)) \rightarrow s_\phi A$
-	\item $s_\phi (\exists_w A)  = 
->>>>>>> Stashed changes
 		\begin{cases} 
 			\exists_w A & \text{if $w = x$} \\
             \exists_z (s_{[^z/_y]} s_{[^y/_x]} A) & \text{for z fresh if $w = y$} \\
@@ -1773,6 +1766,37 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
   \end{center}
 \caption{Axioms of the reduction semantics for SCCP.}
 \label{fig:operational}
+\end{table}
+
+\vspace{-.5cm}
+\def\odiv{\; {\ominus\hspace{-7.1pt} \div} \;}
+\def\odivvv{\; {\ominus\hspace{-7.1pt} \div} \;}
+\begin{table}
+\begin{center}
+	\scalebox{0.9}{
+		\begin{tabular}{llll}
+			$\frac {\displaystyle \langle A, \sigma' \otimes \exists_x \sigma_0
+				\rangle \mapsto \langle B, \sigma'' \rangle \ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'} 
+			{\displaystyle\langle \exists^{\sigma'}_x A,
+				\sigma \rangle \mapsto \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv \exists_x \sigma_0}$
+			&\bf{Hide} &\vspace{0.2cm} \\ 
+ 			%$\frac {\displaystyle \la A[z/x], c[z/x] \otimes \sigma \ra \xrightarrow{\;  \alpha \;} \la
+			%B,  c' \otimes \sigma \otimes \alpha \ra} {\displaystyle\la \exists^c_x A,
+			%\sigma\ra \xrightarrow{\;  \alpha \;} \la \exists^{c'[x/z]}_x B[x/z], \exists_x(c'[x/z]) \otimes \sigma \otimes \alpha \ra} \ \
+			% {\it x\not\in fv(c'), z \not\in (fv(A) \cup fv(c \otimes \sigma \otimes \alpha)) }$
+			$\frac {\displaystyle \langle A[^z/_x], \sigma'[^z/_x] \otimes \sigma_0 \rangle \xrightarrow{\;  \alpha \;}
+				\langle B,  \sigma'' \rangle\ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma',\, 
+				                     z \not\in fv(A) \cup sv(\sigma)\cup sv(\sigma') \cup sv(\alpha)}
+			{\displaystyle\langle \exists^{\sigma'}_x A, \sigma\rangle \xrightarrow{\;  \alpha \;}
+				\langle \exists^{\sigma_1}_z B, \sigma_0 \otimes \alpha \otimes \exists_z\sigma_1 \rangle
+				\ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv (\alpha \otimes \sigma_0)}$
+			&\bf{L-Hide}&
+		\end{tabular}
+	}
+\end{center}
+%\hfill
+\caption{Unlabelled and labelled version of the rule for the local hiding of variables.}
+\label{fig:hiding}
 \end{table}
 
 \begin{table}  %\hfil5
