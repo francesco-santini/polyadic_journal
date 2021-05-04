@@ -118,7 +118,6 @@ Besides presenting the main features of the new formalism,
 the paper investigates how the operators of polyadic algebras interact with the residuated 
 monoid structure tat is used for representing the set of preference values. 
 
-%bal blah balh blah
 %
 %The constraint store that describes a \emph{Soft Constraint Satisfaction Problem} (\emph{SCSP}) or the result of agents interaction in \emph{Soft Concurrent Constraint Programming} (\emph{SCCP}), 
 %s then represented by a polynomial, as all constraints in general, 
@@ -301,7 +300,7 @@ The LUB of a (possibly infinite or empty) subset $X \subseteq A$ is denoted $\bi
 Should  they exist, $\bigvee A$ and $\bigvee \emptyset$ correspond respectively to the top, denoted as 
 $\top$, and to the bottom, denoted as $\bot$, of the PO.
 
-\begin{definition}[Compact elements]
+\comment{\begin{definition}[Compact elements]
 An element $a \in A$ is compact 
 %(or finite) 
 if whenever $a \leq \bigvee Y$ for some $Y \subseteq A$
@@ -312,7 +311,7 @@ $X \subseteq Y$ such that $a \leq \bigvee X$.
 %Then ${\mathbb C}$ is algebraic if $\forall c \in A. c = \bigvee \{ d \in A^C \mid d \leq c\}$.
 \end{definition}
 
-We let $A^C \subseteq A$ denote the set of compact elements of ${\mathbb C}$. 
+We let $A^C \subseteq A$ denote the set of compact elements of ${\mathbb C}$. }
 
 %We considered the LUBs of possibly infinite sets just for the sake of simplicity: 
 %our proposal would fit also the finite case.
@@ -361,7 +360,7 @@ We let $A^C \subseteq A$ denote the set of compact elements of ${\mathbb C}$.
 \end{definition}
 
 As usual, we use the infix notation: $a \monop b$ stands for $\monop(a,b)$.
-The monoidal operator can be defined for any multi-set: it is given 
+\comment{The monoidal operator can be defined for any multi-set: it is given 
 for a family of elements $a_i \in A$ indexed over a finite, non-empty
 set $I$, and it is denoted by
 $\bigotimes_{i \in I} a_i$.
@@ -370,7 +369,7 @@ If for an index set $I$ the $a_i$'s are different,
 we write $\bigotimes S$ instead of $\bigotimes_{i \in I} a_i$
 for the set $S = \{a_i \mid i \in I\}$.
 %
-Conventionally, we denote $\bigotimes \emptyset = \bot$.
+Conventionally, we denote $\bigotimes \emptyset = \bot$.}
 
 \begin{definition}[distributivity]
 \label{dist}
@@ -425,37 +424,6 @@ $F(V)$ as the set of functions $f\colon V \to V$ with finite support.
 The semi-lattice monoid of interest is  $\mathbb{F}(V) = \langle F(V), id, \circ, \iota \rangle$ where 
 $\iota$ is the identity function,  $\circ$ is function composition and $id$ is the discrete ordering on $F(V)$.
 \end{example}
-
-The next step is to provide an infinite composition. Our definition is from~\cite{CLIM}
-(see also~\cite[p.~42]{golan}).
-
-\begin{definition}[Infinite composition]
-Let $I$ be a (countable) set of indexes. Then, the composition $\bigotimes_{i \in I} a_i$
-is defined as $\bigvee_{J \subseteq I} \bigotimes_{j \in J} a_j$ for all finite subsets $J$.
-\end{definition}
-
-Should $I$ be finite, the definition gives back the usual multi-set composition,
-since $\otimes$ is monotone and increasing.
-%
-As the infinitary composition is also monotone and increasing, by construction 
-%$\bigotimes \emptyset = \bigvee \emptyset = \bot$ and 
-$\bigotimes A = \bigvee A = \top$.
-%
-We now provide a notion of compactness with respect to the
-monoidal operator.
-% via the infinite composition.
-
-\begin{definition}[$\otimes$-compact elements]\label{def:compactness}
-Let $a \in A$. It is $\otimes$-compact 
-%(or $\otimes$-finite) 
-if whenever $a \leq \bigotimes_{i \in I} a_i$ %for some family $I$
-then there exists a finite subset $J \subseteq I$ such that $a \leq \bigotimes_{j \in J} a_j$.
-\end{definition}
-
-We let $A^\otimes \subseteq A$ denote the set of $\otimes$-compact elements of ${\mathbb S}$.
-%
-It is easy to show that a compact element is also $\otimes$-compact, i.e., $A^C \subseteq A^\otimes$.
-Indeed, the latter notion is definitively more flexible.
 
 \bigskip
 %
@@ -621,6 +589,14 @@ of constraints (see e.g.~\cite{ecai06}).
 
 Note that if a RePO is localised then $\forall a \in A. a \odiv a = \monid$.
 %\marginpar{all RePO are localized?}
+
+\begin{remark}
+	Note that the equivalence $a \otimes ((a \otimes b) \odiv a) = a \otimes b$ always holds, even if the 
+	underlying RePO is not invertible. Indeed, we have by definition $a \otimes ((a \otimes b) \odiv a) 
+	\leq a \otimes b$, as $(a \otimes b) \odiv a \leq b$. We must check that $a \otimes ((a \otimes b) 
+	\odiv a) \leq a \otimes b \iff b \leq ((a \otimes b) \odiv a) \iff a \otimes b \leq a \otimes b$,
+	which is trivially true.
+\end{remark}
 
 \begin{remark}\label{rmk:soft}
 	Some well-known structures used for soft constraints are the 
@@ -1045,7 +1021,7 @@ substitutions at the expenses of working with complete
 partial orders: see e.g.~\cite[Definition 11]{jlamp17}.}
 %
 
-\smallskip
+\comment{\smallskip
 Our first step is the introduction of a technical notion that allows for 
 factorising the common properties in the definition of the two families of operators.
 
@@ -1063,29 +1039,29 @@ A pomonoid action of $\mathbb{M}$ on $\mathbb{P}$ is a function $\phi: A \times 
 \end{definition}
 
 The first two requirements just state
-that $\phi$ is a monoid action of $\mathbb{M}$ on $S$, while the latter states that $\phi$ is monotone. Sometimes, we say that $\mathbb{P}$ is an $\mathbb{M}$-PO.
+that $\phi$ is a monoid action of $\mathbb{M}$ on $S$, while the latter states that $\phi$ is monotone. Sometimes, we say that $\mathbb{P}$ is an $\mathbb{M}$-PO.}
 
 \subsubsection{Cylindric operators.}
 We fix a partially ordered monoid $\mathbb{S} = \langle A, \leq, \monop, \monid \rangle$
 and a set $V$ of variables, and we then define a family of cylindric operators axiomatising existential quantifiers.
 
 \begin{definition}[cylindrification]\label{cyli}
-	A cylindric operator $\exists$ over $\mathbb{S}$ and $V$ is a pomonoid action
-	$\exists: V \times A \rightarrow A$ such that for all $X \subseteq V$
+	A cylindric operator $\exists$ over $\mathbb{S}$ and $V$ ia family of monotone, 
+	$\exists_x : A \rightarrow A$ indexed by elements in V such that for all 
+	$a, b \in A$ and $x, y \in V$
 	%\todo{$2_f^V$ non e' stato definito prima e/o f non si sa cosa e' qui}
 	\begin{enumerate}
-%	     \item $\forall a \in A.\ \exists(\emptyset, a) = a$,
-%             \item $\forall a \in A.\ \exists(X, \exists(Y, a)) = \exists(X \cup Y, a)$,
- %            \item $\forall a, b \in A.\ X \subseteq Y\wedge a \leq b \implies  \exists(X, a) = \exists(Y, b)$,
-	     \item $\exists(X, \monid) = \monid$,
-	     \item $\forall a,b \in A.\ \exists(X, a \monop \exists(X, b)) = \exists(X, a) \monop \exists(X, b)$.
+	     \item $\exists_x a \leq a$,
+         \item $\exists_x \exists_y a = \exists_y \exists_x a$,
+         %\item $\forall a, b \in A.\ X \subseteq Y\wedge a \leq b \implies  \exists(X, a) = \exists(Y, b)$,
+	     %\item $\exists(X, \monid) = \monid$,
+	     \item $\exists_x (a \monop \exists_x b) = \exists_x a \monop \exists_x b$.
 	\end{enumerate}
 	
-	\noindent Let $a \in A$. The \emph{support} of $a$ is the set of variables $sv(a) = \{ x \mid \exists(\{x\}, a) \neq a\}$. 
+	\noindent Let $a \in A$. The \emph{support} of $a$ is the set of variables 
+	$sv(a) = \{ x \mid \exists_x a \neq a\}$. 
 	% and the set of unsupported variables of $a$ is the set of variables $uv(a) =  V \setminus sv(a)$.
 \end{definition}
-
-If $X = {x}$, we write $\exists_x$.
 
 %Note that, since by Definition~\ref{pomo} we have $\exists(\emptyset, a) = a$, the requirements of Definition~\ref{cyli} trivially hold 
 %whenever $X$ is the empty set.
@@ -1121,27 +1097,27 @@ by $\sigma^{c}(X) \subseteq V$ the counter-image of $X$ along $\sigma$.
 
 \begin{definition}[polyadification]
 	\label{def:poly}
-	A polyadic operator $s$ for $\exists$ is a pomonoid action $s: F(V) \times A \rightarrow A$
-	such that for all $X \in 2_{fin}^V$ and $\sigma, \tau\in F(V)$
+	A polyadic operator $s$ for $\exists$ is a a family of operators $s_\sigma: A \rightarrow A$
+	indexed by elements in $F(V)$ such that for all $x \in V$ and $\sigma, \tau\in F(V)$
 	\begin{enumerate}
-		\item $\forall a, b \in A.\ s(\sigma, a \monop b) = s(\sigma, a) \monop s(\sigma, b)$,
-        \item $\forall a \in A.\ \sigma \mid_{sv(a)} = \tau \mid_{sv(a)} \implies s(\sigma, a) 
-        = s(\tau, a)$,
-        \item if $\sigma \mid_{\sigma^{c}(X)}$ is injective then $\exists(X, s(\sigma, a)) = 
-        s(\sigma, \exists(\sigma^{c}(X), a))$.				
+		\item $s_\sigma a = a$
+		\item $\forall a, b \in A.\ s_\sigma(a \monop b) = s_\sigma a \monop s_\sigma b$,
+        \item $\forall a \in A.\ \sigma \mid_{sv(a)} = \tau \mid_{sv(a)} \implies s_\sigma a 
+        = s_\tau a$,
+        \item $\forall a \in A.\ \exists_x s_\sigma a = \begin{cases}
+			s_\sigma \exists_y a &\text{if $\sigma^c(x) = \{y\}$}\\
+			s_\sigma a &\text{otherwise}
+			\end{cases}$.				
     \end{enumerate}
 \end{definition}
 
 %Clearly item $3$ always holds for an empty $X$.
 %
-We usually denote $s(\tau,a)$ as $s_\tau a$.
-Now, being an action implies that $s_\iota a = a$, and 
-together with item $2$ it implies that $s_{\tau} \monid = \monid$.
 A polyadic operator offers enough structure for modelling variable substitution. 
 %
 In the following, we fix a polyadic operator $s$ for $\exists$.
 
-\begin{remark}
+\comment{\begin{remark}
 The laws are directly adapted from~\cite{sagi2013}, with the exception of $2$, which 
 is stated as for a finite non-empty $X \subseteq V$ and $a \in A$
 	\begin{itemize}
@@ -1166,6 +1142,7 @@ thus by $2a$ we have
 $s(\sigma, \exists (Y \setminus sv(a), a)) = s(\tau, \exists (Y \setminus sv(a), a))$.
 Since by definition we have $\exists (Y \setminus sv(a), a)) = a$, the result follows.
 \end{remark}
+}
 
 %\begin{remark}
 %Note also that $\sigma(\sigma^{c}(X)) \subseteq X$, so, when restricted to singleton, we have that item %$3$ in Definition~\ref{def:poly} is equivalent to
@@ -1240,23 +1217,23 @@ DIRE DI PIU'
 
 \begin{lemma}
 	\label{lemmaSubs0}
-	Let $\sigma \in F(V)$ invertible, $a \in A$, and $W \subseteq V$ finite. Then it holds
+	Let $\sigma \in F(V)$ invertible, $a \in A$, and $x, y \in V$ $x\in sv(\sigma)$. Then it holds
 	\begin{enumerate}
-		\item $s_{\sigma} \exists_{sv(\sigma)} a = \exists_{sv(\sigma)} a$
+		\item if $s_{\sigma} \exists_x a = \exists_x a$
 		\item if $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ then 
-		$\exists_{sv(\sigma)} a = \exists_{\sigma(sv(\sigma))} s_{\sigma} a$
-		\item if $W \cap (sv(\sigma) \cup \sigma(sv(\sigma))) = \emptyset$ then 
-		$s_{\sigma} \exists_W a = \exists_W s_{\sigma} a$
+		$\exists_x a = \exists_{\sigma(x)} s_{\sigma} a$
+		\item if $y \not \in sv(\sigma) \cup sv(\sigma(sv(\sigma)))$ then 
+		$s_{\sigma} \exists_y a = \exists_y s_{\sigma} a$
 	\end{enumerate}
 \end{lemma}
 \begin{proof}
 Proofs are immediate.
 As for item $1$, it is a consequence of $\sigma \mid_{V \setminus sv(\sigma)} = id \mid_{V \setminus sv(\sigma)}$.
 
-Concerning now item $3$, since $W$ satisfies $W \cap sv(\sigma) = \emptyset$ then $\sigma(W) = W$,
-and since additionally $W \cap \sigma(sv(\sigma)) = \emptyset$ it also follows that $\sigma^{c}(W) = W$. Thus
+Concerning now item $3$, since $y$ satisfies $y \not \in sv(\sigma)$ then $\sigma(y) = y$,
+and since additionally $y \not \in \sigma(sv(\sigma))$ it also follows that $\sigma^{c}(y) = y$. Thus
 we have that 
-$\exists_W s_{\sigma} a = \exists_{\sigma(W)} s_{\sigma} a = s_{\sigma} \exists_{\sigma^{c}(W)} a = s_{\sigma} \exists_W a$,
+$\exists_y s_{\sigma} a = \exists_{\sigma(y)} s_{\sigma} a = s_{\sigma} \exists_{\sigma^{c}(y)} a = s_{\sigma} \exists_y a$,
 where the intermediate equality holds by item 3 of Lemma~\ref{lemma:Inv0}.
 
 Let us finally move to item $2$, and let us consider the lifting $\sigma_l$. This can be less parsimoniously described as
@@ -1268,12 +1245,12 @@ $$\sigma_l(y) = \bigg \{\begin{array}{ll}
 	y & \ otherwise
 	\end{array}$$
 %Then $\sigma'$ is an injective substitution and switches the variables in $sv(\sigma)$ and $\sigma(sv(\sigma))$ in some way. 
-By the hypothesis $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ we have that $\sigma \mid_{sv(a)} = \sigma_l \mid_{sv(a)}$,
+By the hypothesis $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ we have that $\sigma(x) = \sigma^l(x)$,
 %
-hence it holds $\exists_{sv(\sigma)} a = s_{\sigma} \exists_{sv(\sigma)} a = s_{\sigma_l} \exists_{sv(\sigma)} a$.
+hence it holds $\exists_x a = s_{\sigma} \exists_x a = s_{\sigma_l} \exists_x a$.
 %
-Now note that $(\sigma_l)^{c}(\sigma(sv(\sigma))) = sv(\sigma)$, for $(\sigma_l)^{c}$ the set-theoretical inverse of $\sigma_l$, 
-thus again by item $3$ of Definition~\ref{def:poly} we have that $s_{\sigma_l} \exists_{sv(\sigma)} a = \exists_{\sigma(sv(\sigma))} s_{\sigma_l} a = \exists_{\sigma(sv(\sigma))} s_{\sigma} a$.
+Now note that $(\sigma_l)^{c}(\sigma(x)) = x$, for $(\sigma_l)^{c}$ the set-theoretical inverse of $\sigma_l$, 
+thus again by item $3$ of Definition~\ref{def:poly} we have that $s_{\sigma_l} \exists_x a = \exists_{\sigma(x)} s_{\sigma_l} a = \exists_{\sigma(x)} s_{\sigma} a$.
 %As for $2$, let $\tau$ such that $\hat{\tau} \mid_{sv(\hat{\tau})}: Y \rightarrow V$ is bijective, $Im(\hat{\tau} \mid_{sv(\hat{\tau})}) = X$, $\hat{\tau} \mid_{V \setminus sv(\hat{\tau})} = id \mid_{V \setminus sv(\hat{\tau})}$ and let $\hat{\sigma}'$ defined as follows:
 %	\begin{itemize}
 %		\item $\hat{\sigma}'(y) = \hat{\sigma}(y)$ if $y \not \in Y$
@@ -1352,15 +1329,15 @@ $\mathbb{S}$ is a RePO (see Definition~\ref{def:repo}).
 \begin{lemma}
 Let $X \subseteq V$ be finite. Then it holds
 	\begin{itemize}
-         \item $\forall a, b \in A.\ \exists_X(a \odiv \exists_X b) \leq \exists_X a \odiv \exists_X b$.
+         \item $\forall a, b \in A.\ \exists_x(a \odiv \exists_x b) \leq \exists_x a \odiv \exists_x b$.
 	\end{itemize}
 \end{lemma}
 
 \begin{proof}
- \[\exists_X b \otimes (a \odiv \exists_X b) \leq a \implies
-   \exists_X(\exists_X b \otimes (a \odiv \exists_X b)) \leq \exists_X a \implies\]
- \[\exists_X b \otimes \exists_X(a \odiv \exists_X b)) \leq \exists_X a \implies
-   \exists_X(a \odiv \exists_X b) \leq \exists_X a \odiv \exists_X b\]
+ \[\exists_x b \otimes (a \odiv \exists_x b) \leq a \implies
+   \exists_x(\exists_x b \otimes (a \odiv \exists_x b)) \leq \exists_x a \implies\]
+ \[\exists_x b \otimes \exists_x(a \odiv \exists_x b)) \leq \exists_x a \implies
+   \exists_x(a \odiv \exists_x b) \leq \exists_x a \odiv \exists_x b\]
    \qed
 \end{proof}
 
@@ -1374,25 +1351,47 @@ $\exists_x(a \monop \exists_x b) \geq \exists_x a \monop \exists_x b$.
 %\todo{un esempio dove $\odiv$ non distribuisce}
 %\end{remark}
 
-Similarly, it is easy to show that it holds $\forall a, b \in A.\ \exists_X(\exists_X a \odiv b) \leq \exists_X a \odiv \exists_X b$. 
+Similarly, it is easy to show that it holds $\forall a, b \in A.\ \exists_x(\exists_x a \odiv b) \leq \exists_x a \odiv \exists_x b$. 
 %
 A similar result relates residuation and polyadic operators.
 %the following lemma holds.
 %\todo{Mettere motivazione Lemma?}
 
 \begin{lemma}
-Let $\sigma,\tau \in F(V)$. Then it holds
+Let $\sigma \in F(V)$. Then it holds
 \begin{itemize}
 \item $\forall a,b \in A.\ s_\sigma (a \odiv b) \leq s_\sigma a \odiv s_\sigma b$.
 \end{itemize}
 \end{lemma}
 
-%\begin{proof}
-%\[ a \otimes (b \odiv a) \leq b \implies \]
-%\[ s_\sigma [a \otimes (b \odiv a)] \leq s_\sigma b \implies \]
-%\[ s_\sigma a \otimes s_\sigma(b \odiv a) \leq s_\sigma b \implies \]
-%\[ s_\sigma (b \odiv a) \leq s_\sigma b \odiv s_\sigma a \]
-%\end{proof}
+\begin{proof}
+\[ a \otimes (b \odiv a) \leq b \implies \]
+\[ s_\sigma [a \otimes (b \odiv a)] \leq s_\sigma b \implies \]
+\[ s_\sigma a \otimes s_\sigma(b \odiv a) \leq s_\sigma b \implies \]
+\[ s_\sigma (b \odiv a) \leq s_\sigma b \odiv s_\sigma a \]
+\end{proof}
+
+Furhtermore, if $\sigma$ is invertible, then we can prove the following:
+
+\begin{lemma}
+Let $\sigma \in F(V)$ be invertible. Then it holds
+\begin{itemize}
+\item $\forall a,b \in A.\ s_\sigma (a \odiv b) = s_\sigma a \odiv s_\sigma b$.
+\end{itemize}
+\end{lemma}
+
+\begin{proof}
+First of all, note that $\sigma$ invertible implies $s_{\sigma^{-1}} s_{\sigma} a = a 
+= s_{\sigma} s_{\sigma^{-1}} a$, from which we can prove:
+\[ s_\sigma b \otimes (s_\sigma a \odiv s_\sigma b) \leq s_\sigma a  \implies \]
+\[ s_{\sigma^{-1}} (s_\sigma b \otimes (s_\sigma a \odiv s_\sigma b))
+\leq s_{\sigma^{-1}} s_\sigma a  \implies \]
+\[ s_{\sigma^{-1}} s_\sigma b \otimes s_{\sigma^{-1}} (s_\sigma a \odiv s_\sigma b) \leq a \implies \]
+\[ b \otimes s_{\sigma^{-1}} (s_\sigma a \odiv s_\sigma b) \leq a \implies \]
+\[ s_{\sigma^{-1}} (s_\sigma a \odiv s_\sigma b) \leq a \odiv b \implies \]
+\[ s_\sigma (s_{\sigma^{-1}} (s_\sigma a \odiv s_\sigma b)) \leq s_\sigma (a \odiv b) \implies \]
+\[ s_\sigma a \odiv s_\sigma b \leq s_\sigma (a \odiv b) \]
+\end{proof}
 
 \section{Polyadic Soft Constraints}\label{sec:softconstraints}
 \label{subsec:inst} 
@@ -1511,7 +1510,7 @@ original constraints to the appropriate sub-tuples.
 \begin{lemma}[Cylindric and polyadic operators for (soft) constraints]
 	The ReSL of constraints $\mathbb{C}$ admits cylindric and polyadic operators, defined as
 	\begin{itemize}
-		\item  $(\exists_X c) \eta = \bigvee \{c \rho \mid \eta\mid_{V \setminus X} = 
+		\item  $(\exists_x c) \eta = \bigvee \{c \rho \mid \eta\mid_{V \setminus \{x\}} = 
 		\rho\mid_{V \setminus X}\}$ for all $c \in {\mathcal C}, X \subseteq V$
 		%\item if $\sigma$ is an injective substitution, then $(s_{\sigma}c)\eta = c(\sigma \circ \eta)$ 
 		%for all $c \in \mathcal{C}$
@@ -1524,9 +1523,9 @@ original constraints to the appropriate sub-tuples.
 \end{lemma}
 
 Hiding means eliminating variables from the support:
-$supp(\exists_X c) \subseteq supp({c}) \setminus X$.\footnote{The operator
+$supp(\exists_x c) \subseteq supp({c}) \setminus {x}$.\footnote{The operator
 	is called \emph{projection} in the soft framework,
-	and $\exists_X c$ is denoted $c\Downarrow_{V\setminus X}$.}
+	and $\exists_x c$ is denoted $c\Downarrow_{V\setminus \{x\}}$.}
 
 \begin{proof}
 %Let us consider a finite set $X$ and a constraint $c$. Recall that since $supp(c)$ is finite,
@@ -1538,14 +1537,14 @@ The properties of the pomonoid action (see Definition~\ref{pomo})
 are easily shown to hold for both operators. 
 %
 As for the cylindric laws (see Definition~\ref{cyli}), first note that the set of functions 
-$\rho$ such that $\eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}$ is actually finite.
+$\rho$ such that $\eta\mid_{V \setminus \{x\}} = \rho\mid_{V \setminus \{x\}}$ is actually finite.
 Thus, we have that 
 \begin{eqnarray*}
-(\exists_X (c \otimes \exists_X d)) \eta & = & \bigvee_\rho \{(c \otimes \exists_X d) \rho \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\}\\
-& = & \bigvee_\rho \{c\rho \otimes (\exists_X d) \rho \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\} \\
-& = & \bigvee_\rho \{c\rho \otimes  (\bigvee_\xi \{d \xi \mid \rho\mid_{V \setminus X} = \xi\mid_{V \setminus X}\}) \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\} \\
-& = & \bigvee_\rho \{c\rho \mid \eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}\} \otimes \bigvee_\xi \{d \xi \mid \eta\mid_{V \setminus X} = \xi\mid_{V \setminus X}\} \\
-& = & (\exists_X c) \eta \otimes (\exists_X d) \eta
+(\exists_x (c \otimes \exists_x d)) \eta & = & \bigvee_\rho \{(c \otimes \exists_x d) \rho \mid \eta\mid_{V \setminus \{x\}} = \rho\mid_{V \setminus \{x\}}\}\\
+& = & \bigvee_\rho \{c\rho \otimes (\exists_x d) \rho \mid \eta\mid_{V \setminus \{x\}} = \rho\mid_{V \setminus \{x\}}\} \\
+& = & \bigvee_\rho \{c\rho \otimes  (\bigvee_\xi \{d \xi \mid \rho\mid_{V \setminus \{x\}} = \xi\mid_{V \setminus \{x\}}\}) \mid \eta\mid_{V \setminus \{x\}} = \rho\mid_{V \setminus \{x\}}\} \\
+& = & \bigvee_\rho \{c\rho \mid \eta\mid_{V \setminus \{x\}} = \rho\mid_{V \setminus \{x\}}\} \otimes \bigvee_\xi \{d \xi \mid \eta\mid_{V \setminus \{x\}} = \xi\mid_{V \setminus \{x\}}\} \\
+& = & (\exists_x c) \eta \otimes (\exists_x d) \eta
 \end{eqnarray*}
 
 % = 
@@ -1676,22 +1675,29 @@ Let $[^y/_x] \in F(V)$, defined as:
 			y & \text{if $w = x$} \\
             w & \text{otherwise}
         \end{cases} \]
-The substitution operator $s_{[^y/_x]}: \mathcal{A} \rarrow \mathcal{A}$ on agents is defined by structural induction as 
+$[^y/_x]$ is an injective substitution, thus enjoying the properties shown in Section~\ref{propo}.
+We can hence define the substitution operator $[^y/_x]: \mathcal{A} \rarrow \mathcal{A}$ on agents as follows: 
 
 \begin{itemize}
-	\item $s_{[^y/_x]} \ostop = \ostop$
-	\item $s_{[^y/_x]}\tell(c) = \tell(s_{[^y/_x]}c)$
-	\item $s_{[^y/_x]} p(w) =  p([^y/_x](w))$
-	\item $s_{[^y/_x]} (\ask(c) \rightarrow A) = \ask(s_{[^y/_x]}(c)) \rightarrow s_{[^y/_x]} A$
-	\item $s_{[^y/_x]} (\exists_w A)  = 
+	\item $[^y/_x] \ostop = \ostop$
+	\item $[^y/_x]\tell(c) = \tell(s_{[^y/_x]}c)$
+	\item $[^y/_x] p(w) =  p([^y/_x](w))$
+	\item $[^y/_x] (\ask(c) \rightarrow A) = \ask(s_{[^y/_x]}(c)) \rightarrow [^y/_x] A$
+	\item $[^y/_x] (\exists_w A)  = 
 		\begin{cases} 
 			\exists_w A & \text{if $w = x$} \\
-            \exists_z (s_{[^z/_y]} s_{[^y/_x]} A) & \text{for z fresh if $w = y$} \\
-            \exists_x (s_{[^y/_x]} A) & \text{otherwise}
+            \exists_z ([^z/_y] [^y/_x] A) & \text{for z fresh if $w = y$} \\
+            \exists_x ([^y/_x] A) & \text{otherwise}
         \end{cases}$
-\item $s_{[^y/_x]}(A_1 \parallel A_2)  = (s_{[^y/_x]} A_1 \parallel s_{[^y/_x]} A_2)$
+\item $[^y/_x](A_1 \parallel A_2)  = ([^y/_x] A_1 \parallel [^y/_x] A_2)$
 \end{itemize}
 \end{definition}
+
+\begin{remark}
+Note that terms are $\alpha$-convertible: two terms which differ only for hidden variables can be considered equivalent. Indeed, as $sv([^y/_x]) = x$ and $x \not \in fv(\exists_x A)$, we have $\exists_x A = [^y/_x] \exists_x A$. If $y \not \in fv(A)$, we can swap the two operators, thus obtaining 
+\[y \not \in fv(A) \implies \exists_x A = \exists_y [^y/_x] A\]
+which precisely induces $\alpha$-conversion.
+\end{remark}
 
 %The substitution on compact elements is the one given in Definition~\ref{def:sub}: thanks to Lemma~\ref{lemmaSubs0}, 
 %the choice of the intermediate variable is immaterial.
@@ -1701,7 +1707,7 @@ The substitution operator $s_{[^y/_x]}: \mathcal{A} \rarrow \mathcal{A}$ on agen
 
 
 \begin{definition}[Reductions]\label{def:reductions}
-Let $\Gamma = {\mathcal A} \times \C^{\otimes}$ be the set of \emph{configurations}.
+Let $\Gamma = {\mathcal A} \times \C$ be the set of \emph{configurations}.
 The \emph{direct reduction semantics} for SCCP is the pair 
 $\langle \Gamma,  \mapsto \rangle$
 such that $\mapsto \, \, \subseteq \, \,\Gamma \times   \Gamma$ is the family 
@@ -1748,85 +1754,36 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
   {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle s_{[^y/_x]} A, \sigma \rangle}$ 
   &\bf{Rec}&
     \\
-   &\mbox{   }&\mbox{   }&
-  \\
-    \mbox{\bf A4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq \Delta 
-    \wedge w \not \in \Delta }
-    {\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle s_{[^w/_x]} A, \sigma\rangle}$
+    &\mbox{   }&\mbox{   }&
+    \\
+    \mbox{\bf A4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq 
+    \Delta \wedge w \not \in \Delta }
+    {\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle A[^w/_x],
+    \sigma\rangle}$
     &\bf{Hide}&
     \\
    &\mbox{   }&\mbox{   }&
   \\
-    \mbox{\bf A5}& $\frac {\displaystyle \langle A, \sigma' \otimes \exists_x \sigma_0
-				\rangle \rightarrow \langle B, \sigma'' \rangle \ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'} 
-			{\displaystyle\langle \exists^{\sigma'}_x A,
-				\sigma \rangle \rightarrow \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv \exists_x \sigma_0}$
+    \mbox{\bf A5}& $\frac {\displaystyle \langle A, \rho \otimes \sigma_0 \rangle
+    \mapsto \langle B, \sigma_1 \rangle \wedge x \not \in sv(\sigma) \wedge \sigma_0 
+    = \sigma \odiv \exists_x \rho }
+    {\displaystyle\langle \exists^{\rho}_x A,\sigma\rangle \mapsto_\Delta \langle 
+    \exists^{\sigma_1 \odiv \sigma_0}_x B, \sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0) 
+    \rangle}$
     &\bf{Hide-local}&
+%    \\
+%   &\mbox{   }&\mbox{   }&
+%  \\
+%    \mbox{\bf A5}& $\frac {\displaystyle \langle A, \sigma' \otimes \exists_x \sigma_0
+%				\rangle \rightarrow \langle B, \sigma'' \rangle \ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'} 
+%			{\displaystyle\langle \exists^{\sigma'}_x A,
+%				\sigma \rangle \rightarrow \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv \exists_x \sigma_0}$
+%    &\bf{Hide-local}&
   \end{tabular}
   \end{center}
 \caption{Axioms of the reduction semantics for SCCP.}
 \label{fig:operational}
 \end{table}
-
-\vspace{-.5cm}
-\def\odiv{\; {\ominus\hspace{-7.1pt} \div} \;}
-\def\odivvv{\; {\ominus\hspace{-7.1pt} \div} \;}
-\begin{table}
-\begin{center}
-	\scalebox{0.9}{
-		\begin{tabular}{llll}
-			$\frac {\displaystyle \langle A, \sigma' \otimes \exists_x \sigma_0
-				\rangle \mapsto \langle B, \sigma'' \rangle \ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'} 
-			{\displaystyle\langle \exists^{\sigma'}_x A,
-				\sigma \rangle \mapsto \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv \exists_x \sigma_0}$
-			&\bf{Hide} &\vspace{0.2cm} \\ 
- 			%$\frac {\displaystyle \la A[z/x], c[z/x] \otimes \sigma \ra \xrightarrow{\;  \alpha \;} \la
-			%B,  c' \otimes \sigma \otimes \alpha \ra} {\displaystyle\la \exists^c_x A,
-			%\sigma\ra \xrightarrow{\;  \alpha \;} \la \exists^{c'[x/z]}_x B[x/z], \exists_x(c'[x/z]) \otimes \sigma \otimes \alpha \ra} \ \
-			% {\it x\not\in fv(c'), z \not\in (fv(A) \cup fv(c \otimes \sigma \otimes \alpha)) }$
-			$\frac {\displaystyle \langle A[^z/_x], \sigma'[^z/_x] \otimes \sigma_0 \rangle \xrightarrow{\;  \alpha \;}
-				\langle B,  \sigma'' \rangle\ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma',\, 
-				                     z \not\in fv(A) \cup sv(\sigma)\cup sv(\sigma') \cup sv(\alpha)}
-			{\displaystyle\langle \exists^{\sigma'}_x A, \sigma\rangle \xrightarrow{\;  \alpha \;}
-				\langle \exists^{\sigma_1}_z B, \sigma_0 \otimes \alpha \otimes \exists_z\sigma_1 \rangle
-				\ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv (\alpha \otimes \sigma_0)}$
-			&\bf{L-Hide}&
-		\end{tabular}
-	}
-\end{center}
-%\hfill
-\caption{Unlabelled and labelled version of the rule for the local hiding of variables.}
-\label{fig:hiding}
-\end{table}
-
-\begin{table}  %\hfil5
-  %\scalebox{0.9}{
-   \begin{center}
-   \begin{tabular}{llll} 
-   %
-  \mbox{\bf R1}& $\frac {\displaystyle \langle A,\sigma \rangle \rarrow_\Delta \langle A', \sigma' \rangle
-  \wedge fv(B) \subseteq \Delta} 
-  {\displaystyle \begin{array}{l}
-                          \langle A\parallel B, \sigma \rangle \rarrow_\Delta \langle A'\parallel B, \sigma' \rangle
-                          \end{array}}$ 
-    & \bf{Par1}&
-  \\
-  & \mbox{   }&\mbox{   }&
-  \\
-    \mbox{\bf R2}& $\frac {\displaystyle \langle A,\sigma \rangle \rarrow_\Delta \langle A', \sigma'   \rangle
-    	\wedge fv(B) \subseteq \Delta} 
-    {\displaystyle 
-    	\begin{array}{l} \langle B\parallel A, \sigma \rangle \rarrow_\Delta \langle B\parallel A', \sigma' \rangle
-    	\end{array}}$& \bf{Par2}&
-  \end{tabular}
-  \end{center}
-\caption{Contextual rules of the reduction semantics for SCCP.}
-\label{fig:operational2}
-\end{table}
-
-\def\odiv{\, {\ominus\hspace{-7.8pt} \div} \,}
-\def\odivvv{\; {\ominus\hspace{-4.7pt} \div} \;}
-
 
 The split distinguishes between axioms and rules guaranteeing the closure with respect to the parallel operator. Indeed, rules {\bf  R1}  and {\bf  R2} model the interleaving of two agents in parallel.
 %
@@ -1860,7 +1817,7 @@ In axiom {\bf A5} In we consider instead local variables, where the hiding opera
 More precisely, according to~\cite{extendedHiding} we consider an extended operator $\exists_x^\sigma$, for $\sigma$ the local store.
 Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The intuition is that variable $x$ may be local to a component $\exists_x \sigma'$ of the store $\sigma$, yet visible at a global level: we must then evaluate $A$ in the store
 when the local $x$ is hidden, yet the possible duplications are removed (e.g., $\exists_x \sigma'$ may already occur in the global store $\sigma$). The final store intuitively contains in $\sigma_1$ the original $\sigma'$ increased by what has been added by the step. \\
-\medskip
+\smallskip
 %
 %
 %(as $(9)$ in~\cite{popl91}), assuming a set of variables $Var_{\mathcal{P}}$
@@ -2002,34 +1959,8 @@ in the following we restrict our attention to minimally increasing computations,
 altogether the subscripts $\Delta$'s whenever they are irrelevant.
 
 \section{Concluding Remarks}\label{sec:conclusion}
-Polynomial constraints are used in many areas of system analysis and verification. For instance, when synthesising program invariants or analysing reachability of hybrid systems. A further application is represented by the generation of measures for proving termination of symbolic programs, as well as rewrite systems. This work strives in the direction of bringing polynomial constraints in the soft constraints framework. 
-
-Our proposal moved from previous works, such as \cite{ipl17,jlamp17}, to build a new and more general
-framework for representing soft constraints. In this paper, we have observed properties of residuation
-in monoids equipped with partial orders or semi-lattices; moreover, we have introduced cylindric
-and polyadic operators in terms of pomonoid actions. This allowed us to exploit
-properties of $2_{fin}^V$ and $F(V)$ monoids and to generalise the notion of substitution,
-by defining any possible function as a substitution and building a new axiomatisation,
-which mirrors those obtained for previous definitions.
-This provides a more elegant formalisation, as well as more general and compact laws.
-Such results can be useful in giving an easier representation of soft constraints in SCSPs.
-
-Furthermore, the absence of diagonals allowed the use of more general structures, which are not 
-necessarily complete lattices, making our formalisation applicable to a larger class of case studies.
-Also, using polyadic algebras with constraints can be used to model
-many problems by using a comfortable polynomial representation. 
-
-Polynomials can easily fit real-life problems and can be used in SCCP paradigm to describe a knowledge
-basis shared among agents: indeed, a possible development of our works is a refitting of observational
-and behavioural equivalences as described in \cite{jlamp17}, which needed complete lattices,
-that could lead to the definition of a denotational semantics for SCCP.
-As future work, we can also think of defining the class of Polynomial \emph{Soft} Constraint Satisfaction Problems (PSCSPs), 
-as accomplished in \cite{pcsp09} with crisp constraints, in order to achieve a similar generalisation with respect to CSPs.
 
 \bibliographystyle{splncs03}%splncs
 \bibliography{main,softccp}
-
-
-
 
 \end{document}
