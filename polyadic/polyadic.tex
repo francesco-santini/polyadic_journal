@@ -1049,12 +1049,12 @@ We fix a partially ordered monoid $\mathbb{S} = \langle A, \leq, \monop, \monid 
 and a set $V$ of variables, and we then define a family of cylindric operators axiomatising existential quantifiers.
 
 \begin{definition}[cylindrification]\label{cyli}
-	A cylindric operator $\exists$ over $\mathbb{S}$ and $V$ ia family of monotone, 
+	A cylindric operator $\exists$ over $\mathbb{S}$ and $V$ ia family of monotone operators
 	$\exists_x : A \rightarrow A$ indexed by elements in V such that for all 
 	$a, b \in A$ and $x, y \in V$
 	%\todo{$2_f^V$ non e' stato definito prima e/o f non si sa cosa e' qui}
 	\begin{enumerate}
-	     \item $\exists_x a \leq a$,
+	     \item $a \leq \exists_x a$,
          \item $\exists_x \exists_y a = \exists_y \exists_x a$,
          %\item $\forall a, b \in A.\ X \subseteq Y\wedge a \leq b \implies  \exists(X, a) = \exists(Y, b)$,
 	     %\item $\exists(X, \monid) = \monid$,
@@ -1100,16 +1100,16 @@ by $\sigma^{c}(X) \subseteq V$ the counter-image of $X$ along $\sigma$.
 
 \begin{definition}[polyadification]
 	\label{def:poly}
-	A polyadic operator $s$ for $\exists$ is a a family of operators $s_\sigma: A \rightarrow A$
+	A polyadic operator $s$ for $\exists$ is a a family of monotone operators $s_\sigma: A \rightarrow A$
 	indexed by elements in $F(V)$ such that for all $x \in V$ and $\sigma, \tau\in F(V)$
 	\begin{enumerate}
-		\item $s_\sigma a = a$
+		\item $sv(\sigma) \cap sv(a) = \emptyset \implies s_\sigma a = a$
 		\item $\forall a, b \in A.\ s_\sigma(a \monop b) = s_\sigma a \monop s_\sigma b$,
         \item $\forall a \in A.\ \sigma \mid_{sv(a)} = \tau \mid_{sv(a)} \implies s_\sigma a 
         = s_\tau a$,
         \item $\forall a \in A.\ \exists_x s_\sigma a = \begin{cases}
 			s_\sigma \exists_y a &\text{if $\sigma^c(x) = \{y\}$}\\
-			s_\sigma a &\text{otherwise}
+			s_\sigma a &\text{if $\sigma^c(x) = \emptyset$}
 			\end{cases}$.				
     \end{enumerate}
 \end{definition}
@@ -1220,9 +1220,9 @@ DIRE DI PIU'
 
 \begin{lemma}
 	\label{lemmaSubs0}
-	Let $\sigma \in F(V)$ invertible, $a \in A$, and $x, y \in V$ $x\in sv(\sigma)$. Then it holds
+	Let $\sigma \in F(V)$ invertible, $a \in A$, and $x, y \in V$. Then it holds
 	\begin{enumerate}
-		\item if $s_{\sigma} \exists_x a = \exists_x a$
+		\item if $sv(\sigma) \cap sv(a) = \{x\}$, then $s_{\sigma} \exists_x a = \exists_x a$
 		\item if $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ then 
 		$\exists_x a = \exists_{\sigma(x)} s_{\sigma} a$
 		\item if $y \not \in sv(\sigma) \cup sv(\sigma(sv(\sigma)))$ then 
@@ -1514,7 +1514,7 @@ original constraints to the appropriate sub-tuples.
 	The ReSL of constraints $\mathbb{C}$ admits cylindric and polyadic operators, defined as
 	\begin{itemize}
 		\item  $(\exists_x c) \eta = \bigvee \{c \rho \mid \eta\mid_{V \setminus \{x\}} = 
-		\rho\mid_{V \setminus X}\}$ for all $c \in {\mathcal C}, X \subseteq V$
+		\rho\mid_{V \setminus \{x\}}\}$ for all $c \in {\mathcal C}, x \in V$
 		%\item if $\sigma$ is an injective substitution, then $(s_{\sigma}c)\eta = c(\sigma \circ \eta)$ 
 		%for all $c \in \mathcal{C}$
 		\item  $(s_\sigma c) \eta = c (\eta \circ \sigma)$ for all $c \in {\mathcal C}, \sigma \in F(V)$	
@@ -1558,6 +1558,7 @@ Thus, we have that
 %(\exists_X c) \eta \otimes (\exists_X d) \eta \]
 %%\[ (\exists_X d) \rho = \bigvee \{d \xi \mid \rho\mid_{V \setminus X} = \xi\mid_{V \setminus X}\}\]
 
+[da rivedere]
 Let us now move to the polyadic laws (see Definition~\ref{def:poly}).We just consider the third item, 
 and we assume that $\sigma \mid_{\sigma^c(X)}$ is injective, thus
 \begin{eqnarray*}
@@ -1606,68 +1607,18 @@ are ranged over by $c$, $d$, $\ldots$.
 The set $\mathcal{A}$ of all agents, %which is
 parametric with respect to a set $\mathcal{P}$ of (unary) procedure declarations $p(x)$,
 is given by the following grammar
-\[ A \Coloneqq \: \: \mathit{\ostop} \mid \textit{\tell}(c)  \mid \textit{\ask}(c) \rightarrow A \mid A \parallel A \mid \exists_x A \mid %Z \mid \mu_Z A
-p(x).\]  
+\[ A \Coloneqq \: \: \mathit{\ostop} \mid \textit{\tell}(c)  \mid \textit{\ask}(c) \rightarrow A \mid A \parallel A \mid %\exists_x A \mid %Z \mid \mu_Z A 
+p(x) \mid \exists^{\rho}_x A.\]  
 \end{definition}
 
+We consider here the extended agent $\exists^{\rho}_x A$, where $\rho$ is meant to represent a local store. More precisely, the extended agent allows to carry some information about the hidden variable $x$ in an incremental way. \\
 We denote by $fv(A)$ the set of free variables of an agent, defined in the expected way 
 by structural induction, assuming that $fv(\tell(c)) = sv(c)$ and
- $fv(\ask(c) \rightarrow A) = sv(c) \cup fv(A)$.
- %
- In the following, we restrict our attention to 
- procedure declarations $p(x) = A$ such that $fv(A) = \{x\}$.
-
+$fv(\ask(c) \rightarrow A) = sv(c) \cup fv(A)$. We also remark that $fv(\exists_x A) = fv(A) \setminus 
+\{x\}$ and $fv(\exists^{\rho}_x A) = (fv(A) \setminus \{x\}) \cup sv(\rho)$.
 %
-%
-%%Given a soft constraint system $S_C=\langle \C, \otimes,\bot,\top ,
-%%\exists_x, d_{xy}\rangle$ as defined in
-%%Section~\ref{sec:softconstraints}, the syntax
-%%of  deterministic \SCCP agents is defined as
-%
-%
-%\def\odivv{\; {\ominus\hspace{-4pt} \div} \;}
-%\def\odivvv{\; {\ominus\hspace{-6pt} \div} \;}
-%\begin{table}
-%%\footnotesize
-%\begin{center}
-%%P \Coloneqq \: \: F.A \; \; \; \; \; \; \; \;
-%%F \Coloneqq \: \: p(\hat{x})::A \mid F.F \; \; \; \; \; \; \; \;
-%$A \Coloneqq \: \: \mathit{\ostop} \mid \textit{\tell}(c)  \mid \textit{\ask}(c) \rightarrow A \mid A \parallel A \mid \exists_x A \mid %Z \mid \mu_Z A$
-%p(x)$
-%\end{center}
-%%\normalsize
-%\caption{The syntax of deterministic soft CCP}
-%\label{syntax}
-%\end{table}
-%
-%In Tab.~\ref{syntax} we recall the deterministic fragment of soft CCP,
-%with respect to the standard proposal, we replaced the procedure call with the
-%simpler to handle recursion operator $\mu_Z$.
-%%\marginpar{A che servono F e P?}
-%%
-%Let $\mathcal{A}$ be the set of all agents, which is
-%parametric with respect to a set $\mathcal{P}$ of (unary) procedure declarations 
-%$p(x) = A$ such that $fv(A) = \{x\}.$\footnote{The set of free variables of an agent is defined in the
- %expected way by structural induction, assuming that $fv(\tell(c)) = sv(c)$ and $fv(\ask(c) 
- %\rightarrow A) = sv(c) \cup fv(A)$.}
-%
-%$\mathcal{P}$ is the class of programs, $\mathcal{F}$ is the class of sequences of procedure
-%declarations,
-%$\mathcal{A}$ is the set of agents and
-%$\mathcal{Z} = \{Z, Z_1, Z_2 \ldots\}$ is the set of recursion variables, 
-%$c \in \C^\otimes$ with $sv(c) \in V$.
-%
-%, and $\hat{x}$ is a tuple of variables in $Var$ passed in a procedure call.
-%
-%In $p(\hat{x}) :: A$ we assume that the variables in
-%$\mathit{vars}(A)$, i.e. the set of variables occurring either as parameters of procedure calls or belonging
-%to the support of
-%the constraints in agent $A$, also occur
-%among $\hat{x}$.
-%\footnote{Note that, with respect to the standard proposals, we require only for the
-%$\textit{ask}$ operator to have a compact constraint, while the $\textit{tell}$ ranges over all constraints.
-%Intuitively, we allow to require to the store the removal of certain constraint, while compactness allow
-%for obtaining a simpler relation when checking the entailment of a constraint.}
+In the following, we restrict our attention to 
+procedure declarations $p(x) = A$ such that $fv(A) = \{x\}$.
 
 We now move to consider the reduction semantics of our language.
 
@@ -1683,31 +1634,48 @@ We can hence define the substitution operator $[^y/_x]: \mathcal{A} \rarrow \mat
 
 \begin{itemize}
 	\item $[^y/_x] \ostop = \ostop$
-	\item $[^y/_x]\tell(c) = \tell(s_{[^y/_x]}c)$
+	\item $[^y/_x] \tell(c) = \tell(s_{[^y/_x]}c)$
 	\item $[^y/_x] p(w) =  p([^y/_x](w))$
 	\item $[^y/_x] (\ask(c) \rightarrow A) = \ask(s_{[^y/_x]}(c)) \rightarrow [^y/_x] A$
-	\item $[^y/_x] (\exists_w A)  = 
-		\begin{cases} 
-			\exists_w A & \text{if $w = x$} \\
-            \exists_z ([^z/_y] [^y/_x] A) & \text{for z fresh if $w = y$} \\
-            \exists_x ([^y/_x] A) & \text{otherwise}
-        \end{cases}$
-\item $[^y/_x](A_1 \parallel A_2)  = ([^y/_x] A_1 \parallel [^y/_x] A_2)$
+	\item $[^y/_x] (\exists_w A)  = \exists_w ([^y/_x] A) \ \ \text{for $w \not \in \{x, y\}$}$
+    \item $[^y/_x] (\exists^{\rho}_w A) = \exists^{(s_{[^y/_x]} \rho)}_w [^y/_x]A \ \
+    \text{for $w \not \in \{x, y\}$}$
+	\item $[^y/_x](A_1 \parallel A_2)  = ([^y/_x] A_1 \parallel [^y/_x] A_2)$
 \end{itemize}
 \end{definition}
 
 \begin{remark}
-Note that terms are $\alpha$-convertible: two terms which differ only for hidden variables can be considered equivalent. Indeed, as $sv([^y/_x]) = x$ and $x \not \in fv(\exists_x A)$, we have $\exists_x A = [^y/_x] \exists_x A$. If $y \not \in fv(A)$, we can swap the two operators, thus obtaining 
-\[y \not \in fv(A) \implies \exists_x A = \exists_y [^y/_x] A\]
-which precisely induces $\alpha$-conversion.
+In the following, we consider terms to be equivalent up to $\alpha$-conversion, meaning that terms which differ only for hidden variables can be considered equivalent:
+\[\exists_x^\rho A = \exists_y^{(s_{[^y/_x]}\rho)} A [^y/_x] \ \ for \ \ y \not \in sv(\rho) \cup fv(A)\].
+Note that this holds thanks to the underlying monoid properties, where we have that $\exists_x \sigma = \exists_y s_{[^y/_x]}(\sigma)$ if $y \not \in sv(\sigma)$.
 \end{remark}
 
-%The substitution on compact elements is the one given in Definition~\ref{def:sub}: thanks to Lemma~\ref{lemmaSubs0}, 
-%the choice of the intermediate variable is immaterial.
-% NO
-% $A[^y/_z][^z/_x] = A[^y/_x]$, since each syntactical substitution in $A$ involves all the variables with the same name.
+Thanks to $\alpha$-conversion, we can define substitution for $\exists^{\rho}_x A$ and $\exists_x A$ 
+as above. Other cases can be managed by renaming, since the following holds:
 
+\begin{proposition}
+Let $A \in \mathcal{A}$, $x \not \in fv(A)$. Then $[^y/_x]A = A$.
+\end{proposition}
 
+\begin{proof}
+For $\ostop$, $\tell(c)$, $p(w)$ the statement is trivially true, as we have that
+\begin{itemize}
+	\item $[^y/_x]\ostop = \ostop$
+	\item $[^y/_x]\tell(c) = \tell(s_{[^y/_x]}c) = \tell(c)$ by polyadic laws and $x \not
+	\in fv(\tell(c)) = sv(c)$.
+	\item $[^y/_x]p(w) = p(w)$ by $x \not = w$.
+\end{itemize}
+As for the other agents, the statement can be proved by inductive reasoning, assuming it to be true for subagents in $\ask(c) \rightarrow A$, $(A_1 || A_2)$ and $\exists^{\rho}_w A$. Indeed we obtain:
+\begin{itemize}
+	\item $[^y/_x](\ask(c) \rightarrow A) = [^y/_x]\ask(c) \rightarrow [^y/_x]A = 
+	\ask(s_{[^y/_x]}c) \rightarrow [^y/_x]A = \ask(c) \rightarrow A$
+	by hypothesis and polyadic laws.
+	\item $[^y/_x](A_1 || A_2) = ([^y/_x]A_1 || [^y/_x]A_2)) = (A_1 || A_2)$
+	by hypothesis.
+	\item $[^y/_x](\exists^{\rho}_w A) = \exists^{s_{[^y/_x]\rho}}_x [^y/_x]A = \exists^{\rho}_w A$
+	by hypothesis and polyadic laws.
+\end{itemize}
+\end{proof}
 
 \begin{definition}[Reductions]\label{def:reductions}
 Let $\Gamma = {\mathcal A} \times \C$ be the set of \emph{configurations}.
@@ -1754,14 +1722,14 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
     &\mbox{   }&\mbox{   }&
     \\
   \mbox{\bf A3}& $\frac {\displaystyle sv(\sigma) \cup \{y\} \subseteq \Delta \wedge \displaystyle p(x) = A \in \mathcal{P} }
-  {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle s_{[^y/_x]} A, \sigma \rangle}$ 
+  {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle [^y/_x]A, \sigma \rangle}$ 
   &\bf{Rec}&
     \\
     &\mbox{   }&\mbox{   }&
     \\
     \mbox{\bf A4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq 
     \Delta \wedge w \not \in \Delta }
-    {\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle A[^w/_x],
+    {\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle [^w/_x]A,
     \sigma\rangle}$
     &\bf{Hide}&
     \\
@@ -1774,14 +1742,6 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
     \exists^{\sigma_1 \odiv \sigma_0}_x B, \sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0) 
     \rangle}$
     &\bf{Hide-local}&
-%    \\
-%   &\mbox{   }&\mbox{   }&
-%  \\
-%    \mbox{\bf A5}& $\frac {\displaystyle \langle A, \sigma' \otimes \exists_x \sigma_0
-%				\rangle \rightarrow \langle B, \sigma'' \rangle \ \ \ \mbox{  \textit{with}  } \sigma_0 = \sigma \odiv \exists_x \sigma'} 
-%			{\displaystyle\langle \exists^{\sigma'}_x A,
-%				\sigma \rangle \rightarrow \langle \exists^{\sigma_1}_x B, \sigma_0 \otimes \exists_x \sigma_1\rangle \ \ \ \mbox{  \textit{with}  } \sigma_1 = \sigma'' \odiv \exists_x \sigma_0}$
-%    &\bf{Hide-local}&
   \end{tabular}
   \end{center}
 \caption{Axioms of the reduction semantics for SCCP.}
@@ -1820,15 +1780,7 @@ In {\bf A1} a constraint $c$ is added to the store $\sigma$.
 %, which in the next step will be $\sigma \otimes c$.
 %
 {\bf A2} checks if $c$ is entailed by  $\sigma$: if not, the computation is blocked.
-% until this condition holds, and then continuation $A$ is executed.
-%
-%provides the standard unfolding step for the recursion operator: the mechanisms of variable.
-%substitution and scope are defined as usual.
-%
-%Rules {\bf  R3}  and {\bf  R4} model the interleaving of two agents in parallel.
-%% symmetric rules (on agent $B$) are not shown in Fig.~\ref{fig:operational}.
-%\marginpar{Either $\exists_x \ostop = \ostop$ is missing or R4 is basically useless}
-%
+
 Axiom {\bf A3} replaces a procedure identifier with the associated body, renaming the formal parameter with the actual one:
 %$A[^y/_x]$ stands for the agent obtained by replacing all the occurrences of $x$ with $y$.
 %
@@ -1842,25 +1794,10 @@ $fv(B) \cup sv(\rho) \subseteq \Delta$.\footnote{Our rule is  reminiscent of
 $(8)$ in~\cite[p.~342]{popl91}.}
 
 In axiom {\bf A5} we consider instead local variables, where the hiding operator carries some information on the variables it abstracts.
-More precisely, according to~\cite{extendedHiding} we consider an extended operator $\exists_x^\sigma$, for $\sigma$ the local store.
-Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The intuition is that variable $x$ may be local to a component $\exists_x \sigma'$ of the store $\sigma$, yet visible at a global level: we must then evaluate $A$ in the store
-when the local $x$ is hidden, yet the possible duplications are removed (e.g., $\exists_x \sigma'$ may already occur in the global store $\sigma$). The final store intuitively contains in $\sigma_1$ the original $\sigma'$ increased by what has been added by the step. \\
+More precisely, according to~\cite{extendedHiding} we consider an extended operator $\exists_x^\rho$, for $\rho$ the local store.
+Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The precondition states that $x \not \in sv(\sigma)$: this ensures that $\sigma_0$ does not contain free occurences of $x$, as it is obtained by removing $\exists_x \rho$ from $\sigma$. \\
 \smallskip
-%
-%
-%(as $(9)$ in~\cite{popl91}), assuming a set of variables $Var_{\mathcal{P}}$
-%(one for each procedure definition) that cannot occurr either in the support nor in the syntax of any agent.
-%
-%\marginpar{R5 may add non-determinsm!!}
-%\marginpar{R5 is much more difficult now: the problem was in the superscript $\sigma''$ for non-idempotent CLIMs}
-%Finally, rule {\bf R6} calls a procedure $p(\hat{x})$ by passing the (global) parameters $\hat{y}$:
-%%$d_{\hat{x},\hat{y}}$ is a shorthand for the composition of the $d_{x_i,y_i}$'s.
-%$A[\hat{y}/\hat{x}]$ is the pairwise renaming in $A$ of variables in  $\hat{y}$ with variables in $\hat{x}$.
-%\marginpar{The use of $d_{x,y}$ for R6 would be nicer, but maybe problematic (compactness)}
-%Finally, rule {\bf R6} provides the standard unfolding step for the recursion operator: the mechanisms of variable
-%substitution and scope are defined as usual.
 
-%\smallskip
 Let $\gamma = \langle A, \sigma \rangle$ be a configuration.
 %
 We denote by $fv(\gamma)$ the set $fv(A) \cup sv(\sigma)$ and by
