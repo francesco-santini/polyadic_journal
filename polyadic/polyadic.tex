@@ -1795,7 +1795,7 @@ $(8)$ in~\cite[p.~342]{popl91}.}
 
 In axiom {\bf A5} we consider instead local variables, where the hiding operator carries some information on the variables it abstracts.
 More precisely, according to~\cite{extendedHiding} we consider an extended operator $\exists_x^\rho$, for $\rho$ the local store.
-Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The precondition states that $x \not \in sv(\sigma)$: this ensures that $\sigma_0$ does not contain free occurences of $x$, as it is obtained by removing $\exists_x \rho$ from $\sigma$. \\
+Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The precondition states that $x \not \in sv(\sigma)$: this ensures that $\sigma_0$ does not contain free occurences of $x$, as it is obtained by removing $\exists_x \rho$ from $\sigma$. The intuition is then that $x$ can only appear in the local store $\rho$, and then in $\sigma_1$. Thus, hiding $x$ means to remove it from the resulting store, by letting it $\sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0)$. On the other hand, the local information carried by the hide operator is updated to $\sigma_1 \odiv sigma_0$, which can still contain $x$. \\
 \smallskip
 
 Let $\gamma = \langle A, \sigma \rangle$ be a configuration.
