@@ -1611,7 +1611,7 @@ is given by the following grammar
 p(x) \mid \exists^{\rho}_x A.\]  
 \end{definition}
 
-We consider here the extended agent $\exists^{\rho}_x A$, where $\rho$ is meant to represent a local store. More precisely, the extended agent allows to carry some information about the hidden variable $x$ in an incremental way. \\
+We consider here the extended agent $\exists^{\rho}_x A$, where $\rho$ is meant to represent a local store. More precisely, the extended agent allows to carry some information about the hidden variable $x$ in an incremental way. In the following, we will often write $\exists_x A$ for $\exists^{\monid}_x A$ \\
 We denote by $fv(A)$ the set of free variables of an agent, defined in the expected way 
 by structural induction, assuming that $fv(\tell(c)) = sv(c)$ and
 $fv(\ask(c) \rightarrow A) = sv(c) \cup fv(A)$. We also remark that $fv(\exists_x A) = fv(A) \setminus 
@@ -1628,16 +1628,15 @@ Let $[^y/_x] \in F(V)$, defined as:
 		\begin{cases} 
 			y & \text{if $w = x$} \\
             w & \text{otherwise}
-        \end{cases} \]
-$[^y/_x]$ is an injective substitution, thus enjoying the properties shown in Section~\ref{propo}.
-We can hence define the substitution operator $[^y/_x]: \mathcal{A} \rarrow \mathcal{A}$ on agents as follows: 
+        \end{cases} \].
+We define the substitution operator $[^y/_x]: \mathcal{A} \rarrow \mathcal{A}$ on agents as follows: 
 
 \begin{itemize}
 	\item $[^y/_x] \ostop = \ostop$
 	\item $[^y/_x] \tell(c) = \tell(s_{[^y/_x]}c)$
 	\item $[^y/_x] p(w) =  p([^y/_x](w))$
 	\item $[^y/_x] (\ask(c) \rightarrow A) = \ask(s_{[^y/_x]}(c)) \rightarrow [^y/_x] A$
-	\item $[^y/_x] (\exists_w A)  = \exists_w ([^y/_x] A) \ \ \text{for $w \not \in \{x, y\}$}$
+	%\item $[^y/_x] (\exists_w A)  = \exists_w ([^y/_x] A) \ \ \text{for $w \not \in \{x, y\}$}$
     \item $[^y/_x] (\exists^{\rho}_w A) = \exists^{(s_{[^y/_x]} \rho)}_w [^y/_x]A \ \
     \text{for $w \not \in \{x, y\}$}$
 	\item $[^y/_x](A_1 \parallel A_2)  = ([^y/_x] A_1 \parallel [^y/_x] A_2)$
@@ -1650,8 +1649,7 @@ In the following, we consider terms to be equivalent up to $\alpha$-conversion, 
 Note that this holds thanks to the underlying monoid properties, where we have that $\exists_x \sigma = \exists_y s_{[^y/_x]}(\sigma)$ if $y \not \in sv(\sigma)$.
 \end{remark}
 
-Thanks to $\alpha$-conversion, we can define substitution for $\exists^{\rho}_x A$ and $\exists_x A$ 
-as above. Other cases can be managed by renaming, since the following holds:
+Thanks to $\alpha$-conversion, we can define substitution for $\exists^{\rho}_x A$ as above, even if the substitution function $[^y/_x]$ is not injective. Other cases can be managed by renaming, since the following holds:
 
 \begin{proposition}
 Let $A \in \mathcal{A}$, $x \not \in fv(A)$. Then $[^y/_x]A = A$.
@@ -1672,7 +1670,7 @@ As for the other agents, the statement can be proved by inductive reasoning, ass
 	by hypothesis and polyadic laws.
 	\item $[^y/_x](A_1 || A_2) = ([^y/_x]A_1 || [^y/_x]A_2)) = (A_1 || A_2)$
 	by hypothesis.
-	\item $[^y/_x](\exists^{\rho}_w A) = \exists^{s_{[^y/_x]\rho}}_x [^y/_x]A = \exists^{\rho}_w A$
+	\item $[^y/_x](\exists^{\rho}_w A) = \exists^{s_{[^y/_x]\rho}}_w [^y/_x]A = \exists^{\rho}_w A$
 	by hypothesis and polyadic laws.
 \end{itemize}
 \end{proof}
@@ -1724,18 +1722,18 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
   \mbox{\bf A3}& $\frac {\displaystyle sv(\sigma) \cup \{y\} \subseteq \Delta \wedge \displaystyle p(x) = A \in \mathcal{P} }
   {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle [^y/_x]A, \sigma \rangle}$ 
   &\bf{Rec}&
-    \\
-    &\mbox{   }&\mbox{   }&
-    \\
-    \mbox{\bf A4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq 
-    \Delta \wedge w \not \in \Delta }
-    {\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle [^w/_x]A,
-    \sigma\rangle}$
-    &\bf{Hide}&
-    \\
-   &\mbox{   }&\mbox{   }&
+    %\\
+    %&\mbox{   }&\mbox{   }&
+    %\\
+    %\mbox{\bf A4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq 
+    %\Delta \wedge w \not \in \Delta }
+    %{\displaystyle\langle \exists_x A,\sigma\rangle \mapsto_\Delta \langle [^w/_x]A,
+    %\sigma\rangle}$
+    %&\bf{Hide}&
+    %\\
+   %&\mbox{   }&\mbox{   }&
   \\
-    \mbox{\bf A5}& $\frac {\displaystyle \langle A, \rho \otimes \sigma_0 \rangle
+    \mbox{\bf A4}& $\frac {\displaystyle \langle A, \rho \otimes \sigma_0 \rangle
     \mapsto \langle B, \sigma_1 \rangle \wedge x \not \in sv(\sigma) \wedge \sigma_0 
     = \sigma \odiv \exists_x \rho }
     {\displaystyle\langle \exists^{\rho}_x A,\sigma\rangle \mapsto_\Delta \langle 
@@ -1784,16 +1782,16 @@ In {\bf A1} a constraint $c$ is added to the store $\sigma$.
 Axiom {\bf A3} replaces a procedure identifier with the associated body, renaming the formal parameter with the actual one:
 %$A[^y/_x]$ stands for the agent obtained by replacing all the occurrences of $x$ with $y$.
 %
-Axiom {\bf A4} hides the variable $x$ occurring in $A$, replacing it  
-with a globally fresh variable,
-as ensured by $w \not \in \Delta$.
-The latter is more general than just requiring that 
-$w \not \in fv(\exists_x A) \cup sv(\sigma)$, since
-$\langle B, \rho \rangle   \rarrow_\Delta$ implies that 
-$fv(B) \cup sv(\rho) \subseteq \Delta$.\footnote{Our rule is  reminiscent of 
-$(8)$ in~\cite[p.~342]{popl91}.}
+%Axiom {\bf A4} hides the variable $x$ occurring in $A$, replacing it  
+%with a globally fresh variable,
+%as ensured by $w \not \in \Delta$.
+%The latter is more general than just requiring that 
+%$w \not \in fv(\exists_x A) \cup sv(\sigma)$, since
+%$\langle B, \rho \rangle   \rarrow_\Delta$ implies that 
+%$fv(B) \cup sv(\rho) \subseteq \Delta$.\footnote{Our rule is  reminiscent of 
+%$(8)$ in~\cite[p.~342]{popl91}.}
 
-In axiom {\bf A5} we consider instead local variables, where the hiding operator carries some information on the variables it abstracts.
+In axiom {\bf A4} we consider instead local variables, where the hiding operator carries some information on the variables it abstracts.
 More precisely, according to~\cite{extendedHiding} we consider an extended operator $\exists_x^\rho$, for $\rho$ the local store.
 Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The precondition states that $x \not \in sv(\sigma)$: this ensures that $\sigma_0$ does not contain free occurences of $x$, as it is obtained by removing $\exists_x \rho$ from $\sigma$. The intuition is then that $x$ can only appear in the local store $\rho$, and then in $\sigma_1$. Thus, hiding $x$ means to remove it from the resulting store, by letting it $\sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0)$. On the other hand, the local information carried by the hide operator is updated to $\sigma_1 \odiv sigma_0$, which can still contain $x$. \\
 \smallskip
