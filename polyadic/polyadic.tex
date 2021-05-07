@@ -1160,163 +1160,6 @@ Since by definition we have $\exists (Y \setminus sv(a), a)) = a$, the result fo
 %\item $sv(\sigma) = \bigcap X \subseteq V \mid \sigma(X) \neq X$
 %\end{itemize}
 
-\subsection{Properties of Polyadic Operators}
-\label{propo}
-In this section we just show some facts concerning
-polyadic operators: they ensure that indeed these operators 
-suitably axiomatise substitutions. 
-%
-More precisely, we consider a few simple properties that mimic those holding
-for substitutions modelled via diagonals, as considered e.g. in~\cite[Lemma~2 and Lemma~3]{jlamp17}.
-
-\begin{definition}[inverse functions]
-	\label{def:inverse}
-	Let $\sigma \in F(V)$ be \emph{invertible}, i.e., such that $\sigma \mid_{sv(\sigma)}$ is injective.
-	Its \emph{inverse} is defined as
-	$$\sigma^{-1}(y) = \bigg \{\begin{array}{rl}
-	x & \mathit{if} \ y = \sigma(x) \ and \ x \in sv(\sigma) \\
-		y & \ otherwise
-	\end{array}$$
-	%i.e., $\{^y/_x\}(z) = z$ for all $z \neq x$.
-	%
-Its \emph{injective lifting} is defined as
-	$$\sigma_l(y) = \bigg \{\begin{array}{ll}
-	\sigma(y) & if \ y \in sv(\sigma) \\
-	\sigma^{-1}(y) & \ otherwise
-	\end{array}$$
-\end{definition}
-
-In other terms, note that an element $y \in \sigma(sv(\sigma))$ can be the image along $\sigma$ of at most two elements: 
-should this be the case, one of them is the element itself 
-and the other belongs to $sv(\sigma)$.
-When defining the inverse, we give precedence to the element in $sv(\sigma)$.
-%
-Instead, the injective lifting is indeed an injective substitution.
-
-%Polyadic substitution behaves correctly with respect to $\exists$. 
-\begin{lemma} \label{lemma:Inv0}
-Let $\sigma \in F(V)$ be invertible. Then it holds
-\begin{itemize}
-\item $sv(\sigma_l) = \sigma(sv(\sigma)) \cup sv(\sigma) = sv(\sigma_l^{-1})$,
-\item $sv(\sigma^{-1}) = \sigma(sv(\sigma))$,
-\item $sv(\sigma^{-1} \circ \sigma) = \sigma(sv(\sigma)) \setminus sv(\sigma)$,
-\item $sv(\sigma \circ \sigma^{-1}) = sv(\sigma) \setminus \sigma(sv(\sigma))$.
-\end{itemize}
-\end{lemma}
-
-The set-theoretical proofs are immediate and are omitted. Lemma~\ref{lemmaSubs0} helps to ensure that polyadic substitution behaves correctly with respect to $\exists$. 
-We recall that the properties below mirror 
-those obtained for substitutions via diagonal operators~\cite{jlamp17}.
-%\marginpar{leave if needed}
-
-\comment{
-\begin{remark}
-With respect to the notion of diagonal
-operators~\cite{xxx}\todo{Manca citazione}, as e.g. adopted in~\cite{jlamp17}, in the present context they are not defined, since in our RePOs we do not have the $\top$ elements.
-
-DIRE DI PIU'
-\end{remark}
-}
-
-\begin{lemma}
-	\label{lemmaSubs0}
-	Let $\sigma \in F(V)$ invertible, $a \in A$, and $x, y \in V$. Then it holds
-	\begin{enumerate}
-		\item if $sv(\sigma) \cap sv(a) = \{x\}$, then $s_{\sigma} \exists_x a = \exists_x a$
-		\item if $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ then 
-		$\exists_x a = \exists_{\sigma(x)} s_{\sigma} a$
-		\item if $y \not \in sv(\sigma) \cup sv(\sigma(sv(\sigma)))$ then 
-		$s_{\sigma} \exists_y a = \exists_y s_{\sigma} a$
-	\end{enumerate}
-\end{lemma}
-\begin{proof}
-Proofs are immediate.
-As for item $1$, it is a consequence of $\sigma \mid_{V \setminus sv(\sigma)} = id \mid_{V \setminus sv(\sigma)}$.
-
-Concerning now item $3$, since $y$ satisfies $y \not \in sv(\sigma)$ then $\sigma(y) = y$,
-and since additionally $y \not \in \sigma(sv(\sigma))$ it also follows that $\sigma^{c}(y) = y$. Thus
-we have that 
-$\exists_y s_{\sigma} a = \exists_{\sigma(y)} s_{\sigma} a = s_{\sigma} \exists_{\sigma^{c}(y)} a = s_{\sigma} \exists_y a$,
-where the intermediate equality holds by item 3 of Lemma~\ref{lemma:Inv0}.
-
-Let us finally move to item $2$, and let us consider the lifting $\sigma_l$. This can be less parsimoniously described as
-%
-%$\sigma'$ defined as follows:
-$$\sigma_l(y) = \bigg \{\begin{array}{ll}
-	\sigma(y) & \ \mathit{if} \ y \in sv(\sigma) \\
-	\sigma^{-1}(y) & \ \mathit{if} \ y \in \sigma(sv(\sigma)) \setminus sv(\sigma) \\
-	y & \ otherwise
-	\end{array}$$
-%Then $\sigma'$ is an injective substitution and switches the variables in $sv(\sigma)$ and $\sigma(sv(\sigma))$ in some way. 
-By the hypothesis $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ we have that $\sigma(x) = \sigma^l(x)$,
-%
-hence it holds $\exists_x a = s_{\sigma} \exists_x a = s_{\sigma_l} \exists_x a$.
-%
-Now note that $(\sigma_l)^{c}(\sigma(x)) = x$, for $(\sigma_l)^{c}$ the set-theoretical inverse of $\sigma_l$, 
-thus again by item $3$ of Definition~\ref{def:poly} we have that $s_{\sigma_l} \exists_x a = \exists_{\sigma(x)} s_{\sigma_l} a = \exists_{\sigma(x)} s_{\sigma} a$.
-%As for $2$, let $\tau$ such that $\hat{\tau} \mid_{sv(\hat{\tau})}: Y \rightarrow V$ is bijective, $Im(\hat{\tau} \mid_{sv(\hat{\tau})}) = X$, $\hat{\tau} \mid_{V \setminus sv(\hat{\tau})} = id \mid_{V \setminus sv(\hat{\tau})}$ and let $\hat{\sigma}'$ defined as follows:
-%	\begin{itemize}
-%		\item $\hat{\sigma}'(y) = \hat{\sigma}(y)$ if $y \not \in Y$
-%		\item $\hat{\sigma}'(y) = \hat{\tau}(y)$ otherwise
-%	\end{itemize}
-%$\hat{\sigma}'$ switches all the variables in $sv(\hat{\sigma})$ and $sv(\hat{\tau})$ in some way. Then we have $s_{\hat{\sigma}} \exists_Y a = s_{\hat{\sigma}'} \exists_Y a$ and $\exists_Y s_{\hat{\sigma}'} \exists_Y a = s_{\hat{\sigma}'} \exists_X \exists_Y a = \exists_X a$
-\qed
-\end{proof}
-
-%\begin{proof}
-%	The proofs are immediate. Consider for instance the most difficult item $3$.
-%	If $x=y$ the proof is over. Now, since $w \not \in \{x, y\}$ we have 
-%	by definition that
-%	$\delta_{x,y} = \exists_w(\delta_{x,w} \monop \delta_{w,y})$.
-%	Again by definition $b [^y/_x] = \exists_x(\delta_{x,y} \monop b)$, so that
-%	$\exists_w (a [^y/_x]) =  \exists_w \exists_x(\delta_{x,y} \monop a) = 
-%	\exists_x \exists_w(\delta_{x,y} \monop a) = 
-%	\exists_x (\delta_{x,y} \monop \exists_w a) = 
-%	(\exists_w a) [^y/_x]$.
-%\end{proof}
-
-Finally, we rephrase some further laws of the crisp case 
-%It is easy to prove that the following laws hold 
-(see~\cite[p.140]{pippo}).
-
-\begin{lemma}
-	\label{lemmaSubs}
-	Let $\sigma \in F(V)$ be invertible. Then it holds
-	\begin{enumerate}
-		\item $\forall a\in A.\ (sv(\sigma) \setminus  \sigma(sv(\sigma))) \cap sv(s_\sigma a) = \emptyset$.
-		\item $\forall a\in A.\ (\sigma(sv(\sigma)) \setminus sv(\sigma)) \cap sv(a) = \emptyset \implies s_{\sigma^{-1}} s_{\sigma} a = a$,
-		%\item $s_{\sigma} a = a \iff sv(a) \cap sv(\sigma) = \emptyset$
-	\end{enumerate}
-\end{lemma}
-
-\begin{proof}
-	As for item $1$, note that $sv(s_{\sigma} a) = \sigma(sv(a))$. Let $Z = sv(\sigma) \cap sv(a)$: 
-	then $\sigma(Z) \subseteq \sigma(sv(\sigma))$ and $\sigma \mid_{sv(a) \setminus Z} = \iota \mid_{sv(a) \setminus Z}$, which implies $(sv(a) \setminus Z) \cap sv(\sigma) = \emptyset$.
-	Since $\sigma(Z) \subseteq \sigma(sv(\sigma))$, it holds $(sv(\sigma) \setminus \sigma(sv(\sigma)) \cap \sigma(sv(a)) = (sv(\sigma) \setminus \sigma(sv(\sigma)) \cap sv(s_{\sigma} a) = \emptyset$.
-
-	As for item $2$, by definition it holds $s_{\sigma^{-1}} s_{\sigma} a = s_{\sigma^{-1} \circ \sigma} a$. 
-	Now, item $3$ of Lemma~\ref{lemma:Inv0} implies that $sv(\sigma^{-1} \circ \sigma) = \sigma(sv(\sigma)) \setminus sv(\sigma)$, 
-	and since $\sigma(sv(\sigma)) \cap sv(a) = \emptyset$ it holds $(\sigma^{-1} \circ \sigma) \mid _{sv(a)} = \iota \mid _{sv(a)}$.
-	The result then follows by item $2$ of Definition~\ref{def:poly}.	
-\qed	
-	%Consider now item $3$: note that $a = b \implies \exists_X a = \exists_X b$. Then $s_\sigma a = a \implies \exists_{\sigma(sv(a))} s_\sigma a = \exists_{sv(a)} a \implies s_\sigma \exists_{\sigma^{-1}(sv(a))} a = \exists_{sv(a)} a \implies \sigma^{-1}(sv(a)) = sv(a) \implies sv(\sigma) \cap sv(a) = \emptyset$. \\
-	%Questo pero' mi confonde: se $\sigma$ fosse una permutazione varrebbe lo stesso. \\
-	%To proove $sv(\sigma) \cap sv(a) \implies s_{\sigma} a = a$, consider the contrapositive of item $2$ in Definition~\ref{def:poly}: then it holds $s_{\sigma} a \not = a \implies \sigma \mid_{sv(a)} \not = \iota \mid_{sv(a)}$, i.e. there exists $X \subseteq sv(a) \not = \emptyset$ such that $\sigma(X) \not = X$, which in turn implies $sv(\sigma) \cap sv(a) \not = \emptyset$.
-	%$\hat{\tau} \circ \hat{\sigma} = \hat{\tau}$, then $s_{\hat{\tau} \circ \hat{\sigma}} a = s_{\hat{\tau}} \exists_Y a$. Since $Y = sv(\hat{\tau})$, the result follows from $1$ of Lemma~\ref{lemmaSubs0}.
-	%$\{^x/_y\} \mid_{V \setminus\{y\}} = id \mid_{V \setminus\{y\}}$.
-	%As for $3$,  note that $\sigma^{-1} (X) = \emptyset$, thus
-	%$\exists_X s_{\sigma} a = s_{\sigma} a$ and the result holds.
-%	Consider for instance the most difficult item $3$.
-%	If $x=y$ the proof is over. Now, since $w \not \in \{x, y\}$ we have 
-%	by definition that
-%	$\delta_{x,y} = \exists_w(\delta_{x,w} \monop \delta_{w,y})$.
-%	Again by definition $b [^y/_x] = \exists_x(\delta_{x,y} \monop b)$, so that
-%	$\exists_w (a [^y/_x]) =  \exists_w \exists_x(\delta_{x,y} \monop a) = 
-%	\exists_x \exists_w(\delta_{x,y} \monop a) = 
-%	\exists_x (\delta_{x,y} \monop \exists_w a) = 
-%	(\exists_w a) [^y/_x]$.
-\end{proof}
-
 \subsection{Cylindric and Polyadic Operators for Residuated Monoids}
 \label{cyre}
 Both algebraic structures introduced in the previous section are quite standard,
@@ -1365,6 +1208,10 @@ Let $\sigma \in F(V)$. Then it holds
 \begin{itemize}
 \item $\forall a,b \in A.\ s_\sigma (a \odiv b) \leq s_\sigma a \odiv s_\sigma b$.
 \end{itemize}
+Furhtermore, if $\sigma$ is invertible, then it holds
+\begin{itemize}
+\item $\forall a,b \in A.\ s_\sigma (a \odiv b) = s_\sigma a \odiv s_\sigma b$.
+\end{itemize}
 \end{lemma}
 
 \begin{proof}
@@ -1372,20 +1219,10 @@ Let $\sigma \in F(V)$. Then it holds
 \[ s_\sigma [a \otimes (b \odiv a)] \leq s_\sigma b \implies \]
 \[ s_\sigma a \otimes s_\sigma(b \odiv a) \leq s_\sigma b \implies \]
 \[ s_\sigma (b \odiv a) \leq s_\sigma b \odiv s_\sigma a \]
-\end{proof}
 
-Furhtermore, if $\sigma$ is invertible, then we can prove the following:
+As for the second item, note that $\sigma$ invertible implies $s_{\sigma^{-1}} s_{\sigma} a = a 
+= s_{\sigma} s_{\sigma^{-1}} a$. Then we have:
 
-\begin{lemma}
-Let $\sigma \in F(V)$ be invertible. Then it holds
-\begin{itemize}
-\item $\forall a,b \in A.\ s_\sigma (a \odiv b) = s_\sigma a \odiv s_\sigma b$.
-\end{itemize}
-\end{lemma}
-
-\begin{proof}
-First of all, note that $\sigma$ invertible implies $s_{\sigma^{-1}} s_{\sigma} a = a 
-= s_{\sigma} s_{\sigma^{-1}} a$, from which we can prove:
 \[ s_\sigma b \otimes (s_\sigma a \odiv s_\sigma b) \leq s_\sigma a  \implies \]
 \[ s_{\sigma^{-1}} (s_\sigma b \otimes (s_\sigma a \odiv s_\sigma b))
 \leq s_{\sigma^{-1}} s_\sigma a  \implies \]
@@ -1510,7 +1347,7 @@ original constraints to the appropriate sub-tuples.
 %The ReSL of constraints also enjoys the cylindric properties, as shown by
 %the result below (for cylindric operators and diagonals in the idempotent case, see~\cite{scc}).
 
-\begin{lemma}[Cylindric and polyadic operators for (soft) constraints]
+\comment{\begin{lemma}[Cylindric and polyadic operators for (soft) constraints]
 	The ReSL of constraints $\mathbb{C}$ admits cylindric and polyadic operators, defined as
 	\begin{itemize}
 		\item  $(\exists_x c) \eta = \bigvee \{c \rho \mid \eta\mid_{V \setminus \{x\}} = 
@@ -1567,7 +1404,6 @@ and we assume that $\sigma \mid_{\sigma^c(X)}$ is injective, thus
 & = & (\exists_{\sigma^c(X)} c) (\eta \circ \sigma) = (s_\sigma \exists_{\sigma^c(X)} c) \eta
 \end{eqnarray*}
 
-
 %  \bigvee \{c (\rho \circ \sigma) \mid (\eta\circ \sigma)\mid_{V \setminus \sigma^{c}(X)} = (\rho\circ \sigma)\mid_{V \setminus \sigma^{c}(X)}\}=^{*}\]
 \noindent
 where it always holds that $\eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}$ implies $(\eta\circ \sigma)\mid_{V \setminus \sigma^{c}(X)} = (\rho\circ \sigma)\mid_{V \setminus \sigma^{c}(X)}$,
@@ -1578,7 +1414,7 @@ for a $\rho$ such that $\eta\mid_{V \setminus X} = \rho\mid_{V \setminus X}$
 $\xi(x) \neq \xi(y)$).
 \qed
 \end{proof}
-
+}
 %
 %Finally, the diagonal element $\delta_{x,y}$ has support $\{x, y\}$ for 
 %$x \neq y$, while the support for $\delta_{x,x}$ is $\emptyset$. 
@@ -1632,46 +1468,53 @@ Let $[^y/_x] \in F(V)$, defined as:
 We define the substitution operator $[^y/_x]: \mathcal{A} \rarrow \mathcal{A}$ on agents as follows: 
 
 \begin{itemize}
-	\item $[^y/_x] \ostop = \ostop$
-	\item $[^y/_x] \tell(c) = \tell(s_{[^y/_x]}c)$
-	\item $[^y/_x] p(w) =  p([^y/_x](w))$
-	\item $[^y/_x] (\ask(c) \rightarrow A) = \ask(s_{[^y/_x]}(c)) \rightarrow [^y/_x] A$
+	\item $\ostop[^y/_x] = \ostop$
+	\item $\tell(c)[^y/_x] = \tell(s_{[^y/_x]}c)$
+	\item $p(w)[^y/_x] =  p([^y/_x](w))$
+	\item $(\ask(c) \rightarrow A)[^y/_x] = \ask(s_{[^y/_x]}(c)) \rightarrow A[^y/_x]$
 	%\item $[^y/_x] (\exists_w A)  = \exists_w ([^y/_x] A) \ \ \text{for $w \not \in \{x, y\}$}$
-    \item $[^y/_x] (\exists^{\rho}_w A) = \exists^{(s_{[^y/_x]} \rho)}_w [^y/_x]A \ \
+    \item $(\exists^{\rho}_w A)[^y/_x] = \exists^{(s_{[^y/_x]} \rho)}_w A[^y/_x] \ \
     \text{for $w \not \in \{x, y\}$}$
-	\item $[^y/_x](A_1 \parallel A_2)  = ([^y/_x] A_1 \parallel [^y/_x] A_2)$
+	\item $(A_1 \parallel A_2)[^y/_x]  = (A_1[^y/_x] \parallel A_2[^y/_x])$
 \end{itemize}
 \end{definition}
 
 \begin{remark}
 In the following, we consider terms to be equivalent up to $\alpha$-conversion, meaning that terms which differ only for hidden variables can be considered equivalent:
-\[\exists_x^\rho A = \exists_y^{(s_{[^y/_x]}\rho)} A [^y/_x] \ \ for \ \ y \not \in sv(\rho) \cup fv(A)\].
+\[\exists_x^\rho A = \exists_y^{(s_{[^y/_x]}\rho)} A[^y/_x] \ \ for \ \ y \not \in sv(\rho) \cup fv(A)\].
 Note that this holds thanks to the underlying monoid properties, where we have that $\exists_x \sigma = \exists_y s_{[^y/_x]}(\sigma)$ if $y \not \in sv(\sigma)$.
 \end{remark}
 
 Thanks to $\alpha$-conversion, we can define substitution for $\exists^{\rho}_x A$ as above, even if the substitution function $[^y/_x]$ is not injective. Other cases can be managed by renaming, since the following holds:
 
 \begin{proposition}
-Let $A \in \mathcal{A}$, $x \not \in fv(A)$. Then $[^y/_x]A = A$.
+Let $A \in \mathcal{A}$, $x \not \in fv(A)$. Then $A[^y/_x] = A$.
 \end{proposition}
 
 \begin{proof}
 For $\ostop$, $\tell(c)$, $p(w)$ the statement is trivially true, as we have that
 \begin{itemize}
-	\item $[^y/_x]\ostop = \ostop$
-	\item $[^y/_x]\tell(c) = \tell(s_{[^y/_x]}c) = \tell(c)$ by polyadic laws and $x \not
+	\item $\ostop[^y/_x] = \ostop$
+	\item $\tell(c)[^y/_x] = \tell(s_{[^y/_x]}c) = \tell(c)$ by polyadic laws and $x \not
 	\in fv(\tell(c)) = sv(c)$.
-	\item $[^y/_x]p(w) = p(w)$ by $x \not = w$.
+	\item $p(w)[^y/_x] = p(w)$ by $sv(p(w)) = {w} \wedge x \not \in sv(p(w)) \implies
+	w \not = x$.
 \end{itemize}
 As for the other agents, the statement can be proved by inductive reasoning, assuming it to be true for subagents in $\ask(c) \rightarrow A$, $(A_1 || A_2)$ and $\exists^{\rho}_w A$. Indeed we obtain:
 \begin{itemize}
-	\item $[^y/_x](\ask(c) \rightarrow A) = [^y/_x]\ask(c) \rightarrow [^y/_x]A = 
-	\ask(s_{[^y/_x]}c) \rightarrow [^y/_x]A = \ask(c) \rightarrow A$
+	\item $(\ask(c) \rightarrow A)[^y/_x] =  
+	\ask(s_{[^y/_x]}c) \rightarrow A[^y/_x] = \ask(c) \rightarrow A$
 	by hypothesis and polyadic laws.
-	\item $[^y/_x](A_1 || A_2) = ([^y/_x]A_1 || [^y/_x]A_2)) = (A_1 || A_2)$
+	\item $(A_1 || A_2)[^y/_x] = (A_1[^y/_x] \parallel A_2[^y/_x])) = (A_1 \parallel A_2)$
 	by hypothesis.
-	\item $[^y/_x](\exists^{\rho}_w A) = \exists^{s_{[^y/_x]\rho}}_w [^y/_x]A = \exists^{\rho}_w A$
-	by hypothesis and polyadic laws.
+\end{itemize}
+As for $\exists^{\rho}_w A$, recall that $fv(\exists^{\rho}_w A) = (fv(A) \setminus {w}) \cup sv(\rho)$, thus $x \not \in fv(\exists^{\rho}_w A) \implies x \not \in sv(\rho)$. Then we have two possible cases:
+\begin{itemize}
+	\item $w \not = x$. $(\exists^{\rho}_w A)[^y/_x] = \exists^{s_{[^y/_x]}\rho}_w A[^y/_x] = 
+	\exists^{\rho}_w A[^y/_x]$ (by $x \not \in sv(\rho)$) $= \exists^{\rho}_w A$ (by hypotheses).
+	\item $w = x$. $(\exists^{\rho}_x A)[^y/_x] = ((\exists^{\rho}_x A)[^z/_x])[^y/_x] \ \ 
+	\text{for $z$ fresh}$ (by $\alpha$-conversion) $= (\exists^{\rho}_z A)[^y/_x] = \exists^{\rho}_z A$
+	(by the reasoning above) $= \exists^{\rho}_x A$ (again by $\alpha$-conversion).   
 \end{itemize}
 \end{proof}
 
@@ -1720,8 +1563,10 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
     &\mbox{   }&\mbox{   }&
     \\
   \mbox{\bf A3}& $\frac {\displaystyle sv(\sigma) \cup \{y\} \subseteq \Delta \wedge \displaystyle p(x) = A \in \mathcal{P} }
-  {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle [^y/_x]A, \sigma \rangle}$ 
+  {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle A[^y/_x], \sigma \rangle}$ 
   &\bf{Rec}&
+  \\
+    &\mbox{   }&\mbox{   }&
     %\\
     %&\mbox{   }&\mbox{   }&
     %\\
@@ -1739,7 +1584,7 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
     {\displaystyle\langle \exists^{\rho}_x A,\sigma\rangle \mapsto_\Delta \langle 
     \exists^{\sigma_1 \odiv \sigma_0}_x B, \sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0) 
     \rangle}$
-    &\bf{Hide-local}&
+    &\bf{Hide}&
   \end{tabular}
   \end{center}
 \caption{Axioms of the reduction semantics for SCCP.}
@@ -1793,7 +1638,7 @@ Axiom {\bf A3} replaces a procedure identifier with the associated body, renamin
 
 In axiom {\bf A4} we consider instead local variables, where the hiding operator carries some information on the variables it abstracts.
 More precisely, according to~\cite{extendedHiding} we consider an extended operator $\exists_x^\rho$, for $\rho$ the local store.
-Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The precondition states that $x \not \in sv(\sigma)$: this ensures that $\sigma_0$ does not contain free occurences of $x$, as it is obtained by removing $\exists_x \rho$ from $\sigma$. The intuition is then that $x$ can only appear in the local store $\rho$, and then in $\sigma_1$. Thus, hiding $x$ means to remove it from the resulting store, by letting it $\sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0)$. On the other hand, the local information carried by the hide operator is updated to $\sigma_1 \odiv sigma_0$, which can still contain $x$. \\
+Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The precondition states that $x \not \in sv(\sigma)$: this ensures that $\sigma_0$ does not contain free occurences of $x$, as it is obtained by removing $\exists_x \rho$ from $\sigma$. The intuition is then that $x$ can only appear in the local store $\rho$, and then in $\sigma_1$. Thus, hiding $x$ means to remove it from the resulting store, by letting it $\sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0)$. On the other hand, the local information carried by the hide operator is updated to $\sigma_1 \odiv \sigma_0$, which can still contain $x$. \\
 \smallskip
 
 Let $\gamma = \langle A, \sigma \rangle$ be a configuration.
