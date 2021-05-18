@@ -1451,7 +1451,7 @@ We consider here the extended agent $\exists^{\rho}_x A$, where $\rho$ is meant 
 We denote by $fv(A)$ the set of free variables of an agent, defined in the expected way 
 by structural induction, assuming that $fv(\tell(c)) = sv(c)$ and
 $fv(\ask(c) \rightarrow A) = sv(c) \cup fv(A)$. We also remark that $fv(\exists_x A) = fv(A) \setminus 
-\{x\}$ and $fv(\exists^{\rho}_x A) = (fv(A) \setminus \{x\}) \cup sv(\rho)$.
+\{x\}$ and $fv(\exists^{\rho}_x A) = (fv(A) \cup sv(\rho)) \setminus \{x\}$.
 %
 In the following, we restrict our attention to 
 procedure declarations $p(x) = A$ such that $fv(A) = \{x\}$.
@@ -1508,10 +1508,10 @@ As for the other agents, the statement can be proved by inductive reasoning, ass
 	\item $(A_1 || A_2)[^y/_x] = (A_1[^y/_x] \parallel A_2[^y/_x])) = (A_1 \parallel A_2)$
 	by hypothesis.
 \end{itemize}
-As for $\exists^{\rho}_w A$, recall that $fv(\exists^{\rho}_w A) = (fv(A) \setminus {w}) \cup sv(\rho)$, thus $x \not \in fv(\exists^{\rho}_w A) \implies x \not \in sv(\rho)$. Then we have two possible cases:
+As for $\exists^{\rho}_w A$, recall that $fv(\exists^{\rho}_w A) = (fv(A) \cup sv(\rho)) \setminus \{w\}$, thus $x \not = w \wedge x \not \in fv(\exists^{\rho}_w A) \implies x \not \in fv(A) \wedge x \not \in sv(\rho)$. Then we have two possible cases:
 \begin{itemize}
 	\item $w \not = x$. $(\exists^{\rho}_w A)[^y/_x] = \exists^{s_{[^y/_x]}\rho}_w A[^y/_x] = 
-	\exists^{\rho}_w A[^y/_x]$ (by $x \not \in sv(\rho)$) $= \exists^{\rho}_w A$ (by hypotheses).
+	\exists^{\rho}_w A[^y/_x]$ (by $x \not = w$) $= \exists^{\rho}_w A$ (by hypotheses).
 	\item $w = x$. $(\exists^{\rho}_x A)[^y/_x] = ((\exists^{\rho}_x A)[^z/_x])[^y/_x] \ \ 
 	\text{for $z$ fresh}$ (by $\alpha$-conversion) $= (\exists^{\rho}_z A)[^y/_x] = \exists^{\rho}_z A$
 	(by the reasoning above) $= \exists^{\rho}_x A$ (again by $\alpha$-conversion).   
