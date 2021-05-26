@@ -89,7 +89,8 @@
 
 \begin{document}
 
-\title{Polyadic Soft Constraints~\thanks{Research partially supported by the MIUR PRIN 2017FTXR7S ``IT-MaTTerS''.}}
+\title{Soft Concurrent Constraint Programming with \\ Polyadic Structures}
+%~\thanks{Research partially supported by the MIUR PRIN 2017FTXR7S ``IT-MaTTerS''.}
 
 
 \author{Laura Bussi\inst{1}, Fabio Gadducci\inst{1}, 
@@ -108,172 +109,21 @@ Francesco Santini\inst{2}
 \maketitle
 
 \begin{abstract}
-We propose a formalism for manipulating soft constraints based on polyadic algebras.
-%
-The choice of such algebras in place of classical cylindric ones
- simplifies the structure of the partial order of preference values by removing diagonals, 
- a family of constants used for modelling parameter passing and variable substitution,
- whose presence require completeness. 
- Removing diagonals also allows for an easy representation of preference/cost functions in terms of polynomials,
- thus streamlining their manipulation on languages based on (stores of) constraints.
-%
-Besides presenting the main features of the new formalism,
-the paper investigates how the operators of polyadic algebras interact with the residuated 
-monoid structure tat is used for representing the set of preference values. 
-
-%
-%The constraint store that describes a \emph{Soft Constraint Satisfaction Problem} (\emph{SCSP}) or the result of agents interaction in \emph{Soft Concurrent Constraint Programming} (\emph{SCCP}), 
-%s then represented by a polynomial, as all constraints in general, 
-%Our main objective is to provide a blueprint for  developing  such frameworks in practice, by filling the gap between the original algebraic approach and an actual implementation.
+???
 \end{abstract}
 
-\keywords{Soft constraints, polyadic algebras, residuated monoids.}
+\keywords{Concurrent constraint programming, polyadic algebras, residuated monoids.}
 
 \section{Introduction}\label{sec:intro}
-
-%\subsection{Constraints and constraint programming}
-Computer scientists often face combinatorial problems, as e.g. in operational research, artificial intelligence, or circuit design,
-and constraints are a tool for naturally modelling such problems. % in a natural way. 
-In their simplest form, constraints are just sets of inequations: % over a domain: 
-given a set of variables $V$ and a domain of values $D$, 
-a constraint over a subset of variables limits the combinations of values that such variables can take. 
-Combinatorial problems can thus be easily modelled by constraints: \emph{constraint satisfaction problems} (CSPs)
-are defined over a set $V$, a domain $D$ and a set of constraints $C$. Solving a CSP
-simply means to find an assignment of the variables such that all its constraints are satisfied. 
-
-\begin{samepage}
-Consider, for instance, a problem where we want to respect a given relation among two measures, e.g. $y = 2x$, for $x$ representing the width and $y$ the length of an object. 
-Of course, both $x$ and $y$ have to be positive reals and might have to respect some upper bounds, let us say $5$ and $9$. The problem can be formalised as
-\begin{itemize}
-	\item the set of variables $V$ is $\{x,y\}$;
-	\item the domain $D$ is the set of positive reals $\mathbb{R}^+$;
-	\item the constraints in $C$ are given by polynomials: $\{2x-y = 0, \ x-5 \leq 0, \ y-9 \leq 0\}$.
-\end{itemize}
-\noindent
-where clearly the assignment $\{x \leftarrow 4, \ y \leftarrow 8\}$ is a solution for the problem.
-\end{samepage}
-
-%\smallskip
-%\newpage
-\emph{Constraint programming} (CP) is a computational framework that allows to implement algorithms for solving CSPs:  
-it has been intensively studied and a set of algorithms for solving CSPs have been implemented since the Nineties~\cite{aijour}. 
-%
-\emph{Concurrent constraint programming} (CCP) extends CP by allowing parallel programs to interact by means of a shared store representing a constraint. 
-%
-As the basic operations in imperative programming are \emph{read} and \emph{write}, in CP and CCP we have operations to manipulate the store
-\begin{itemize}
-	\item \emph{tell(c)} adds a constraint \emph{c} to the store;
-	\item \emph{ask(c)} checks if a constraint \emph{c} is satisfied, i.e. the store \emph{entails} such a constraint;
-\end{itemize}
-\noindent
-and depending on the domain we may additionally require subtraction (as for example it has been implemented in \cite{lcc}, 
-where constraints are formulas in linear logic)
-\begin{itemize}
-	\item \emph{remove(c)} removes \emph{c} from the store, thus possibly lifting some of the requirements that had been enforced by the constraint. 
-	%After the removal, values which were allowed by \emph{c} could be permitted, according on the remaining constraints are satisfied. 
-\end{itemize}
-%
-%Constraint programming have been intensively studied and a set of algorithms for solving CSPs have been implemented since the early Nineties.~\cite{aijour}. 
-%Furthermore, CP allows for concurrency by using a blocking \emph{ask} operation: this led to the definition of concurrent constraint programming, 
-%where multiple agents can access the store at the same time and perform parallel operations~\cite{popl91}. 
-%
-In order to model e.g. procedure calls, furthers operators are needed on constraints. 
-%
-The standard solution~\cite{popl91} is via cylindric algebras: a family of variable-indexed unary operations, %called \emph{cylindrification}, 
-for representing existential quantifiers, and a family of constants called \emph{diagonals}, 
-for modelling parameters passing and variable substitution.
-
-\smallskip
-Despite CSP expressiveness,  
-in many real-life situations we need a more flexible way to model problems, 
-since some constraints could be ``less important'' than others and might not have to be necessarily satisfied.
-%
-Soft constraints have been introduced to model this kind of situation. In informal terms, they are classical constraints where a value from a partially ordered set is associated to each instantiation of the variables of a constraint. It is  thus possible to state that a constraint is either  more or less significant than others in order to find a good approximation of the solution, even if not all constraints are satisfied at the same time. 
-%
-Then, a \emph{soft constraint} is defined as a function of type $(V\to D)\to A$, 
-where functions $V\to D$ are assignments of variables in $V$ to a domain $D$ and the values in $A$ represent either cost or preferability, depending on whether representing negative or positive preferences. Combining positive and negative preferences results in what is called a bipolar approach~\cite{posneg}.
-
-To evaluate preferences, the set $A$ is equipped with a semi-lattice structure and, 
-to make possible the combination of soft constraints, a monoidal operator. 
-Therefore, $A$ turns out to be an idempotent semiring (also called tropical semiring or dioid). 
-%
-%Many such structures have been proposed.
- For instance, \emph{Fuzzy} semirings associate a constraint to its cost and the aim is to minimise the sum,
-  %this falls into the range of negative preferences. 
-  while \emph{Probabilistic} semirings associate a constraint to its probability and the aim is to maximise the joint probability.
-%Our proposal follows instead a bipolar approach.
-A further operation is needed over the set $A$, in order to model the removal of constraints, 
-resulting in a residuated monoid: the basics of the formalism within the bipolar approach have been presented in~\cite{ipl17}.
-
-%However, one of the issues that was left open is the representation of constraints in a compact form, since a polynomial presentation is not readily available:
-%indeed, tackling this problem has been the starting point of our work.
-
-%\subsection{Cylindric and polyadic algebras for soft constraints}
-\medskip
-
-Some extensions of CCP for allowing soft constraints have been already proposed, as for instance in~\cite{scc}, and they required a reworking of the underlying theory.
-The starting point has been again the operators of cylindric algebras. However, the use of diagonals for soft constraints puts some strong requirements on the structure of the set of values $A$, 
-which are not always met in actual case studies. Moreover, diagonals also present some serious issues in finding a compact representation.
-
-\comment{
-Some extensions of CCP for allowing soft constraints have been already proposed, as for instance in~\cite{scc} and they have obviously required a rework of the underlying theory.
-in order to provide new operators for modelling variables hiding and procedure calls. These are mainly based on the notion of cylindric algebra, which was defined by Tarsky in 1952 and represents an algebraisation of first order logic. In rough terms, a cylindric algebra is a Boolean algebra provided with unary operations called \emph{cylindrification}, which are a family of variable-indexed operators representing the existential quantifier. Cylindric algebras are also provided with constants, called \emph{diagonals}, which are are used for modelling parameters passing and variables substitution. As said, cylindric algebras have been used in formalisation of constraints, as well as for an algebraisation of relational models~\cite{cylalg}.
-
-Our objective is to develop a more general framework for modelling bipolar preferences in the soft constraint formalism, by providing a new set of operators and defining their properties in order to represent a larger number of interesting case studies.
-
-Polyadic algebras have been introduced by Halmos and they can be considered as a generalisation of cylindric algebras, since they extend the latter and provide a new family of operators which allows for replacing diagonals in modelling variables substitution. Halmos' definition also provides the notion of diagonals and so it's been used so far: indeed, proposed algebras for soft constraints are usually based on complete lattices and structures equipped with diagonals. 
-
-In order to achieve the goal of generalisation, we're completely replacing diagonal elements with a family of weaker operators which recall the given definition of polyadic operators~\cite{sagi2013}. This will allow us to move to semi-lattices and to represent a larger number of case studies. In particular, polynomial functions don't allow for a representation using diagonals: our formalisation fills this gap, providing a comfortable way to express polynomials in the soft constraints formalism.
-}%comment
-
-The proposal developed in this paper is to consider polyadic algebras instead of cylindric ones. This means to replace diagonals with a family of polyadic operators (see e.g.~\cite{sagi2013}) that
-precisely axiomatise variable substitution, and to investigate how these operators interact with the residuated monoid structure of the set of values $A$.
-
-The benefits are twofold. On the one hand, we relax some of the requirements necessary for $A$: the join semi-lattice on $A$ must be complete for cylindric algebras, while it is not necessary so for polyadic ones. Such relaxation is relevant also for more recent developments on CCP: while in standard denotational models the semantics universe is supposed to have a complete semi-lattice structure, this is not needed with 
-the bisimulation semantics introduced in \cite{pippo}.
-%
-On the other hand, replacing diagonals with polyadic operators allows for a compact -- \emph{polynomial} -- representation of soft constraints.
-
-In Section~\ref{sec:bg} we rephrase some basic definitions for residuated monoids. 
-In Section~\ref{newpro} we offer a presentation of polyadic algebras tailored for constraints and we present some results 
-concerning the combination of these two structures.
-%
-These results are used in Section~\ref{sec:softconstraints}, where we provide a novel formalisation of soft constraints in terms of polyadic algebras whose carrier is a residuated monoid. 
-%
-Finally, in Section~\ref{sec:polynomialsoftconstraints} we introduce a set of constraints that enjoy a polynomials representation 
-and we discuss the algebra of linear polynomials with coefficients in $\mathbb{N}$ as a case study.
-
-\comment{
-\paragraph{The (soft) constraints of Catuscia.}
-The word ``constraint'' occurs in the titles of 40 publications co-authored by Catuscia. Between 1991 and 1997, most of these papers were devoted to the semantics~\cite{boer1} and analysis~\cite{de1997proving} of Constraint Logic Programming and Concurrent Constraint Programming. In 2001, the latter language was extended to Temporal Concurrent Constraint Programming~\cite{nielsen2002temporal,palamidessi2001temporal}.
-%, a rather influential work, that led to the Ph.D. thesis of Frank Valencia. 
-Since then, Catuscia has exploited constraints in several applications domains like security \cite{DBLP:conf/iclp/LopezPPRV06}, biological systems \cite{DBLP:conf/birthday/ChiarugiFOP15}, and the modelling of knowledge in social networks \cite{DBLP:conf/concur/KnightPPV12}.
-
-Despite her scientific interest in hard constraints, Catuscia seems to prefer a rather soft approach in her personal and professional relationships: although always surrounded by students, collaborators, and visitors, Catuscia is always available for chatting and joking, and for helping out, both in technical and in personal matters. 
-%
-Also well-known among friends is her soft spot for the wee hours of the morning. %, both for personal and technical matters.
-%
-%The first author remembers that during his fellowship at \'Ecole Polytechnique, Catuscia helped him to solve many issues, personal, administrative, and technical. 
-%
-In particular, the first author recalls that, while working on the afore-mentioned bisimulation semantics for CCP~\cite{pippo}, after many weeks trying hard to prove the main theorem with the other collaborators, he spent one afternoon in Catuscia's office looking together for a proof. When he woke up the morning after, in his mail-box there was a message from her: a beautiful and crystal-clear proof of the long awaited result. This message was sent at about 3 am.}
+???
 
 \section{An Introduction to Residuated Monoids}\label{sec:bg}
 
-This section recalls some results on residuated monoids,
-which are our chosen algebraic structure for modelling
-soft constraints.
-%
-They are mostly drawn from~\cite{jlamp17}, and they are presented without proofs.
-Note however that, to the best of our knowledge, the material from Proposition~\ref{reabs} up
-to Example~\ref{nodist2} appears to be original in the literature on costraints.
-%
-%Section 2.2 presents our personal take on polyadic algebras:
-%the standard axiomatisation of e.g.~\cite{sagi2013} has been completely 
-%reworked, in order 
-%to be adapted to the constraints formalism.
-%
-%Finally, Section~\ref{cyre} offers some preliminary insights on 
-%the laws for polyadic operators in residuated monoids.
+This section reports some results on residuated monoids,
+which are the algebraic structure adopted for modelling
+soft constraints in the following of the paper.
+Results are mostly drawn from~\cite{jlamp17}, where also proofs can be found.
+
 
 \subsection{Preliminaries on Ordered Monoids}\label{sec:lem}
 
@@ -404,24 +254,15 @@ Note that distributivity implies that $\otimes$ is monotone with respect to $\le
 	which are known as $c$-semirings 
 	in the soft constraint jargon~\cite{jacm97} (see e.g.~\cite{ecai06} for a brief survey on residuation 
 	for such semirings).
-	%
-%	%Indeed, it is precisely the lack of the latter requirement on $\monid$ that makes ReSLs suitable for modelling bipolar 
-%	%preferences:
 	Note that requiring the monotonicity of $\otimes$ and imposing $\monid$ to be the top of the partial order
 	means that preferences are negative, i.e., 
 	that it holds $\forall a, b \in A. a \monop b \leq a$.
-%	%, and that $\forall a, b \in A. a \leq b \implies \monid = b \odiv a$.
-%	%
 \end{remark}
 
 \begin{example}
-Given a (possibly infinite) set $V$ of variables, two semi-lattice monoids are going to play a key role in the following sections.
-
-The first one is the semi-lattice monoid 
+Given a (possibly infinite) set $V$ of variables, two semi-lattice monoids are going to play a key role in the following sections. The first one is the semi-lattice monoid 
 $\mathbb{M}(V) = \langle 2^V_{fin}, \subseteq, \cup, \emptyset \rangle$
 of finite sub-sets of $V$, with the usual order given by sub-set inclusion.
-%\todo{come in un commento nel seguiro, non trovo spiegazione della $f$ in $2^V_f$}
-
 For the second one, we start by defining the support of an endofunction $f\colon V \to V$ as the set $sv(f) = \{ x \in V \mid f(x)\neq x \}$ and
 $F(V)$ as the set of functions $f\colon V \to V$ with finite support.
 The semi-lattice monoid of interest is  $\mathbb{F}(V) = \langle F(V), id, \circ, \iota \rangle$ where 
@@ -466,10 +307,7 @@ They introduce a new operator $\odiv$, which represents a ``weak'' (due to the p
 \begin{definition}[residuation]\label{def:repo}
 	A residuated monoid (RePO) is a 5-tuple $\langle A, \leq, \monop, \odiv, \monid \rangle$ such that
 	$\langle A, \leq, \monop, \monid \rangle$ is a partially ordered monoid and
-	$\odiv: A \times A \rightarrow A$ is a function satisfying 
-	\begin{itemize}
-		\item $\forall a, b, c \in A. b \monop c \leq a \iff c \leq a \odiv b$.
-	\end{itemize}
+	$\odiv: A \times A \rightarrow A$ is a function satisfying $\forall a, b, c \in A. b \monop c \leq a \iff c \leq a \odiv b$.x
 	An ReSL is an RePO such that the underlying PO is a SL.
 \end{definition}
 
@@ -593,13 +431,13 @@ of constraints (see e.g.~\cite{ecai06}).
 Note that if a RePO is localised then $\forall a \in A. a \odiv a = \monid$.
 %\marginpar{all RePO are localized?}
 
-\begin{remark}
-	Note that the equivalence $a \otimes ((a \otimes b) \odiv a) = a \otimes b$ always holds, even if the 
-	underlying RePO is not invertible. Indeed, we have by definition $a \otimes ((a \otimes b) \odiv a) 
-	\leq a \otimes b$, as $(a \otimes b) \odiv a \leq b$. We must check that $a \otimes ((a \otimes b) 
-	\odiv a) \leq a \otimes b \iff b \leq ((a \otimes b) \odiv a) \iff a \otimes b \leq a \otimes b$,
-	which is trivially true.
-\end{remark}
+%\begin{remark}
+%	Note that the equivalence $a \otimes ((a \otimes b) \odiv a) = a \otimes b$ always holds, even if the 
+%	underlying RePO is not invertible. Indeed, we have by definition $a \otimes ((a \otimes b) \odiv a) 
+%	\leq a \otimes b$, as $(a \otimes b) \odiv a \leq b$. We must check that $a \otimes ((a \otimes b) 
+%	\odiv a) \leq a \otimes b \iff b \leq ((a \otimes b) \odiv a) \iff a \otimes b \leq a \otimes b$,
+%	which is trivially true.
+%\end{remark}
 
 \begin{remark}\label{rmk:soft}
 	Some well-known structures used for soft constraints are the 
@@ -711,9 +549,9 @@ that $c \leq \1 \odiv (\1 \odiv c)$, then $3$ implies $1$.
 %In the following example it is shown that distributivity for $\odiv$ could hold partially, since we choose a residuation operator which is not the inverse of $\otimes$.
 %\end{remark}
 
-\begin{remark}\label{rmk:softUnit}
-The proposition above provides an important characterisation for all absorptive ReSLs, including all those mentioned in Remark~\ref{rmk:soft}.
-\end{remark}
+%\begin{remark}\label{rmk:softUnit}
+%The proposition above provides an important characterisation for all absorptive ReSLs, including all those mentioned in Remark~\ref{rmk:soft}.
+%\end{remark}
 
 There are some important classes of ReSLs  such that $\odiv$ is easily proved to be distributive in the first argument,
 while it is not so with respect to the second argument, not even in the absorptive case.
@@ -1233,21 +1071,9 @@ As for the second item, note that $\sigma$ invertible implies $s_{\sigma^{-1}} s
 \[ s_\sigma a \odiv s_\sigma b \leq s_\sigma (a \odiv b) \]
 \end{proof}
 
-\section{Polyadic Soft Constraints}\label{sec:softconstraints}
+\subsection{Polyadic Soft Constraints}\label{sec:softconstraints}
 \label{subsec:inst} 
-In the past sections we mentioned a few ReSLs such as 
-the Fuzzy 
-%semiring  $\langle [0, 1], \leq, \times, 1 \rangle$ 
-%of the $[0, 1]$ interval of real numbers with the usual order and multiplication
-%as the monoidal operator
-and the Tropical semiring.
-%$\langle \mathbb{R}^+ \cup\{+\infty\}, \geq, +, 0 \rangle$
-%non-negative reals plus $\infty$ with the inverse order and addition.
-%
-Building on such examples, in this section we give a main case study: a ReSL 
-where the notion of cylindric and polyadic operators can be easily given.
-It exploits the notion
-of soft constraint: indeed, our proposal follows yet generalises \cite{scc},
+We are now ready to advance our proposal of soft constraints;  follows yet generalises \cite{scc},
 whose underlying algebraic structure is the one of absorptive semirings.
 
 \begin{definition}[(soft) constraints]\label{def:softconstraints}
@@ -1432,7 +1258,7 @@ To this end, we close the section by adding the simple result below to the soft 
 \end{proposition}
 }
 
-\section{Deterministic Soft CCP}\label{sec:detSCCP}
+\section{Polyadic Soft CCP: language and reduction/barbed  semantics}\label{sec:detSCCP}
 This section introduces our (meta-)language.
 We fix a set of variables $V$, ranged over by $x$, $y$, $\ldots$ , and 
 an invertible CLIM $\mathbb S = \langle {\mathcal C}, \leq, \otimes\rangle$, which is 
@@ -1481,7 +1307,7 @@ We define the substitution operator $[^y/_x]: \mathcal{A} \rarrow \mathcal{A}$ o
 
 \begin{remark}
 In the following, we consider terms to be equivalent up to $\alpha$-conversion, meaning that terms which differ only for hidden variables can be considered equivalent:
-\[\exists_x^\rho A = \exists_y^{(s_{[^y/_x]}\rho)} A[^y/_x] \ \ for \ \ y \not \in sv(\rho) \cup fv(A)\].
+\[\exists_x^\rho A = \exists_y^{(s_{[^y/_x]}\rho)} A[^y/_x] \ \ for \ \ y \not \in sv(\rho) \cup fv(A)\]
 Note that this holds thanks to the underlying monoid properties, where we have that $\exists_x \sigma = \exists_y s_{[^y/_x]}(\sigma)$ if $y \not \in sv(\sigma)$.
 \end{remark}
 
@@ -1736,40 +1562,7 @@ for $w \in fv(\gamma_i) \setminus (\Delta \cup fv(\gamma_3))$ and $z_i$'s fresh.
 In the two latter cases, we have $Result(\xi_1) = Result(\xi_2)$.
 \end{proposition}
 
-\begin{proof}
-	The first item is clearly due to the choice of different free variables 
-	for the same hiding operator, as for direct reduction semantics.
-	
-	So, let us assume that the two reductions occur on the opposite sides of a parallel operator.
-	A first relevant case is if both reductions replace an hiding operator with the same fresh variable
-	$w$. However, it suffices to replace $w$ 
-	with fresh variables $z_1$ and $z_2$ in  the two reductions, in order for item 3 to be verified.
-	%
-		
-	Among the remaining cases, the only relevant one is if both actions add 
-	different constraints to the store.
-	%\medskip
-	%
-	So, let us assume that $\gamma = \langle A_1 \parallel A_2, \sigma \rangle$ such that 
-	$\langle A_1, \sigma \rangle \rightarrow_\Delta \langle B_1, \sigma_1 \rangle$
-	and
-	$\langle A_2, \sigma \rangle \rightarrow_\Delta \langle B_2, \sigma_2 \rangle$.
-	%Also, we may safely assume up-to that any locally fresh variable occurring in either $B_1$ or $B_2$ 
-	%is globally fresh.
-	%
-	Note that since reduction semantics is monotone (Lemma~\ref{mono})
-	and $\sigma$ is $\otimes$-compact, also $\sigma_1$
-	is $\otimes$-compact and furthermore we have
-	$\sigma_1 = \sigma \otimes (\sigma_1 \odiv \sigma)$.
-	% (by Lemma~\ref{mono}).
-	%
-	Now,  monotonicity (again Lemma~\ref{mono}) ensures us that
-	$\langle B_1 \parallel A_2, \sigma \otimes (\sigma_1 \odiv \sigma) \rangle
-	\rightarrow_\Delta
-	\langle B_1 \parallel B_2, \sigma \otimes (\sigma_1 \odiv \sigma) \otimes (\sigma_2 \odiv \sigma) \rangle$ 
-	and by symmetric reasoning the latter configuration 
-	is the one we were looking for.
-\end{proof}
+
 
 
 The result above is a local confluence theorem, which is expected, since the calculus is essentially deterministic.
@@ -1856,112 +1649,78 @@ computations of $\gamma$.
 If $\xi_1$ and $\xi_2$ are fair, then $\mathit{Result}(\xi_1) = \mathit{Result}(\xi_2)$.
 \end{theorem}
 
-\begin{proof}
-The result is a combination of Proposition \ref{lemma:upto} and Lemmata \ref{lem:SubComp}
-and \ref{lem:enab}. So, let us assume to have two (possibly infinite) fair computations originating from $\gamma$, and let us consider their initial reductions $\gamma \rightarrow_\Delta \gamma_i$ 
-for $i =  1, 2$. 
-First thing, note that assuming the same subscript $\Delta$ is not restrictive since we work with minimally increasing reductions.
-%
-Now, according to Proposition \ref{lemma:upto}, we have two cases, as depicted on Figure~\ref{fig:conf1} and Figure~\ref{fig:conf2}.
-\end{proof}
-
-% QUESTA e' commentata, ma e' la prima figura che mi hai mandato
+	
+	
 %	\begin{figure}[t]
-%		\centering\scalebox{0.8}{
-%			\begin{tikzpicture}
-%			\tikzstyle{all nodes}=[inner sep=0pt,minimum size=0.2cm,circle,fill=black]
-%			\draw 
-%			node[circle,fill=black,scale=0.5](A)at(5.5,1){}
-%			node(B)at(4,-1){}              
-%			node(C)at(7,-1){}
-%			node(D)at(2.5,-3){}
-%			node(E)at(8.5,-3){}
-%			node(F)at(1.75,-4){}
-%			node(G)at(9.25,-4){};	
+%		\newcommand{\HEIGHT} {135pt}
+%		\hfil
+%		\begin{minipage}{.45\columnwidth}
+%			\vbox to \HEIGHT{
+%				\vfil
+%				\centering
+%				\begin{tikzpicture}[scale=0.8, transform shape]
+%				\tikzstyle{all nodes}=[inner sep=0pt,minimum size=0.2cm,circle,fill=black]
+%				\draw 
+%				node[circle,fill=black,scale=0.5](A)at(5.5,1){}
+%				node(B)at(4,-1){$\gamma_1$}              
+%				node(C)at(7,-1){$\gamma_2$} 
+%				node(D)at(5.5,-2){$\gamma_i[^z/_{z_i}]$} 
+%				node(E)at(4.75,-3){}
+%				node(F)at(3.25,-2){}
+%				node(G)at(7.75,-2){}
+%				node(H)at(6.25,-3){};	
+%				
+%				\draw[->](A)--(C) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};%{$\Delta_1$};
+%				\draw[->](A)--(B) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};%$\Delta_1$};
+%				\draw[->](A)--(D) node[pos=.7, fill=white, opacity=0.2, text opacity=1,left] {};%{$\Delta_1$};	
+%				\draw[dashed,-](D)--(E) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
+%				\draw[dashed,-](B)--(F) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
+%				\draw[dashed,-](C)--(G) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
+%				\draw[dashed,-](D)--(H) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
+%				\end{tikzpicture}
+%				\vfil
+%			}
+%			\caption{Proposition~\ref{lemma:upto} (item 1) and Lemma~\ref{mono} ensure that we may collapse the initial reductions (thus confluence).}
+%			\label{fig:conf1}
+%		\end{minipage}
+%		\hfil
+%		\begin{minipage}{.45\columnwidth}
+%			\vbox to \HEIGHT{
+%				\vfil
+%				\centering
+%				\begin{tikzpicture}[scale=0.8, transform shape]
+%					\tikzstyle{all nodes}=[inner sep=0pt,minimum size=0.2cm,circle,fill=black]
+%					\draw 
+%					node[circle,fill=black,scale=0.5](A)at(5.5,1){}
+%					node(B)at(3.5,-0.5){$\gamma_1$}              
+%					node(C)at(7.5,-0.5){$\gamma_2$} 
+%					node(D)at(8.5,-1.25){}
+%					node(E)at(2.5,-1.25){}
+%					node(F)at(4,-2){$\gamma_1[^{z_1}/_w]$}
+%					node(G)at(7,-2){$\gamma_2[^{z_2}/_w]$}
+%					node(H)at(5.5,-5){$\gamma_3$}
+%					node(I)at(3.5,-3){}
+%					node(L)at(7.5,-3){};	
 %					
-%			\draw[->](A)--(C) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {$\Delta_1$};
-%			\draw[->](A)--(B) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {$\Delta_1$};	
-%			\draw[->](B)--(D) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {$\Delta_2'$};		
-%			\draw[->](C)--(E) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {$\Delta_2$};	
-%			\draw[dashed,-](B)--(F) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
-%			\draw[dashed,-](C)--(G) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};	
-%			\end{tikzpicture}}
-%		\caption{Prova}
-%		\label{fig:fig1}
+%					\draw[->](A)--(C) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};%{$\Delta_1$};
+%					\draw[->](A)--(B) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};%{$\Delta_1$};	
+%					\draw[dashed,-](B)--(E) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
+%					\draw[dashed,-](C)--(D) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
+%					\draw[->](A)--(F) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};
+%					\draw[->](A)--(G) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};
+%					\draw[->](F)--(H) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};
+%					\draw[->](G)--(H) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};
+%					\draw[dashed,-](F)--(I) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
+%					\draw[dashed,-](G)--(L) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
+%				\end{tikzpicture}
+%				\vfil
+%			}
+%			\caption{Proposition~\ref{lemma:upto} (item 2), Lemma~\ref{mono}, and the restriction to fair computations ensure confluence.}
+%			\label{fig:conf2}
+%		\end{minipage}
+%		\hfil
+%		
 %	\end{figure}
-	
-	
-	
-	\begin{figure}[t]
-		\newcommand{\HEIGHT} {135pt}
-		\hfil
-		\begin{minipage}{.45\columnwidth}
-			\vbox to \HEIGHT{
-				\vfil
-				\centering
-				\begin{tikzpicture}[scale=0.8, transform shape]
-				\tikzstyle{all nodes}=[inner sep=0pt,minimum size=0.2cm,circle,fill=black]
-				\draw 
-				node[circle,fill=black,scale=0.5](A)at(5.5,1){}
-				node(B)at(4,-1){$\gamma_1$}              
-				node(C)at(7,-1){$\gamma_2$} 
-				node(D)at(5.5,-2){$\gamma_i[^z/_{z_i}]$} 
-				node(E)at(4.75,-3){}
-				node(F)at(3.25,-2){}
-				node(G)at(7.75,-2){}
-				node(H)at(6.25,-3){};	
-				
-				\draw[->](A)--(C) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};%{$\Delta_1$};
-				\draw[->](A)--(B) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};%$\Delta_1$};
-				\draw[->](A)--(D) node[pos=.7, fill=white, opacity=0.2, text opacity=1,left] {};%{$\Delta_1$};	
-				\draw[dashed,-](D)--(E) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
-				\draw[dashed,-](B)--(F) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
-				\draw[dashed,-](C)--(G) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
-				\draw[dashed,-](D)--(H) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
-				\end{tikzpicture}
-				\vfil
-			}
-			\caption{Proposition~\ref{lemma:upto} (item 1) and Lemma~\ref{mono} ensure that we may collapse the initial reductions (thus confluence).}
-			\label{fig:conf1}
-		\end{minipage}
-		\hfil
-		\begin{minipage}{.45\columnwidth}
-			\vbox to \HEIGHT{
-				\vfil
-				\centering
-				\begin{tikzpicture}[scale=0.8, transform shape]
-					\tikzstyle{all nodes}=[inner sep=0pt,minimum size=0.2cm,circle,fill=black]
-					\draw 
-					node[circle,fill=black,scale=0.5](A)at(5.5,1){}
-					node(B)at(3.5,-0.5){$\gamma_1$}              
-					node(C)at(7.5,-0.5){$\gamma_2$} 
-					node(D)at(8.5,-1.25){}
-					node(E)at(2.5,-1.25){}
-					node(F)at(4,-2){$\gamma_1[^{z_1}/_w]$}
-					node(G)at(7,-2){$\gamma_2[^{z_2}/_w]$}
-					node(H)at(5.5,-5){$\gamma_3$}
-					node(I)at(3.5,-3){}
-					node(L)at(7.5,-3){};	
-					
-					\draw[->](A)--(C) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};%{$\Delta_1$};
-					\draw[->](A)--(B) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};%{$\Delta_1$};	
-					\draw[dashed,-](B)--(E) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
-					\draw[dashed,-](C)--(D) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
-					\draw[->](A)--(F) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};
-					\draw[->](A)--(G) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};
-					\draw[->](F)--(H) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};
-					\draw[->](G)--(H) node[pos=.4, fill=white, opacity=0.2, text opacity=1,right] {};
-					\draw[dashed,-](F)--(I) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
-					\draw[dashed,-](G)--(L) node[pos=.4, fill=white, opacity=0.2, text opacity=1,left] {};
-				\end{tikzpicture}
-				\vfil
-			}
-			\caption{Proposition~\ref{lemma:upto} (item 2), Lemma~\ref{mono}, and the restriction to fair computations ensure confluence.}
-			\label{fig:conf2}
-		\end{minipage}
-		\hfil
-		
-	\end{figure}
 	
 	
 	
@@ -2066,17 +1825,7 @@ We now show that $\approx_{\mathit{s}}$, as given in Definition~\ref{def:weaksb}
 \begin{lemma}\label{lem:cofinality} 
 Let $c_0 \leq c_1 \leq \dots$ and $d_0 \leq d_1 \leq \dots $ be two chains. \emph{(1)} If they are cofinal, then they have the same limit, i.e., $\bigvee_i c_i = \bigvee_i d_i$. \emph{(2)} If the elements of the chains are $\otimes$-compact and $\bigvee_i c_i = \bigvee_i d_i$, then the two chains are cofinal.\end{lemma}
 %\marginpar{questo richiede che tell inserisca solo compatti}
-\begin{proof}
-%[of Lemma~\ref{lem:cofinality}]
-Let us tackle $(2)$, and consider the sequence $e_0 = c_0$ and $e_{i} = c_{i+1} \odiv c_i$.
-Each $e_i$ is the difference between two consecutive elements of a chain.
-%
-Since the CLIM is invertible we have $c_k =  \bigotimes_{i \leq k} e_i$ and thus
-$\bigvee_i c_i = \bigotimes_i e_i$. Since each $d_j$ is $\otimes$-compact and
-$d_j \leq \bigotimes_i e_i$, there is a $k$ such that $d_j \leq \bigotimes_{i \leq k} e_i$.
-The same reasoning is applied to the chain $d_0 \leq d_1 \leq \dots $, thus
-the result holds.
-\end{proof}
+
 
 
 To prove Theorem~\ref{prop:weaksbequivobs}, besides cofinality from Lemma~\ref{lem:cofinality} we need to relate weak barbs and fair computations.
@@ -2091,44 +1840,10 @@ The lemma is a direct consequence of confluence (see Theorem~\ref{prop:confluenc
 Let $A$, $B$ be agents. Then $A \sim_o B$ if and only if $A \approx_{\mathit{s}} B$.
 \end{theorem}
 %\marginpar{L'unica cosa da provare \`e in realt\`a il Lemma 1}
-\begin{proof}%[of Proposition~\ref{prop:weaksbequivobs}]
-	The proof proceeds as follows.
-	\begin{description}
-		\item[From $\approx_{\mathit{s}}$ to $\sim_o$.] Assume  $\langle A, \bot \rangle \approx_{\mathit{s}} \langle B, \bot \rangle$ and take a $\otimes$-compact $c \in \mathcal{C}^\otimes$. Let
-		\begin{equation}\label{comp:1}\langle A, c \rangle \longrightarrow \langle A_0, \sigma_0 \rangle \longrightarrow \langle A_1, \sigma_1 \rangle \longrightarrow \dots \longrightarrow \langle A_n, \sigma_n \rangle \dots \longrightarrow \dots
-		\end{equation}
-		\begin{equation}\label{comp:2}\langle B, c \rangle \longrightarrow \langle B_0, \rho_0 \rangle \longrightarrow \langle B_1, \rho_1 \rangle \longrightarrow \dots \longrightarrow \langle B_n, \rho_n \rangle \dots \longrightarrow \dots
-		\end{equation}
-		
-		be two fair computations. Since $\approx_{\mathit{s}}$ is upward closed, 
-		$\langle A, c \rangle \approx_{\mathit{s}} \langle B, c \rangle$ and thus $\langle B, c\rangle \Downarrow_{\sigma_i}$ for all $\sigma_i$. By Lemma~\ref{lem:barbsfair}, it follows that there exists an $\rho_j$ (in the above computation) such that 
-		$\exists_{\Gamma_i} \sigma_i \leq \sigma_i \leq \exists_{\Gamma'_j} \rho_j$, and analogously for all $\rho_i$.
-		%there exists a $\sigma_j$ such that $\rho_i \leq \sigma_j$. 
-		Then $\sigma_0 \leq \sigma_1 \leq \dots$  and $\rho_0 \leq \rho_1 \leq \dots$ are cofinal and by Lemma~\ref{lem:cofinality} it holds that $\bigvee_i \exists_{\Gamma_i} \sigma_i = \bigvee_i \exists_{\Gamma'_i} \rho_i$, which means 
-		$\mathit{Result}(\langle A, c \rangle) = \mathit{Result}(\langle B, c \rangle)$.
-		%\marginpar{before it was $\bigvee_i \Gamma_i \sigma_i$, no $\exists$}
-		
-		\item[From $\sim_o$ to $\approx_{\mathit{s}}$.] Assume $A \sim_o B$. First, we show that $\langle A, c\rangle$ and $\langle B, c\rangle$ satisfy the same weak barbs  for all $c \in \mathcal{C}$. Let (\ref{comp:1}) and (\ref{comp:2}) be two fair computations. Since $A \sim_o B$, then $\bigvee_i \exists_{\Gamma_i} \sigma_i = \bigvee_i \exists_{\Gamma'_j} \rho_i$. Since all (the projections of) the intermediate stores of the computations are $\otimes$-compact,
-		%(by Lemma~\ref{comp}),
-		%\marginpar{da rivedere la sintassi per la tell}
-		then by Lemma~\ref{lem:cofinality} for all $\sigma_i$ there exists an $\rho_j$ such that $\exists_{\Gamma_i} \sigma_i \leq \exists_{\Gamma'_j} \rho_j$. 
-		Now suppose that $\langle A, c \rangle \Downarrow_d$. By Lemma~\ref{lem:barbsfair}, 
-		there exists a $\sigma_i$ 
-		%(in the above computation) 
-		such that $d \leq \exists_{\Gamma_i} \sigma_i$. Thus 
-		%$d \leq \exists_{\Gamma_i} \sigma_i \leq \exists_{\Gamma_i} \rho_j$ that means 
-		$\langle B, c\rangle \Downarrow_d$.
-		
-		It is now easy to prove that
-		$R = \{(\gamma_1, \gamma_2) \mid \exists c. \langle A, c \rangle \longrightarrow^* \gamma_1 \& \langle B, c\rangle \longrightarrow^* \gamma_2\}$
-		is a weak saturated bisimulation (Definition~\ref{def:weaksb}). Take $(\gamma_1 , \gamma_2 ) \in R$.
-		If $\gamma_1 \Downarrow_d$ then $\langle A, c \rangle \Downarrow_d$ and, by the above observation, $\langle B, c\rangle \Downarrow_d$. Since \SCCP is
-		confluent, also $\gamma_2 \Downarrow_d$.
-		The fact that R is closed under $\longrightarrow^*$ is evident from the definition of $R$. While
-		for proving that R is upward-closed take $\gamma_1 = \langle A', \sigma'\rangle$ and $\gamma_2 = \langle B', \rho'\rangle$. By item 4 of Lemma~\ref{mono} (i.e., language monotonicity)
-		for all $a \in \mathcal{C}, \langle A, c \otimes a\rangle \longrightarrow^* \langle A', \sigma' \otimes a \rangle$ and $\langle B, c \otimes a\rangle \longrightarrow^* \langle B', \rho'  \otimes a \rangle$. Thus, by definition of $R$, $(\langle A',\sigma' \otimes a \rangle, \langle B',\rho' \otimes a\rangle) \in R$.
-	\end{description} 
-\end{proof}
+
+
+
+\section{Semantics equivalence}
 
 \section{Concluding Remarks}\label{sec:conclusion}
 
