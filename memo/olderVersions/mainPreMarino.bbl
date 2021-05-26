@@ -1,0 +1,108 @@
+\begin{thebibliography}{1}
+\providecommand{\bibitemdeclare}[2]{}
+\providecommand{\surnamestart}{}
+\providecommand{\surnameend}{}
+\providecommand{\urlprefix}{Available at }
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\href}[2]{\texttt{#2}}
+\providecommand{\urlalt}[2]{\href{#1}{#2}}
+\providecommand{\doi}[1]{doi:\urlalt{http://dx.doi.org/#1}{#1}}
+\providecommand{\bibinfo}[2]{#2}
+
+\bibitemdeclare{inproceedings}{pippo}
+\bibitem{pippo}
+\bibinfo{author}{Andr{\'e}s \surnamestart Aristiz{\'a}bal\surnameend},
+  \bibinfo{author}{Filippo \surnamestart Bonchi\surnameend},
+  \bibinfo{author}{Catuscia \surnamestart Palamidessi\surnameend},
+  \bibinfo{author}{Luis~Fernando \surnamestart Pino\surnameend} \&
+  \bibinfo{author}{Frank~D. \surnamestart Valencia\surnameend}
+  (\bibinfo{year}{2011}): \emph{\bibinfo{title}{Deriving labels and
+  bisimilarity for concurrent constraint programming}}.
+\newblock In \bibinfo{editor}{Martin \surnamestart Hofmann\surnameend}, editor:
+  {\sl \bibinfo{booktitle}{FOSSACS 2011}}, {\sl \bibinfo{series}{LNCS}}
+  \bibinfo{volume}{6604}, \bibinfo{publisher}{Springer}, pp.
+  \bibinfo{pages}{138--152}.
+
+\bibitemdeclare{article}{scc}
+\bibitem{scc}
+\bibinfo{author}{Stefano \surnamestart Bistarelli\surnameend},
+  \bibinfo{author}{Ugo \surnamestart Montanari\surnameend} \&
+  \bibinfo{author}{Francesca \surnamestart Rossi\surnameend}
+  (\bibinfo{year}{2006}): \emph{\bibinfo{title}{Soft concurrent constraint
+  programming}}.
+\newblock {\sl \bibinfo{journal}{ACM ToCL}}
+  \bibinfo{volume}{7}(\bibinfo{number}{3}), pp. \bibinfo{pages}{563--589}.
+
+\bibitemdeclare{article}{extendedHiding}
+\bibitem{extendedHiding}
+\bibinfo{author}{Frank~S. \surnamestart de~Boer\surnameend},
+  \bibinfo{author}{Maurizio \surnamestart Gabbrielli\surnameend},
+  \bibinfo{author}{Elena \surnamestart Marchiori\surnameend} \&
+  \bibinfo{author}{Catuscia \surnamestart Palamidessi\surnameend}
+  (\bibinfo{year}{1997}): \emph{\bibinfo{title}{Proving concurrent constraint
+  programs correct}}.
+\newblock {\sl \bibinfo{journal}{ACM ToPLaS}}
+  \bibinfo{volume}{19}(\bibinfo{number}{5}), pp. \bibinfo{pages}{685--725}.
+
+\bibitemdeclare{article}{BonchiGK09}
+\bibitem{BonchiGK09}
+\bibinfo{author}{Filippo \surnamestart Bonchi\surnameend},
+  \bibinfo{author}{Fabio \surnamestart Gadducci\surnameend} \&
+  \bibinfo{author}{Barbara \surnamestart K{\"{o}}nig\surnameend}
+  (\bibinfo{year}{2009}): \emph{\bibinfo{title}{Synthesising {CCS} bisimulation
+  using graph rewriting}}.
+\newblock {\sl \bibinfo{journal}{I\& C}}
+  \bibinfo{volume}{207}(\bibinfo{number}{1}), pp. \bibinfo{pages}{14--40}.
+
+\bibitemdeclare{article}{BonchiGM14}
+\bibitem{BonchiGM14}
+\bibinfo{author}{Filippo \surnamestart Bonchi\surnameend},
+  \bibinfo{author}{Fabio \surnamestart Gadducci\surnameend} \&
+  \bibinfo{author}{Giacoma~Valentina \surnamestart Monreale\surnameend}
+  (\bibinfo{year}{2014}): \emph{\bibinfo{title}{A general theory of barbs,
+  contexts, and labels}}.
+\newblock {\sl \bibinfo{journal}{{ACM} ToCL}}
+  \bibinfo{volume}{15}(\bibinfo{number}{4}), pp. \bibinfo{pages}{35:1--35:27}.
+
+\bibitemdeclare{inproceedings}{coord}
+\bibitem{coord}
+\bibinfo{author}{Fabio \surnamestart Gadducci\surnameend},
+  \bibinfo{author}{Luis \surnamestart Pino\surnameend},
+  \bibinfo{author}{Francesco \surnamestart Santini\surnameend} \&
+  \bibinfo{author}{Frank \surnamestart Valencia\surnameend}
+  (\bibinfo{year}{2015}): \emph{\bibinfo{title}{A labelled semantics for soft
+  {CCP}}}.
+\newblock In \bibinfo{editor}{T.~\surnamestart Holvoet\surnameend} \&
+  \bibinfo{editor}{M.~\surnamestart Viroli\surnameend}, editors: {\sl
+  \bibinfo{booktitle}{COORDINATION}}, {\sl \bibinfo{series}{LNCS}}
+  \bibinfo{volume}{9037}, pp. \bibinfo{pages}{133--149}.
+
+\bibitemdeclare{inproceedings}{Leifer:00:CONCUR}
+\bibitem{Leifer:00:CONCUR}
+\bibinfo{author}{James~J. \surnamestart Leifer\surnameend} \&
+  \bibinfo{author}{Robin \surnamestart Milner\surnameend}
+  (\bibinfo{year}{2000}): \emph{\bibinfo{title}{Deriving bisimulation
+  congruences for reactive systems}}.
+\newblock In \bibinfo{editor}{Catuscia \surnamestart Palamidessi\surnameend},
+  editor: {\sl \bibinfo{booktitle}{CONCUR 2000}}, \bibinfo{series}{LNCS}, pp.
+  \bibinfo{pages}{243--258}.
+
+\bibitemdeclare{article}{Milner06}
+\bibitem{Milner06}
+\bibinfo{author}{Robin \surnamestart Milner\surnameend} (\bibinfo{year}{2006}):
+  \emph{\bibinfo{title}{Pure bigraphs: Structure and dynamics}}.
+\newblock {\sl \bibinfo{journal}{I\&C}}
+  \bibinfo{volume}{204}(\bibinfo{number}{1}), pp. \bibinfo{pages}{60--122}.
+
+\bibitemdeclare{inproceedings}{popl91}
+\bibitem{popl91}
+\bibinfo{author}{Vijay~A. \surnamestart Saraswat\surnameend},
+  \bibinfo{author}{Martin~C. \surnamestart Rinard\surnameend} \&
+  \bibinfo{author}{Prakash \surnamestart Panangaden\surnameend}
+  (\bibinfo{year}{1991}): \emph{\bibinfo{title}{Semantic foundations of
+  concurrent constraint programming}}.
+\newblock In \bibinfo{editor}{David~S. \surnamestart Wise\surnameend}, editor:
+  {\sl \bibinfo{booktitle}{POPL 1991}}, \bibinfo{publisher}{ACM Press}, pp.
+  \bibinfo{pages}{333--352}.
+
+\end{thebibliography}
