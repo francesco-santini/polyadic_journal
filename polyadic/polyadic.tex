@@ -1260,8 +1260,8 @@ To this end, we close the section by adding the simple result below to the soft 
 \section{Polyadic Soft CCP: language and reduction/barbed  semantics}\label{sec:detSCCP}
 This section introduces our (meta-)language.
 We fix a set of variables $V$, ranged over by $x$, $y$, $\ldots$ , and 
-an invertible CLIM $\mathbb S = \langle {\mathcal C}, \leq, \otimes\rangle$, which is 
-cylindric over $V$ and whose compact elements
+an invertible CLIM $\mathbb S = \langle {\mathcal C}, \leq, \otimes\rangle$, which is
+polyadic over $V$ and whose elements
 are ranged over by $c$, $d$, $\ldots$.
 
 \begin{definition}[Agents]%
@@ -1337,9 +1337,10 @@ As for $\exists^{\rho}_w A$, recall that $fv(\exists^{\rho}_w A) = (fv(A) \cup s
 \begin{itemize}
 	\item $w \not = x$. $(\exists^{\rho}_w A)[^y/_x] = \exists^{s_{[^y/_x]}\rho}_w A[^y/_x] = 
 	\exists^{\rho}_w A[^y/_x]$ (by $x \not = w$) $= \exists^{\rho}_w A$ (by hypotheses).
-	\item $w = x$. $(\exists^{\rho}_x A)[^y/_x] = ((\exists^{\rho}_x A)[^z/_x])[^y/_x] \ \ 
-	\text{for $z$ fresh}$ (by $\alpha$-conversion) $= (\exists^{\rho}_z A)[^y/_x] = \exists^{\rho}_z A$
-	(by the reasoning above) $= \exists^{\rho}_x A$ (again by $\alpha$-conversion).   
+	\item $w = x$. $(\exists^{\rho}_x A)[^y/_x] = ((\exists^{\rho}_z A)[^z/_x])[^y/_x] \ \ 
+	\text{for $z \not \in sv(\rho) \cup fv(A)$} = (\exists^{s_{[^y/_x]}(s_{[^z/_x]}\rho)}_z 
+	(A[^z/_x])[^y/_x]) = (\exists^(s_{[^z/_x]}\rho)_z A[^z/_x]) \text{by $x \not \in sv(c)
+	 \cup fv(A[^z/_x])$} \equiv_\alpha \exists^{\rho}_x A$.   
 \end{itemize}
 \end{proof}
 
@@ -1375,20 +1376,20 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
    \begin{center}
    \begin{tabular}{llll} 
    %
-   \mbox{\bf A1}& $ {\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \mapsto  \langle 
+   \mbox{\bf A1}& $ {\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \mapsto \langle 
    \hbox{\ostop}, \sigma \otimes c\rangle}$
    \ \ \ & \bf{Tell}&
   \\ 
   &\mbox{   }&\mbox{   } &\mbox{   }
   \\
-  \mbox{\bf A2}& $\frac {\displaystyle sv(\sigma) \cup sv(c) \cup fv(A) \subseteq \Delta \wedge \sigma \leq c}{\displaystyle
-  	\begin{array}{l} \langle \hbox{\ask}(c) \rightarrow A, \sigma \rangle \mapsto_\Delta \langle A, \sigma \rangle   	\end{array}}$
+  \mbox{\bf A2}& $\frac {\displaystyle \sigma \leq c}{\displaystyle
+  	\begin{array}{l} \langle \hbox{\ask}(c) \rightarrow A, \sigma \rangle \mapsto \langle A, \sigma \rangle   	\end{array}}$
     \ \ \ & \bf{Ask}&
     \\
     &\mbox{   }&\mbox{   }&
     \\
-  \mbox{\bf A3}& $\frac {\displaystyle sv(\sigma) \cup \{y\} \subseteq \Delta \wedge \displaystyle p(x) = A \in \mathcal{P} }
-  {\displaystyle\langle p(y),\sigma\rangle \mapsto_\Delta \langle A[^y/_x], \sigma \rangle}$ 
+  \mbox{\bf A3}& $\frac {\displaystyle p(x) = A \in \mathcal{P} }
+  {\displaystyle\langle p(y),\sigma\rangle \mapsto \langle A[^y/_x], \sigma \rangle}$ 
   &\bf{Rec}&
   \\
     &\mbox{   }&\mbox{   }&
@@ -1406,7 +1407,7 @@ Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
     \mbox{\bf A4}& $\frac {\displaystyle \langle A, \rho \otimes \sigma_0 \rangle
     \mapsto \langle B, \sigma_1 \rangle \wedge x \not \in sv(\sigma) \wedge \sigma_0 
     = \sigma \odiv \exists_x \rho }
-    {\displaystyle\langle \exists^{\rho}_x A,\sigma\rangle \mapsto_\Delta \langle 
+    {\displaystyle\langle \exists^{\rho}_x A,\sigma\rangle \mapsto \langle 
     \exists^{\sigma_1 \odiv \sigma_0}_x B, \sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0) 
     \rangle}$
     &\bf{Hide}&
@@ -1463,7 +1464,7 @@ Axiom {\bf A3} replaces a procedure identifier with the associated body, renamin
 
 In axiom {\bf A4} we consider instead local variables, where the hiding operator carries some information on the variables it abstracts.
 More precisely, according to~\cite{extendedHiding} we consider an extended operator $\exists_x^\rho$, for $\rho$ the local store.
-Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The precondition states that $x \not \in sv(\sigma)$: this ensures that $\sigma_0$ does not contain free occurences of $x$, as it is obtained by removing $\exists_x \rho$ from $\sigma$. The intuition is then that $x$ can only appear in the local store $\rho$, and then in $\sigma_1$. Thus, hiding $x$ means to remove it from the resulting store, by letting it $\sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0)$. On the other hand, the local information carried by the hide operator is updated to $\sigma_1 \odiv \sigma_0$, which can still contain $x$. \\
+Thanks again to the residuation operator, the rule for the extended hidings can be defined as {\bf Hide-local}. The precondition states that $x \not \in sv(\sigma)$: this is not restrictive, due to $\alpha$-equivalence. Furthermore, it ensures that $\sigma_0$ does not contain free occurences of $x$, as it is obtained by removing $\exists_x \rho$ from $\sigma$. The intuition is then that $x$ can only appear in the local store $\rho$, and then in $\sigma_1$. Thus, hiding $x$ means to remove it from the resulting store, by letting it $\sigma_0 \otimes \exists_x(\sigma_1 \odiv \sigma_0)$. On the other hand, the local information carried by the hide operator is updated to $\sigma_1 \odiv \sigma_0$, which can still contain $x$. \\
 \smallskip
 
 Let $\gamma = \langle A, \sigma \rangle$ be a configuration.
@@ -1473,7 +1474,7 @@ $\gamma[^z/_w]$ the component-wise application of substitution $[^z/_w]$.
 
 \begin{lemma}[On monotonicity]
 \label{mono}
-Let $\langle A, \sigma \rangle \rightarrow_\Delta \langle B, \sigma' \rangle$ be a reduction. 
+Let $\langle A, \sigma \rangle \rightarrow \langle B, \sigma' \rangle$ be a reduction. 
 Then
 \begin{enumerate}
 \item $sv(\sigma') \subseteq sv(\sigma)\cup fv(A) \subseteq \Delta$;
@@ -1481,7 +1482,7 @@ Then
 \item $\langle A, \sigma \rangle \rightarrow_{\Delta'} \langle B, \sigma' \rangle$
          for all $\Delta'. sv(\sigma)\cup fv(A) \subseteq \Delta' \wedge fv(B) \cap \Delta' \subseteq fv(A)$;
 \item $\langle A, \sigma \otimes \rho \rangle \rightarrow_\Delta \langle B, \sigma' \otimes \rho \rangle$
-         for all $\rho \in  \C^\otimes. sv(\rho) \subseteq \Delta$. 
+         for all $\rho \in  \C. sv(\rho) \subseteq \Delta$. 
 \end{enumerate}
  \end{lemma}
  
@@ -1493,33 +1494,19 @@ and $sv(\sigma \otimes c) \subseteq sv(\sigma) \cup sv(c)$, then the statement h
 Similarly for item 2, since $\sigma \leq \sigma \otimes c$.
 Item 3 is again true by construction. 
 As for item 4, it suffices to also note that 
-$\sigma, \rho \in  \C^\otimes$ ensure that $\sigma \otimes \rho \in  \C^\otimes$
+$\sigma, \rho \in  \mathcal{C}$ ensure that $\sigma \otimes \rho \in  \mathcal{C}$
 and clearly {\bf A2} will still be executable. 
-
-\begin{definition}[Increasing computations]\label{def:min}
-Let $\gamma_0  \rightarrow_{\Delta_1} \gamma_1  \rightarrow_{\Delta_2} \gamma_2 \rightarrow_{\Delta_3} \dots$ be a
-(possibly infinite) computation. 
-%\marginpar{added ``infinite'' before computation}
-It is increasing if $\Delta_k \subseteq \Delta_{k+1}$ for any $k >1$, and
-it is minimally increasing if $\Delta_k + fn(\gamma_k) = \Delta_{k+1}$ for any $k>1$.
-\end{definition}
-
-What is noteworthy is that in such computation the sets $\Delta$'s are always uniquely identified,
-once $\Delta_1$ is fixed.
-Thanks to Lemma \ref{mono}, for the sake of simplicity and without loss of generality 
-in the following we restrict our attention to minimally increasing computations, dropping
-altogether the subscripts $\Delta$'s whenever they are irrelevant.
 
 
 \section{Saturated Bisimulation}\label{sec:saturated}
 As proposed in \cite{pippo} for crisp languages, we define a barbed equivalence between two agents~\cite{barbed}.  
 %
 Intuitively, barbs are basic observations (predicates) on the states of a system, and in our case they correspond 
-to the compact constraints in $\mathcal{C}^\otimes$.
+to the compact constraints in $\mathcal{C}$.
 
 \begin{definition} [Barbs]
-Let $\langle A, \sigma \rangle$ be a configuration and $c \in \mathcal{C}^\otimes$
-and we say that $\langle A, \sigma \rangle$ verifies $c$, or that $\langle A, \sigma \rangle \downarrow_c$ holds, if  $c \leq \sigma$.
+Let $\langle A, \sigma \rangle$ be a configuration and $c \in \mathcal{C}$
+and we say that $\langle A, \sigma \rangle$ verifies $c$, or that $\langle A, \sigma \rangle \downarrow_c$ holds, if  $\sigma \leq c$.
 \end{definition}
 
 However, since \emph{barbed bisimilarity} is an equivalence already for CCP, along~\cite{pippo}
@@ -1539,7 +1526,7 @@ $( \langle A, \sigma \rangle,\langle B, \rho \rangle) \in R$
 \begin{enumerate}
 \item if $\langle A, \sigma \rangle \downarrow_c$ then $\langle B, \rho \rangle \downarrow_c$;
 \item if $\langle A, \sigma \rangle \longrightarrow \gamma'_1$ then there is $\gamma'_2$ such that $\langle B, \rho \rangle \longrightarrow \gamma'_2$ and $(\gamma'_1, \gamma'_2) \in R$;
-\item $(\langle A,\sigma \otimes d\rangle, \langle B,\rho \otimes d \rangle) \in R$ for  all $d \in \mathcal{C}^\otimes$.
+\item $(\langle A,\sigma \otimes d\rangle, \langle B,\rho \otimes d \rangle) \in R$ for  all $d \in \mathcal{C}$.
 \end{enumerate}
 We say that $\gamma_1$ and $\gamma_2$ are  saturated bisimilar ($\gamma_1  \sim_{\mathit{s}} \gamma_2$) if there exists a  saturated  bisimulation $R$ such that $(\gamma_1 , \gamma_2 ) \in R$. We write $A \sim_{\mathit{s}} B$ if $\langle A, \bot\rangle \sim_{\mathit{s}} \langle B, \bot \rangle$.
 \end{definition}
@@ -1547,7 +1534,7 @@ We say that $\gamma_1$ and $\gamma_2$ are  saturated bisimilar ($\gamma_1  \sim_
 We now let $\longrightarrow^*$ denote the reflexive and transitive closure of $\longrightarrow$, restricted to increasing computations.
 
 \begin{definition} [Weak barbs]
-Let $\langle A, \sigma \rangle$ be a configuration and $c \in \mathcal{C}^\otimes$.
+Let $\langle A, \sigma \rangle$ be a configuration and $c \in \mathcal{C}$.
 We say that $\langle A, \sigma \rangle$ weakly verifies $c$, or that $\langle A, \sigma \rangle \Downarrow_c$ holds, 
 if  there exists $\gamma' = \langle B, \rho \rangle$ such that 
 $\gamma \longrightarrow^* \gamma'$ and $c \leq \exists_{X} \rho$ for $X = fv(\gamma') \setminus fv(\gamma)$.
@@ -1560,7 +1547,7 @@ $( \langle A, \sigma \rangle,\langle B, \rho \rangle) \in R$
 \begin{enumerate}
 \item if $\langle A, \sigma \rangle \downarrow_c$ then $\langle B, \rho \rangle \Downarrow_c$;
 \item if $\langle A, \sigma \rangle \longrightarrow \gamma'_1$ then there is $\gamma'_2$ such that $\langle B, \rho \rangle \longrightarrow^* \gamma'_2$ and $(\gamma'_1, \gamma'_2) \in R$;
-\item $(\langle A,\sigma \otimes d\rangle, \langle B,\rho \otimes d \rangle) \in R$ for  all $d \in \mathcal{C}^\otimes$.
+\item $(\langle A,\sigma \otimes d\rangle, \langle B,\rho \otimes d \rangle) \in R$ for  all $d \in \mathcal{C}$.
 \end{enumerate}
 We say that $\gamma_1$ and $\gamma_2$ are  weakly saturated bisimilar ($\gamma_1  \approx_{\mathit{s}} \gamma_2$) if there exists a  
 weak saturated  bisimulation $R$ such that $(\gamma_1 , \gamma_2 ) \in R$. 
@@ -1600,6 +1587,116 @@ Let $A$, $B$ be agents. Then $A \sim_o B$ if and only if $A \approx_{\mathit{s}}
 %\marginpar{L'unica cosa da provare \`e in realt\`a il Lemma 1}
 
 
+\section{Labelled transition system}
+
+Although $\approx_{\mathit{s}}$ is fully abstract, it is somewhat unsatisfactory
+because of the upward-closure, i.e., the quantification in condition \emph{3} of Definition~\ref{def:weaksb}.
+
+\begin{definition}[Labelled reductions]
+	Let $\Gamma = {\mathcal A} \times \C$ be the set of \emph{configurations} and $V$ the set of variables.
+	The  \emph{labelled direct reduction semantics} for SCCP is the pair 
+	$\langle \Gamma,  \mapsto \rangle$
+	such that $\mapsto \, \, \subseteq \, \,\Gamma \times \Gamma$ is indexed over the couple
+	$\langle \mathcal{C}, 2^V \rangle$,
+	%$2^V$,
+	%between them, 
+	i.e., $\mapsto = \bigcup_{\alpha \in \mathcal{C}, \Delta \subseteq V} \xmapsto{\, A \,}$ and 
+	$\xmapsto{\,A \,} \, \, \subseteq \, \,\Gamma \times \Gamma$, obtained by the rules in 
+	Table~\ref{fig:ALTS}.
+	
+	The \emph{labelled reduction semantics} for SCCP is the pair 
+	$\langle \Gamma,  \rightarrow \rangle$
+	such that $\rarrow \, \, \subseteq \, \,\Gamma \times   \Gamma$ is the family 
+	of binary relations indexed over the couple
+	$\langle \mathcal{C}, 2^V \rangle$;
+	$\xrightarrow{\,A\,} \, \, \subseteq \, \,\Gamma \times \Gamma$ can obtained by the rules in 
+	Table~\ref{fig:ALTS} and Table~\ref{fig:CRLTS}.
+\end{definition}
+
+
+In Table~\ref{fig:ALTS} and Table~\ref{fig:CRLTS} we refine the notion of transition (respectively given in Table~\ref{fig:operational} and Table~\ref{fig:operational2})
+by adding a label that carries additional information about the constraints that cause the reduction.
+Hence, we define a new labelled transition system (LTS) obtained by the family of relations
+$\xmapsto{\;  \alpha \;}a \, \, \subseteq \, \,\Gamma \times \Gamma$ indexed over 
+$\langle \mathcal{C}, 2^V \rangle$;
+Rules in Table~\ref{fig:ALTS} and Table~\ref{fig:CRLTS} are identical to those in Table~\ref{fig:operational} and Table~\ref{fig:operational2}, except for a constraint $\alpha$ that
+represents the minimal information that must be added to $\sigma$ in order to fire an action
+from $\langle A, \sigma\rangle$  to $\langle A', \sigma' \rangle$, i.e., $\langle A, \sigma \otimes \alpha\rangle \longrightarrow \langle A' , \sigma' \rangle$.
+
+\def\odiv{\; {\ominus\hspace{-6.8pt} \div} \;}
+\def\odivv{\; {\ominus\hspace{-5.2pt} \div} \;}
+\def\odivvv{\; {\ominus\hspace{-7.8pt} \div} \;}
+\begin{table}  %\hfil5
+
+   \begin{center}
+   	  \scalebox{0.9}{
+   \begin{tabular}{llll} 
+   %
+   \mbox{\bf LA1}& $\frac{\displaystyle  sv(\sigma) \cup sv(c) \subseteq \Delta } {\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \xmapsto{\;  \bot \;}  \langle \hbox{\ostop},
+                                               \sigma \otimes c\rangle}$
+   \ \ \ & \bf{Tell}&
+  \\ 
+  &\mbox{   }&\mbox{   } &\mbox{   }
+  \\
+  \mbox{\bf LA2}& $\frac {\displaystyle   sv(\sigma) \cup sv(c)  \cup fv(A) \subseteq \Delta}{\displaystyle
+  	\begin{array}{l} \langle \hbox{\ask}(c) \rightarrow A, \sigma \rangle \xmapsto{c  \odivv  \sigma}
+  	\langle A, \sigma \otimes (c\odivvv \sigma) \rangle
+  	\end{array}}$
+  \ \ \ & \bf{Ask}&
+  \\
+  &\mbox{   }&\mbox{   }&
+  \\
+  \mbox{\bf LA3}& $\frac {\displaystyle sv(\sigma) \cup  \{y\} \subseteq \Delta \wedge \displaystyle p(x) = A \in  \mathcal{P} }
+  {\displaystyle\langle p(y),\sigma\rangle \xmapsto{\bot} \langle  A[^y/_x], \sigma\rangle}$ 
+  &\bf{Rec}&
+    \\ \\
+\mbox{\bf LA4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq \Delta \wedge w \not \in \Delta }
+{\displaystyle\langle \exists_x A,\sigma\rangle \xmapsto{\bot} \langle A[^w/_x], \sigma\rangle}$
+&\bf{Hide}&
+
+  \end{tabular}
+}
+  \end{center}
+
+\caption{Axioms of the labelled semantics for \SCCP.}
+\label{fig:ALTS}
+\end{table}
+\def\odiv{\, {\ominus\hspace{-7.8pt} \div} \,}
+\def\odivvv{\; {\ominus\hspace{-4.7pt} \div} \;}
+
+
+\def\odiv{\; {\ominus\hspace{-6.8pt} \div} \;}
+\def\odivv{\; {\ominus\hspace{-5.2pt} \div} \;}
+\def\odivvv{\; {\ominus\hspace{-7.8pt} \div} \;}
+\begin{table}  %\hfil5
+
+   \begin{center}
+   	  \scalebox{0.9}{
+   \begin{tabular}{llll} 
+   %
+  \mbox{\bf LR1}& $\frac {\displaystyle \langle A,\sigma \rangle \xrightarrow{\alpha} \langle A', \sigma' \rangle
+  \wedge fv(B) \subseteq \Delta} 
+  {\displaystyle \begin{array}{l}
+                          \langle A\parallel B, \sigma \rangle \xrightarrow{\alpha} \langle A'\parallel B, \sigma' \rangle
+                          \end{array}}$ 
+    & \bf{Par1}&
+  \\
+  & \mbox{   }&\mbox{   }&
+  \\
+    \mbox{\bf LR2}& $\frac {\displaystyle \langle A,\sigma \rangle \xrightarrow{\alpha} \langle A', \sigma'   \rangle
+    	\wedge fv(B) \subseteq \Delta} 
+    {\displaystyle 
+    	\begin{array}{l} \langle B\parallel A, \sigma \rangle \xrightarrow{\alpha} \langle B\parallel A', \sigma' \rangle
+    	\end{array}}$& \bf{Par2}&
+    \\
+    &\mbox{   }&\mbox{   }&
+  \end{tabular}
+}
+  \end{center}
+
+\caption{Contextual rules of the labelled semantics for \SCCP.}
+\label{fig:CRLTS}
+\end{table}
 
 \section{Semantics equivalence}
 
