@@ -1564,28 +1564,6 @@ obtained from Definition~\ref{def:strongsb} by replacing $\longrightarrow$ with 
 Since $\sim_{\mathit{s}}$ (and $\approx_{\mathit{s}}$) is a saturated bisimulation, it is clearly upward closed and it is also a congruence: indeed, a context can modify the behaviour of a configuration only by adding constraints to its store.
 %\marginpar{to be proved for $\exists_x-$ (not needed for Prop.3)}
 
-\medskip
-We now show that $\approx_{\mathit{s}}$, as given in Definition~\ref{def:weaksb}, coincides with the observational equivalence $\sim_o$ (see Definition~\ref{def:obequivalence}). First we recall the notion of and a classic result on \emph{cofinality}: two (possibly infinite) chains $c_0 \leq c_1 \leq \dots$ and  $d_0 \leq d_1 \leq \dots$ are said to be \emph{cofinal} if for all $c_i$ there exists a $d_j$ such that $c_i \leq d_j$ and, vice-versa, for all $d_i$ there exists a $c_j$ such that $d_i \leq c_j$.
-
-\begin{lemma}\label{lem:cofinality} 
-Let $c_0 \leq c_1 \leq \dots$ and $d_0 \leq d_1 \leq \dots $ be two chains. \emph{(1)} If they are cofinal, then they have the same limit, i.e., $\bigvee_i c_i = \bigvee_i d_i$. \emph{(2)} If the elements of the chains are $\otimes$-compact and $\bigvee_i c_i = \bigvee_i d_i$, then the two chains are cofinal.\end{lemma}
-%\marginpar{questo richiede che tell inserisca solo compatti}
-
-
-
-To prove Theorem~\ref{prop:weaksbequivobs}, besides cofinality from Lemma~\ref{lem:cofinality} we need to relate weak barbs and fair computations.
-
-\begin{lemma}\label{lem:barbsfair}
-Let $\xi = \gamma_0 \longrightarrow \gamma_1 \longrightarrow \ldots$ be a (possibly infinite) fair computation. If $\gamma_0 \Downarrow_d$ then there exists a store $\sigma_i$ in $\xi$ such that $d \leq \exists_{X_i} \sigma_i$ for $X_i = fv(\gamma_i) \setminus fv(\gamma_0)$.
-\end{lemma}
-
-The lemma is a direct consequence of confluence (see Theorem~\ref{prop:confluence}).
-
-\begin{theorem}\label{prop:weaksbequivobs}
-Let $A$, $B$ be agents. Then $A \sim_o B$ if and only if $A \approx_{\mathit{s}} B$.
-\end{theorem}
-%\marginpar{L'unica cosa da provare \`e in realt\`a il Lemma 1}
-
 
 \section{Labelled transition system}
 
@@ -1632,13 +1610,13 @@ from $\langle A, \sigma\rangle$  to $\langle A', \sigma' \rangle$, i.e., $\langl
    	  \scalebox{0.9}{
    \begin{tabular}{llll} 
    %
-   \mbox{\bf LA1}& $\frac{\displaystyle  sv(\sigma) \cup sv(c) \subseteq \Delta } {\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \xmapsto{\;  \bot \;}  \langle \hbox{\ostop},
-                                               \sigma \otimes c\rangle}$
+   \mbox{\bf LA1}& ${\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \xmapsto{\;  \bot \;}
+   \langle \hbox{\ostop}, \sigma \otimes c\rangle}$
    \ \ \ & \bf{Tell}&
   \\ 
   &\mbox{   }&\mbox{   } &\mbox{   }
   \\
-  \mbox{\bf LA2}& $\frac {\displaystyle   sv(\sigma) \cup sv(c)  \cup fv(A) \subseteq \Delta}{\displaystyle
+  \mbox{\bf LA2}& ${\displaystyle
   	\begin{array}{l} \langle \hbox{\ask}(c) \rightarrow A, \sigma \rangle \xmapsto{c  \odivv  \sigma}
   	\langle A, \sigma \otimes (c\odivvv \sigma) \rangle
   	\end{array}}$
@@ -1646,12 +1624,14 @@ from $\langle A, \sigma\rangle$  to $\langle A', \sigma' \rangle$, i.e., $\langl
   \\
   &\mbox{   }&\mbox{   }&
   \\
-  \mbox{\bf LA3}& $\frac {\displaystyle sv(\sigma) \cup  \{y\} \subseteq \Delta \wedge \displaystyle p(x) = A \in  \mathcal{P} }
+  \mbox{\bf LA3}& $\frac {\displaystyle p(x) = A \in  \mathcal{P} }
   {\displaystyle\langle p(y),\sigma\rangle \xmapsto{\bot} \langle  A[^y/_x], \sigma\rangle}$ 
   &\bf{Rec}&
     \\ \\
-\mbox{\bf LA4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq \Delta \wedge w \not \in \Delta }
-{\displaystyle\langle \exists_x A,\sigma\rangle \xmapsto{\bot} \langle A[^w/_x], \sigma\rangle}$
+  \mbox{\bf LA4}& $\frac {\displaystyle \langle A, c \otimes d_0 \rangle \xmapsto{\alpha}
+  \langle B, d_1 \rangle \wedge d_0 = d \odiv \exists_x c \wedge x \not \in sv(d) \cup sv(c) \wedge c_1 = d_1 \odiv (d_0 \otimes d) }
+  {\displaystyle \langle \exists^c_x A, d \rangle \xmapsto{\alpha} 
+  \langle \exists^{c_1}_x B, d_0 \otimes d \otimes \exists_x c_1 \rangle}$
 &\bf{Hide}&
 
   \end{tabular}
