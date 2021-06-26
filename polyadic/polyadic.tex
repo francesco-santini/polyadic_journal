@@ -1502,7 +1502,7 @@ and clearly {\bf A2} will still be executable.
 As proposed in \cite{pippo} for crisp languages, we define a barbed equivalence between two agents~\cite{barbed}.  
 %
 Intuitively, barbs are basic observations (predicates) on the states of a system, and in our case they correspond 
-to the compact constraints in $\mathcal{C}$.
+to the constraints in $\mathcal{C}$.
 
 \begin{definition} [Barbs]
 Let $\langle A, \sigma \rangle$ be a configuration and $c \in \mathcal{C}$
@@ -1629,9 +1629,9 @@ from $\langle A, \sigma\rangle$  to $\langle A', \sigma' \rangle$, i.e., $\langl
   &\bf{Rec}&
     \\ \\
   \mbox{\bf LA4}& $\frac {\displaystyle \langle A, c \otimes d_0 \rangle \xmapsto{\alpha}
-  \langle B, d_1 \rangle \wedge d_0 = d \odiv \exists_x c \wedge x \not \in sv(d) \cup sv(c) \wedge c_1 = d_1 \odiv (d_0 \otimes d) }
+  \langle B, d_1 \rangle \wedge d_0 = d \odiv \exists_x c \wedge x \not \in sv(d) \cup sv(c) \wedge c_1 = d_1 \odiv (d_0 \otimes \alpha) }
   {\displaystyle \langle \exists^c_x A, d \rangle \xmapsto{\alpha} 
-  \langle \exists^{c_1}_x B, d_0 \otimes d \otimes \exists_x c_1 \rangle}$
+  \langle \exists^{c_1}_x B, d_0 \otimes \alpha \otimes \exists_x c_1 \rangle}$
 &\bf{Hide}&
 
   \end{tabular}
@@ -1679,6 +1679,43 @@ from $\langle A, \sigma\rangle$  to $\langle A', \sigma' \rangle$, i.e., $\langl
 \end{table}
 
 \section{Semantics equivalence}
+
+\begin{theorem}[Soundness]
+$\langle A, a \rangle \xmapsto{c} \langle B, b \rangle \implies \langle A, a \otimes c \rangle
+\mapsto \langle B, b \rangle$
+\end{theorem}
+
+\begin{proof}
+Tell and Rec \\
+\[\sigma \otimes \bot = \sigma \]
+\[\langle \tell(c), \sigma \rangle \xmapsto{\bot} \langle \ostop, \sigma \rangle \implies \]
+\[\langle \tell(c), \sigma \otimes \bot \rangle = \langle \tell(c), \sigma \rangle 
+\mapsto \langle stop, \sigma \rangle\]
+\[\langle p(y), \sigma \rangle \xmapsto{\bot} \langle A[^y/_x], \sigma \rangle \implies \]
+\[\langle p(y), \sigma \otimes \bot \rangle = \langle p(y), \sigma \rangle \mapsto
+\langle A[^y/_x], \sigma \]
+Ask \\
+\[\langle \ask(c) \rightarrow A, \sigma \rangle \xmapsto{c \odiv \sigma}
+\langle A, \sigma \otimes (c \odiv \sigma) \rangle \implies \]
+NB $\sigma \otimes (c \odiv \sigma) \leq c $
+\[\langle \ask(c) \rightarrow A, \sigma \otimes (c \odiv \sigma) \rangle \mapsto
+\langle A, \sigma \otimes (c \odiv \sigma) \rangle \]
+Hide \\
+hyp: $\langle A, c \otimes d_0 \rangle \xmapsto{\alpha} \langle B, d_1 \rangle \implies
+\langle A, c \otimes d_0 \otimes \alpha \rangle \mapsto \langle B, d_1 \rangle$ \\
+$d_0 = d \odiv \exists_x c$ \\
+$c_1 = d_1 \odiv (d_0 \otimes \alpha)$ \\
+\[\langle \exists^c_x A, d \rangle \xmapsto{\alpha} \langle 
+\exists^{d_1 \odiv ((d \odiv \exists_x c) \otimes \alpha)} B, 
+((d \odiv \exists_x c) \otimes \alpha) \otimes 
+\exists_x (d_1 \odiv ((d \odiv \exists_x c) \otimes \alpha)) \implies\]
+\[\langle \exists^c_x A, d \rangle \mapsto \langle
+\exists^{d_1 \odiv ((d \otimes \alpha) \odiv \exists_x c)} B,
+((d \otimes \alpha) \odiv \exists_x c) \otimes 
+\exists_x (d_1 \otimes ((d \otimes \alpha) \odiv \exists_x c))\]
+\\
+$(d \otimes a) \odiv \exists_x c = (d \odiv \exists_x c) \otimes \alpha$?
+\end{proof}
 
 \section{Concluding Remarks}\label{sec:conclusion}
 
