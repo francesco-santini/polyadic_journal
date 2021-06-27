@@ -1629,9 +1629,9 @@ from $\langle A, \sigma\rangle$  to $\langle A', \sigma' \rangle$, i.e., $\langl
   &\bf{Rec}&
     \\ \\
   \mbox{\bf LA4}& $\frac {\displaystyle \langle A, c \otimes d_0 \rangle \xmapsto{\alpha}
-  \langle B, d_1 \rangle \wedge d_0 = d \odiv \exists_x c \wedge x \not \in sv(d) \cup sv(c) \wedge c_1 = d_1 \odiv (d_0 \otimes \alpha) }
+  \langle B, d_1 \rangle \wedge d_0 = (d \otimes \alpha) \odiv \exists_x c \wedge x \not \in sv(d) \cup sv(c) \wedge c_1 = d_1 \odiv d_0 }
   {\displaystyle \langle \exists^c_x A, d \rangle \xmapsto{\alpha} 
-  \langle \exists^{c_1}_x B, d_0 \otimes \alpha \otimes \exists_x c_1 \rangle}$
+  \langle \exists^{c_1}_x B, d_0 \otimes \exists_x c_1 \rangle}$
 &\bf{Hide}&
 
   \end{tabular}
@@ -1703,18 +1703,29 @@ NB $\sigma \otimes (c \odiv \sigma) \leq c $
 Hide \\
 hyp: $\langle A, c \otimes d_0 \rangle \xmapsto{\alpha} \langle B, d_1 \rangle \implies
 \langle A, c \otimes d_0 \otimes \alpha \rangle \mapsto \langle B, d_1 \rangle$ \\
-$d_0 = d \odiv \exists_x c$ \\
-$c_1 = d_1 \odiv (d_0 \otimes \alpha)$ \\
+$d_0 = (d \otimes \alpha) \odiv \exists_x c$ \\
+$c_1 = d_1 \odiv d_0$ \\
 \[\langle \exists^c_x A, d \rangle \xmapsto{\alpha} \langle 
-\exists^{d_1 \odiv ((d \odiv \exists_x c) \otimes \alpha)} B, 
-((d \odiv \exists_x c) \otimes \alpha) \otimes 
-\exists_x (d_1 \odiv ((d \odiv \exists_x c) \otimes \alpha)) \implies\]
-\[\langle \exists^c_x A, d \rangle \mapsto \langle
+\exists^{d_1 \odiv ((d \otimes \alpha) \odiv \exists_x c)} B, 
+((d \otimes \alpha) \odiv \exists_x c) \otimes 
+\exists_x (d_1 \otimes ((d \otimes \alpha) \odiv \exists_x c)) \implies\]
+\[\langle \exists^c_x A, d \otimes \alpha \rangle \mapsto \langle
 \exists^{d_1 \odiv ((d \otimes \alpha) \odiv \exists_x c)} B,
 ((d \otimes \alpha) \odiv \exists_x c) \otimes 
 \exists_x (d_1 \otimes ((d \otimes \alpha) \odiv \exists_x c))\]
-\\
-$(d \otimes a) \odiv \exists_x c = (d \odiv \exists_x c) \otimes \alpha$?
+\end{proof}
+
+\begin{theorem}[Completeness]
+$c \leq a$?, $\langle A, a \rangle \mapsto \langle B, b \rangle \implies 
+\langle A, c \rangle \xmapsto{\alpha} \langle B, d \rangle$ with 
+$c \otimes \alpha \otimes \beta = a \wedge d \otimes \beta = b$ for some $\beta$.
+\end{theorem}
+
+\begin{proof}
+Tell and Rec \\
+\[ \langle \tell(c), \sigma \rangle \mapsto \langle \ostop, \sigma \rangle \wedge (c \leq a) \]
+\[ \langle \tell(c), \sigma' \rangle \xmapsto{\bot} \langle \ostop, \sigma' \rangle \]
+\[ \implies \beta = \sigma \odiv \sigma' = \bigvee\{c \mid \sigma' \otimes c \leq \sigma\} \]
 \end{proof}
 
 \section{Concluding Remarks}\label{sec:conclusion}
