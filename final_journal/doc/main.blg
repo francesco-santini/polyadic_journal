@@ -1,0 +1,56 @@
+This is BibTeX, Version 0.99d (TeX Live 2020)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: splncs03.bst
+Illegal, another \bibstyle command---line 118 of file main.aux
+ : \bibstyle
+ :          {elsarticle-num}
+I'm skipping whatever remains of this command
+Illegal, another \bibdata command---line 119 of file main.aux
+ : \bibdata
+ :         {main,softccp}
+I'm skipping whatever remains of this command
+Database file #1: main.bib
+Database file #2: softccp.bib
+You've used 23 entries,
+            2785 wiz_defined-function locations,
+            753 strings with 8769 characters,
+and the built_in function-call counts, 15065 in all, are:
+= -- 1259
+> -- 458
+< -- 40
++ -- 181
+- -- 156
+* -- 976
+:= -- 1876
+add.period$ -- 42
+call.type$ -- 23
+change.case$ -- 153
+chr.to.int$ -- 0
+cite$ -- 23
+duplicate$ -- 1341
+empty$ -- 1296
+format.name$ -- 181
+if$ -- 3314
+int.to.chr$ -- 0
+int.to.str$ -- 23
+missing$ -- 286
+newline$ -- 74
+num.names$ -- 64
+pop$ -- 460
+preamble$ -- 1
+purify$ -- 111
+quote$ -- 0
+skip$ -- 435
+stack$ -- 0
+substring$ -- 904
+swap$ -- 848
+text.length$ -- 40
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 90
+warning$ -- 0
+while$ -- 134
+width$ -- 25
+write$ -- 251
+(There were 2 error messages)

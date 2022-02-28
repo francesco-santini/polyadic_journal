@@ -1,0 +1,115 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem{pippo}
+Aristiz{\'a}bal, A., Bonchi, F., Palamidessi, C., Pino, L.F., Valencia, F.D.:
+  Deriving labels and bisimilarity for concurrent constraint programming. In:
+  Hofmann, M. (ed.) FOSSACS 2011. LNCS, vol. 6604, pp. 138--152. Springer
+  (2011)
+
+\bibitem{parrowlics}
+Bengtson, J., Johansson, M., Parrow, J., Victor, B.: Psi-calculi: Mobile
+  processes, nominal data, and logic. In: LICS 2009. pp. 39--48. {IEEE}
+  Computer Society (2009)
+
+\bibitem{jacm97}
+Bistarelli, S., Montanari, U., Rossi, F.: Semiring-based constraint
+  satisfaction and optimization. Journal of the ACM  44(2),  201--236 (1997)
+
+\bibitem{ecai06}
+Bistarelli, S., Gadducci, F.: Enhancing constraints manipulation in
+  semiring-based formalisms. In: Brewka, G., Coradeschi, S., Perini, A.,
+  Traverso, P. (eds.) ECAI 2006. FAIA, vol. 141, pp. 63--67. IOS Press (2006)
+
+\bibitem{scc}
+Bistarelli, S., Montanari, U., Rossi, F.: Soft concurrent constraint
+  programming. ACM Transactions on Computational Logic  7(3),  563--589 (2006)
+
+\bibitem{fun11}
+Bistarelli, S., Santini, F.: A nonmonotonic soft concurrent constraint language
+  to model the negotiation process. Fundamamenta Informaticae  111(3),
+  257--279 (2011)
+
+\bibitem{festcatuscia}
+Bonchi, F., Bussi, L., Gadducci, F., Santini, F.: Polyadic soft constraints.
+  In: Alvim, M.S., Chatzikokolakis, K., Olarte, C., Valencia, F. (eds.) The Art
+  of Modelling Computational Systems. LNCS, vol. 11760, pp. 241--257. Springer
+  (2019)
+
+\bibitem{smtpolynomial}
+Borralleras, C., Lucas, S., Oliveras, A., Rodr{\'{\i}}guez{-}Carbonell, E.,
+  Rubio, A.: {SAT} modulo linear arithmetic for solving polynomial constraints.
+  Journal of Automed Reasoning  48(1),  107--131 (2012)
+
+\bibitem{bortolussi}
+Bortolussi, L., Wiklicky, H.: A distributed and probabilistic concurrent
+  constraint programming language. In: Gabbrielli, M., Gupta, G. (eds.) ICLP
+  2005. {LNCS}, vol. 3668, pp. 143--158. Springer (2005)
+
+\bibitem{lubos}
+Brim, L., Kret{\'{\i}}nsk{\'{y}}, M., Jacquet, J., Gilbert, D.R.: Modelling
+  multi-agent systems as synchronous concurrent constraint processes. Computers
+  and Artificial Intelligence  21(6) (2002)
+
+\bibitem{buscemi}
+Buscemi, M.G., Montanari, U.: Open bisimulation for the concurrent constraint
+  pi-calculus. In: Drossopoulou, S. (ed.) ESOP 2008. LNCS, vol. 4960, pp.
+  254--268. Springer (2008)
+
+\bibitem{pi2}
+D{\'{\i}}az, J.F., Rueda, C., Valencia, F.D.: Pi+- calculus: {A} calculus for
+  concurrent processes with constraints. {CLEI} Electronic Journal  1(2) (1998)
+
+\bibitem{ipl17}
+Gadducci, F., Santini, F.: Residuation for bipolar preferences in soft
+  constraints. Information Processing Letters  118,  69--74 (2017)
+
+\bibitem{jlamp17}
+Gadducci, F., Santini, F., Pino, L.F., Valencia, F.D.: Observational and
+  behavioural equivalences for soft concurrent constraint programming. Journal
+  of Logic and Algebraic Methods in Programming  92,  45--63 (2017)
+
+\bibitem{catuscia}
+Gilbert, D.R., Palamidessi, C.: Concurrent constraint programming with process
+  mobility. In: Lloyd, J.W., Dahl, V., Furbach, U., Kerber, M., Lau, K.,
+  Palamidessi, C., Pereira, L.M., Sagiv, Y., Stuckey, P.J. (eds.) CL 2000.
+  {LNCS}, vol. 1861, pp. 463--477. Springer (2000)
+
+\bibitem{golanShort}
+Golan, J.: Semirings and Affine Equations over Them. Kluwer (2003)
+
+\bibitem{spatialvalencia}
+Guzm{\'{a}}n, M., Haar, S., Perchy, S., Rueda, C., Valencia, F.D.: Belief,
+  knowledge, lies and other utterances in an algebra for space and extrusion.
+  Journal of Logic and Algebraic Methods in Programming  86(1),  107--133
+  (2017)
+
+\bibitem{barbed}
+Milner, R., Sangiorgi, D.: Barbed bisimulation. In: Kuich, W. (ed.) ICALP 1992.
+  LNCS, vol. 623, pp. 685--695. Springer (1992)
+
+\bibitem{emerging}
+Olarte, C., Rueda, C., Valencia, F.D.: Models and emerging trends of concurrent
+  constraint programming. Constraints  18(4),  535--578 (2013)
+
+\bibitem{pi1}
+R{\'{e}}ty, J.: Distributed concurrent constraint programming. Fundamenta
+  Informaticae  34(3),  323--346 (1998)
+
+\bibitem{sagi2013}
+S\'agi, G.: Polyadic algebras. In: Andr\'eka, H., Ferenczi, M., N\'emeti, I.
+  (eds.) Cylindric-like algebras and algebraic logic, Bolyai Society
+  Mathematical Studies, vol.~22, pp. 367--389. Springer (2013)
+
+\bibitem{popl91}
+Saraswat, V.A., Rinard, M.C., Panangaden, P.: Semantic foundations of
+  concurrent constraint programming. In: Wise, D.S. (ed.) POPL 1991. pp.
+  333--352. ACM Press (1991)
+
+\bibitem{pcsp09}
+Scott, A.D., Sorkin, G.B.: Polynomial constraint satisfaction problems, graph
+  bisection, and the {I}sing partition function. ACM Transactions on Algorithms
+   5(4),  45:1--45:27 (2009)
+
+\end{thebibliography}

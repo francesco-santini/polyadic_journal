@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.8.5)  28 FEB 2022 16:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.8.5)  28 FEB 2022 17:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -848,8 +848,12 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <5> not available
 Underfull \vbox (badness 5105) has occurred while \output is active []
 
  [2]
-[3] [4] [5] [6] [7] [8] [9] [10] [11] [12]
-Overfull \hbox (1.3264pt too wide) in paragraph at lines 1969--1988
+[3] [4] [5] [6] [7] [8] [9] [10]
+
+LaTeX Warning: Reference `mono' on page 11 undefined on input line 1719.
+
+[11] [12] [13]
+Overfull \hbox (1.3264pt too wide) in paragraph at lines 2018--2037
 []\OT1/ptm/m/n/10 [\OT1/ptm/b/n/10 LA1\OT1/ptm/m/n/10 ] By Lemma 12[] (com-plet
 e-ness for \OT1/ptm/b/n/10 LA1\OT1/ptm/m/n/10 ) we have $\OMS/ztmcm/m/n/10 h\OM
 L/ztmcm/m/it/10 A; ^^[\OMS/ztmcm/m/n/10 i [] h\OML/ztmcm/m/it/10 A[]; ^^[[]\OMS
@@ -858,32 +862,35 @@ n/10 (\OML/ztmcm/m/it/10 ^^L \OMS/ztmcm/m/n/10
 
  []
 
-[13] [14] (./polyadic_submit.bbl [15]) [16] (./polyadic_submit.aux) ) 
+[14] [15] (./polyadic_submit.bbl [16]) [17] (./polyadic_submit.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
 Here is how much of TeX's memory you used:
- 17694 strings out of 480608
- 352100 string characters out of 5903631
- 577458 words of memory out of 5000000
- 33206 multiletter control sequences out of 15000+600000
+ 17816 strings out of 480608
+ 354855 string characters out of 5903631
+ 579747 words of memory out of 5000000
+ 33328 multiletter control sequences out of 15000+600000
  595360 words of font info for 161 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 67i,28n,86p,1134b,376s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/loca
-l/texlive/2020/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2020/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2020/t
-exmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2020/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2020/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2020/texmf
--dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texlive/2020/texmf-d
-ist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2020/tex
-mf-dist/fonts/type1/public/rsfs/rsfs10.pfb></usr/local/texlive/2020/texmf-dist/
-fonts/type1/urw/symbol/usyr.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1
-/urw/times/utmb8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/times
-/utmr8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/times/utmri8a.p
-fb>
-Output written on polyadic_submit.pdf (16 pages, 170602 bytes).
+ 67i,28n,86p,1134b,1068s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
+exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/te
+xlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/tex
+live/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texli
+ve/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texliv
+e/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texlive/
+2020/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texl
+ive/2020/texmf-dist/fonts/type1/public/rsfs/rsfs10.pfb></usr/local/texlive/2020
+/texmf-dist/fonts/type1/urw/symbol/usyr.pfb></usr/local/texlive/2020/texmf-dist
+/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/typ
+e1/urw/times/utmr8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/tim
+es/utmri8a.pfb>
+Output written on polyadic_submit.pdf (17 pages, 174441 bytes).
 PDF statistics:
- 128 PDF objects out of 1000 (max. 8388607)
- 82 compressed objects within 1 object stream
+ 131 PDF objects out of 1000 (max. 8388607)
+ 84 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  109 words of extra memory for PDF output out of 10000 (max. 10000000)
 

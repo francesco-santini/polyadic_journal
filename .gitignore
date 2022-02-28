@@ -1,2 +1,9 @@
 catuscia-0.aux catuscia-4.aux catuscia-camera-ready.aux catuscia-0.pdf catuscia-4.pdf catuscia-camera-ready.pdf catuscia-0.log catuscia-4.log catuscia-camera-ready.log catuscia-0.synctex.gz catuscia-4.synctex.gz catuscia-camera-ready.synctex.gz
 coordination/.DS_Store
+.DS_Store
+*.gz
+*.log
+*.aux
+*.gz
+*.log
+*.aux
