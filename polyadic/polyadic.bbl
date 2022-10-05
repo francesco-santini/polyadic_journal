@@ -1,0 +1,63 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+
+\bibitem{pippo}
+Aristiz{\'a}bal, A., Bonchi, F., Palamidessi, C., Pino, L.F., Valencia, F.D.:
+  Deriving labels and bisimilarity for concurrent constraint programming. In:
+  Hofmann, M. (ed.) FOSSACS 2011. LNCS, vol. 6604, pp. 138--152. Springer
+  (2011)
+
+\bibitem{jacm97}
+Bistarelli, S., Montanari, U., Rossi, F.: Semiring-based constraint
+  satisfaction and optimization. Journal of ACM  44(2),  201--236 (1997)
+
+\bibitem{ecai06}
+Bistarelli, S., Gadducci, F.: Enhancing constraints manipulation in
+  semiring-based formalisms. In: Brewka, G., Coradeschi, S., Perini, A.,
+  Traverso, P. (eds.) ECAI 2006. FAIA, vol. 141, pp. 63--67. IOS Press (2006)
+
+\bibitem{scc}
+Bistarelli, S., Montanari, U., Rossi, F.: Soft concurrent constraint
+  programming. ACM Transactions on Computational Logic  7(3),  563--589 (2006)
+
+\bibitem{extendedHiding}
+de~Boer, F.S., Gabbrielli, M., Marchiori, E., Palamidessi, C.: Proving
+  concurrent constraint programs correct. Transactions on Programming Languages
+  and Systems  19(5),  685--725 (1997)
+
+\bibitem{festcatuscia}
+Bonchi, F., Bussi, L., Gadducci, F., Santini, F.: Polyadic soft constraints.
+  In: Alvim, M.S., Chatzikokolakis, K., Olarte, C., Valencia, F. (eds.) The Art
+  of Modelling Computational Systems: {A} Journey from Logic and Concurrency to
+  Security and Privacy - Essays Dedicated to Catuscia Palamidessi on the
+  Occasion of Her 60th Birthday. Lecture Notes in Computer Science, vol. 11760,
+  pp. 241--257. Springer (2019)
+
+\bibitem{ipl17}
+Gadducci, F., Santini, F.: Residuation for bipolar preferences in soft
+  constraints. Information Processing Letters  118,  69--74 (2017)
+
+\bibitem{jlamp17}
+Gadducci, F., Santini, F., Pino, L.F., Valencia, F.D.: Observational and
+  behavioural equivalences for soft concurrent constraint programming. Logical
+  and Algebraic Methods in Programming  92,  45--63 (2017)
+
+\bibitem{golanShort}
+Golan, J.: Semirings and Affine Equations over Them. Kluwer (2003)
+
+\bibitem{barbed}
+Milner, R., Sangiorgi, D.: Barbed bisimulation. In: Kuich, W. (ed.) ICALP 1992.
+  LNCS, vol. 623, pp. 685--695. Springer (1992)
+
+\bibitem{sagi2013}
+S\'agi, G.: Polyadic algebras. In: Andr\'eka, H., Ferenczi, M., N\'emeti, I.
+  (eds.) Cylindric-like algebras and algebraic logic, Bolyai Society
+  Mathematical Studies, vol.~22, pp. 367--389. Springer (2013)
+
+\bibitem{popl91}
+Saraswat, V.A., Rinard, M.C., Panangaden, P.: Semantic foundations of
+  concurrent constraint programming. In: Wise, D.S. (ed.) POPL 1991. pp.
+  333--352. ACM Press (1991)
+
+\end{thebibliography}

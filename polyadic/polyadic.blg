@@ -1,0 +1,47 @@
+This is BibTeX, Version 0.99d (TeX Live 2020)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: polyadic.aux
+The style file: splncs03.bst
+Database file #1: main.bib
+Database file #2: softccp.bib
+You've used 12 entries,
+            2777 wiz_defined-function locations,
+            683 strings with 6909 characters,
+and the built_in function-call counts, 7889 in all, are:
+= -- 659
+> -- 242
+< -- 21
++ -- 94
+- -- 82
+* -- 515
+:= -- 996
+add.period$ -- 23
+call.type$ -- 12
+change.case$ -- 81
+chr.to.int$ -- 0
+cite$ -- 12
+duplicate$ -- 694
+empty$ -- 668
+format.name$ -- 95
+if$ -- 1734
+int.to.chr$ -- 0
+int.to.str$ -- 12
+missing$ -- 151
+newline$ -- 41
+num.names$ -- 36
+pop$ -- 236
+preamble$ -- 1
+purify$ -- 58
+quote$ -- 0
+skip$ -- 230
+stack$ -- 0
+substring$ -- 468
+swap$ -- 442
+text.length$ -- 21
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 46
+warning$ -- 0
+while$ -- 71
+width$ -- 14
+write$ -- 134

@@ -1,0 +1,1404 @@
+\documentclass{llncs}
+\usepackage{mathptmx}
+
+\usepackage{amsmath,amssymb,amsxtra,amsfonts,cancel}
+\usepackage{graphicx,paralist}
+\usepackage{url}
+\usepackage{tikz-cd}
+\usetikzlibrary{trees, arrows}
+\usepackage{xspace}
+%\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{tikz}
+%\usepackage{algorithm}
+%\usepackage{algpseudocode}
+\usepackage{textcomp}
+\usepackage{soul}
+\usepackage{listings}
+\usepackage{mathtools}
+
+\usepackage{todonotes}
+% To disable notes without deleting them
+%\usepackage[disable]{todonotes}
+
+%\floatstyle{plain}
+%\newfloat{myalgo}{tbhp}{mya}
+
+\newenvironment{Algorithm}[2][tbh]%
+{\begin{myalgo}[#1]
+		\centering
+		\begin{minipage}{#2}
+			\begin{algorithm}[H]}%
+			{\end{algorithm}
+		\end{minipage}
+	\end{myalgo}}
+% to cut ------------------------------------------------------
+%\usepackage{paralist}
+%\usepackage[small]{caption}
+%\usepackage{textcomp}
+%\usepackage{times}
+%\addtolength{\floatsep}{-5mm} \addtolength{\textfloatsep}{-5mm}
+% -------------------------------------------------------------
+
+\newtheorem{define}[theorem]{Definition}
+
+\newtheorem{exa}[theorem]{Example}
+\def\smallromani{\renewcommand{\theenumi}{\roman{enumi}}
+        \renewcommand{\labelenumi}{(\theenumi)}}
+
+%\def\bigodiv{{ \mathbf{\bigodot \hspace{-11pt} \boxempty \,\,}}}
+
+\def\bigodiv{ {\text{ \large $\mathbf\odiv\hspace{-9.3pt} \div$}} }
+\def\bigominus{ {\text{ \large $\mathbf\odiv\hspace{-9.3pt} -$}} }
+
+
+
+%\defodiv{{ \odiv\hspace{-7.5pt} \div}}
+\def\0{{\mathbf 0}}
+\def\1{{\mathbf 1}}
+\def\C{{\mathcal C}}
+\newcommand{\rrarrow}{\longrightarrow}
+\newcommand{\diag}[2]{d_{{#1}{#2}}}
+\newcommand{\tell}{{\bf tell}}
+\newcommand{\atell}{{\bf atell}}
+\newcommand{\ask}{{\bf ask}}
+\newcommand{\ostop}{{\bf stop}}
+\newcommand{\retract}{{\bf retr}}
+\newcommand{\rarrow}{\rightarrow}
+\newcommand{\remove}{\rightarrow}
+%introdotto per rimuovere le prove
+\newcommand{\shortNoProof}[1]{ }
+
+\def\ent{\vdash}
+\def\monid{{\mathbf 0}}
+\def\1{{\mathbf 1}}
+\def\C{{\mathcal C}}
+\def\K{{\mathcal K}}
+\long\def\comment#1{}
+\def\monop{\otimes}
+\def\odiv{\, {\ominus\hspace{-7.7pt} \div} \,}
+\def\apexodiv{\, {\ominus\hspace{-5.7pt} \div} \,}
+\def\monid{\mathbf{1}}
+
+\newcommand{\SCCP}{\texttt{SCCP}\xspace}
+\newcommand{\RefFig}[1]{Figure \nolinebreak\ref{#1}}
+\newcommand\fnsep{\textsuperscript{,}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+\title{Soft Concurrent Constraint Programming\\ with Local Variables\thanks{Research partially supported by the MIUR PRIN 2017FTXR7S ``IT-MaTTerS''
+and by GNCS-INdAM (``Gruppo Nazionale per il Calcolo Scientifico'').}
+}
+
+
+\author{Laura Bussi\inst{1}, Fabio Gadducci\inst{1}, 
+Francesco Santini\inst{2}
+} 
+	\institute{Dipartimento di Informatica, Universit{\`a} di Pisa, Pisa, Italy \\
+		\email{laura.bussi@phd.unipi.it} \qquad
+		\email{fabio.gadducci@unipi.it}
+		\and Dipartimento di Matematica e Informatica, Universit{\`a} degli Studi di Perugia, Perugia, Italy\\
+		\email{francesco.santini@unipg.it}
+		}
+	
+\titlerunning{SCCP with Local Variables}
+\authorrunning{Bussi, Gadducci, and Santini}
+
+\maketitle
+
+\begin{abstract}
+We extend Soft Concurrent Constraint languages with the possibility to manage variables that are local (i.e., private) to some of the agents. Being  constraints soft,  it is possible to represent preferences as a partially ordered set.
+%and bipolar preferences, that is, preference values that are either positive or negative. 
+With respect to the related literature using an idempotent operator for constraint composition, a soft language requires a revision of the hiding operator, which is used to locally keep the computation effect on a variable, and conceal it from the  global store.
+We provide the language with labelled and unlabelled reduction semantics as well as bisimulation equivalences,
+further proving their correspondence.
+\end{abstract}
+
+
+\keywords{Soft concurrent constraint programming, residuated monoids, local variables, bisimulation equivalences.}
+
+\section{Introduction}\label{sec:intro}
+\emph{Concurrent Constraint Programming} (CCP) is a declarative model for concurrency where agents interact on a common store of information by telling and asking constraints~\cite{emerging}.  In general terms, a constraint is a relationship on a set of variables: an assignment of (some of) the variables in the store needs to be found so to satisfy a given goal.  A constraint system provides a signature from which the constraints are built;  it is formalised as an algebra with operators to express conjunction of constraints, absent and inconsistent information, hiding of information and parameter passing.
+
+
+The \emph{polyadic}  and  \emph{cylindric algebras} are two algebraisation of  the first-order calculus~\cite{cylalgebraic}, which have been widely  adopted in the literature to provide the semantics of constraint formulas~\cite{fgcs92,popl91}. A cylindric algebra is formed by enhancing a Boolean algebra by means of a family of unary operations called \emph{cylindrifications}. Technically, the cylindrification operation $\exists_x(c)$ is used to project out the information about a variable $x$ from a constraint $c$: for example, because it is important to focus only on  the variables that appear in the goal of a constraint logic program.
+
+While polyadic algebras are the algebraic version of the pure first-order calculus, cylindric algebras yield an algebraisation of the first-order calculus with \emph{equality}. However, equality can be also achieved in polyadic algebras via additional axioms that specify which terms are to be considered equal under the abstract interpretation.
+
+ While most of the solutions in the literature adopt a cylindric algebra to represent constraints~\cite{popl91}, other proposals take advantage of polyadic algebras: in \cite{fgcs92} the motivation is to allow projections on infinite sets, while in  \cite{festcatuscia} replacing diagonals (used to perform parameters passing~\cite{popl91}, borrowed from cylindric algebras) with polyadic operators allows for a compact – \emph{polynomial} – representation of soft constraints.  Moreover, in case it is necessary to use preferences beside hard constraints, i.e. \emph{Soft Concurrent Constraint Programming} (SCCP)~\cite{jacm97,jlamp17}, algebra operators interact with a residuated monoid structure of values~\cite{ipl17}: while the semi-lattice of such preferences must be complete for cylindric algebras,  it is not necessary so for polyadic ones~\cite{festcatuscia}.
+
+The soft CCP language we present in this paper is a further generalisation of what can be found in the literature, in particular~\cite{pippo} (see also Section~\ref{sec:related}). In particular, it allows for a more general algebraic structure than the absorptive and idempotent monoid used there, and it covers 
+also bipolar (i.e., positive/negative) preferences, thus generalising~\cite{posneg}; secondly, polyadic algebras can %be exploited to 
+model many problems using a polynomial representation of constraints. In fact, polynomial constraints  play an important role in program analysis and verification (e.g. when synthesising program invariants and analysing the reachability of hybrid systems), and they have been recently used in SAT modulo theories~\cite{smtpolynomial}.
+Moreover, the language allows an agent to perform operations  on variables (in particular, adding and asking constraints) that are local, i.e., visible only to the agent itself: for this reason, the \emph{hiding} operator needs to consider the effect of local steps with respect to the global store, which is seen by all the agents participating to a concurrent computation. In this way, it is possible to distinguish between local and global knowledge of agents, in the form of a local and a global store of constraints.
+
+Beside the language syntax, we provide a reduction semantics and a saturated bisimulation relation, again taking inspiration from and generalising~\cite{pippo}. In order for two computation states to be \emph{saturated bisimilar}, it is required that \emph{i)} they should expose the same barbs, \emph{ii)} whenever one of them moves then the other should reply and arrive at an equivalent state, \emph{iii)} they should be equivalent under all the possible stores.
+Intuitively, barbs are basic observations (i.e., predicates) on the system states; in the case of CCP languages, barbs are represented by the constraint store. In addition, we show a labelled bisimulation to (partially) overcome the need to check the store closure (i.e., item \emph{iii} in the previous paragraph). As a final step, we show that the labelled and unlabelled reduction semantics correspond, and we advance a labelled bisimulation relation.
+
+This paper is a continuation of \cite{festcatuscia}, exploiting the polyadic formalism to define a concurrent constraint language.
+%and process-equivalence relations.  
+%For the sake of space, the work reports the proof of a few results only, and it is organised as  follows.
+%The work is organised as follows:
+Section~\ref{sec:bg}  
+and Section~\ref{sec:newconstraint} present the necessary background on the algebraic structure needed to model polyadic constraints. 
+The following sections are focused on the semantics of a concurrent constraint-based language using local variables and polyadic constraints, on the correspondence between different semantics, and on the equivalence relations among processes.
+Section~\ref{sec:detpolyadicCCP} presents the syntax and a  reduction semantics for the language, while Section~\ref{sec:labelled} presents a labelled reduction for the same language.
+Section~\ref{sec:correspondancebis} shows further formal results on the correspondence between the two semantics, and a bisimilarity relation to compare processes with the labelled semantics. 
+%Section~\ref{sec:example} shows a an example of an agent computation related to.\todo{Da finire}
+In Section~\ref{sec:related} we summarise the most related work about CCP-based languages with the notion of local and global variables.
+In Section~\ref{sec:conclusion} we finally wrap up the paper with conclusive thoughts and ideas about future works.
+
+\section{An introduction to Residuated Monoids}\label{sec:bg}
+
+This section reports some results on residuated monoids,
+which are the algebraic structure adopted for modelling
+soft constraints in the following of the paper.
+These background results are mostly drawn from~\cite{jlamp17}, where also proofs can be found.
+
+
+\subsection{Preliminaries on Ordered Monoids}\label{sec:lem}
+
+The first step is to define an algebraic structure for modelling preferences,
+where it is possible to compare values and combine them.
+Our choice falls into the range of \emph{bipolar} approaches, in order 
+to represent both positive and negative preferences: 
+we refer to~\cite{ipl17} for a detailed introduction and 
+a comparison with other proposals.
+
+\begin{definition}[Orders]
+	A partial order (PO) is a pair $\langle A, \leq \rangle$ such that
+	$A$ is a set %of values 
+	and $\leq \,\,\subseteq A \times A$ is a reflexive, transitive, and
+	anti-symmetric  relation.
+	% and $\forall a \in A. \bot\leq a$.
+	%
+	%A partial order with bottom (POT) is a triple
+	%$\langle A, \leq, \bot \rangle$ such that $\langle A, \leq \rangle$ is a PO and
+	%$\forall a \in A. \bot \leq a$.
+	%
+	A semi-lattice (SL) is a PO
+	such that any finite subset of $A$ has a least upper bound (LUB).
+\end{definition}
+
+The LUB of a (possibly infinite) subset $X \subseteq A$ is denoted $\bigvee X$, and it is clearly unique.
+Note that $\bigvee \emptyset$ is the bottom, denoted as $\bot$, of the PO.
+Should it exist, $\bigvee A$ is the top, denoted as $\top$, of the PO.
+
+\comment{\begin{definition}[Compact elements]
+An element $a \in A$ is compact 
+if whenever $a \leq \bigvee Y$ for some $Y \subseteq A$
+there exists a finite subset
+$X \subseteq Y$ such that $a \leq \bigvee X$.
+%
+%Let $A^C \subseteq A$ be the set of compact elements of ${\mathbb C}$.
+%Then ${\mathbb C}$ is algebraic if $\forall c \in A. c = \bigvee \{ d \in A^C \mid d \leq c\}$.
+\end{definition}
+
+We let $A^C \subseteq A$ denote the set of compact elements of ${\mathbb C}$. }
+
+\begin{definition}[Ordered monoids]\label{defn:clm}
+	A (commutative) monoid is a triple
+	$\langle A, \monop,$ $\1 \rangle$ such that $\monop: A \times A \rightarrow A$ is
+	a commutative and associative function and $\1 \in A$ is its \emph{identity} element,
+	i.e., $\forall a \in A. a \monop \1 = a$.
+%	
+	A partially ordered monoid (POM) is a 4-tuple $\langle A, {\leq,} \monop, \1 \rangle$ such that 	
+	$\langle A, \leq \rangle$ is a PO and $\langle A, \monop, \1 \rangle$ a monoid.
+	%
+	A semi-lattice monoid (SLM) is a 
+	POM such that their underlying PO is a SL.
+\end{definition}
+
+As usual, we use the infix notation: $a \monop b$ stands for $\monop(a,b)$.
+
+\begin{example}[Power set]\label{ex:powerset}
+	Given a (possibly infinite) set $S$, a key example
+	is represented by the POM $\mathbb{P}(S) = \langle 2^S, \subseteq, \cap, S \rangle$
+	of subsets of $S$, with the partial order given by subset inclusion
+	and the (idempotent) monoidal operator by intersection. 
+	In fact, $\mathbb{P}(S)$ is a continuous lattice, since all LUBs exist,
+	and $S$ is both the top and the identity element.
+%	Since the operator is idempotent (i.e., $\forall a\in A.\, a \monop a = a$), 
+%	the natural order ($\forall a, b \in A.\, a \leq b$ iff $a \monop b = b$) 
+%	is a partial order, and 
+%	it coincides with subset inclusion:
+%	in fact, $\langle 2^V, \subseteq, \cup, \emptyset \rangle$
+%	is an SLM.
+\end{example}
+
+In general, the partial order $\leq$ and the multiplication operator $\otimes$ can be unrelated.
+This is not the case for distributive SLMs (such as $\mathbb{P}(S)$ above).
+
+\begin{definition}[Distributivity]
+\label{dist}
+Let $\langle A, \leq, \monop, \monid \rangle$ be an SLM.
+It is distributive if
+	for  any finite  $X \subseteq A$
+%	\begin{itemize}
+		it holds $\forall a \in A.\,  a \monop  \bigvee X = \bigvee \{a \monop x \mid x \in X\}$.
+%	\end{itemize}
+\end{definition}
+
+Note that distributivity implies that $\otimes$ is monotone with respect to $\leq$.
+\begin{remark}
+% i.e., it holds
+%	\begin{itemize}
+%		%\item 
+%		$\forall a, b, c \in A. a \leq b \implies c \monop a \leq c \monop b$.
+%	\end{itemize}
+
+	It is almost straightforward to show that our proposal encompasses many other formalisms in the literature.
+	Indeed, distributive semi-lattice monoids are \emph{tropical} semirings (also known as dioids), 
+	namely, semirings with an idempotent sum operator $a \oplus b$, which in our formalism is obtained as
+	$\bigvee \{a, b\}$.
+	% that is idempotent.
+	%~\cite{tropical}. 
+	If $\monid$ is the top of the SL we end up 
+	in \emph{absorptive} semirings~\cite{golanShort}, 
+	which are known as $c$-semirings 
+	in the soft constraint jargon~\cite{jacm97} (see~\cite{ecai06} for a brief survey on residuation 
+	for such semirings).
+	Note that requiring the monotonicity of $\otimes$ and imposing $\monid$ to be the top of the partial order
+	means that preferences are negative, i.e., 
+	that it holds $\forall a, b \in A. a \monop b \leq a$.
+\end{remark}
+
+
+\subsection{Remarks on residuation}\label{sec:ror}
+It is often needed to be able to ``remove'' part of a preference, due e.g. 
+to the non-monotone nature of the language at hand
+for manipulating constraints. 
+%
+The structure of our choice is given by residuated monoids~\cite{golanShort}. 
+%
+They introduce a new operator $\odiv$, which represents a ``weak'' (due to the presence of partial orders) inverse of $\otimes$.
+
+\begin{definition}[Residuation]\label{def:repo}
+	A residuated POM is a 5-tuple $\langle A, \leq, \monop, \odiv, \monid \rangle$ such that
+	$\langle A, \leq, \monop, \monid \rangle$ is a partially ordered monoid and
+	$\odiv: A \times A \rightarrow A$ is a function satisfying $\forall a, b, c \in A. b \monop c \leq a \iff c \leq a \odiv b$. A residuated SLM is a
+	residuated POM such that the underlying PO is a SL.
+\end{definition}
+
+In order to confirm the intuition about weak inverses,
+Lemma~\ref{rclm1} below precisely states that residuation conveys the meaning of 
+an approximated form of subtraction.
+
+
+\begin{lemma}\label{rclm1}
+	Let $\langle A,$ $\leq, \otimes,  \odiv, \1 \rangle$ be a residuated POM.
+	Then $a \odiv b = \bigvee \{c \mid b \otimes c \leq a\}$ for all $a, b \in A$.
+\end{lemma}
+
+In words, the LUB of the (possibly infinite) set 
+$\{c \mid b \otimes c \leq a\}$ exists and is equal to $a \odiv b$.
+%
+In fact, residuation implies distributivity (see~\cite[Lemma 2.2]{ipl17}).
+
+\begin{lemma}\label{rclm2}
+	Let $\langle A, \leq, \monop, \odiv, \1 \rangle$ be a residuated POM. 
+	Then $\monop$ is monotone.
+	If additionally it is a SLM, then it is distributive.
+\end{lemma}
+
+\begin{example}
+Consider again the SLM $\mathbb{P}(S)$ from Example~\ref{ex:powerset}. 
+It is clearly residuated, with $X \odiv Y = (S \setminus Y) \cup X$. In fact, the 
+residuated operator plays the role of classical logical implication $Y \implies X$.
+Note also that $S \setminus Y = \emptyset \odiv Y$, so algebraically we have 
+that $X \odiv Y = X \vee (\bot \odiv Y)$ holds in $\mathbb{P}(S)$.
+\end{example}
+
+In any residuated POM the $\odiv$ operator is also monotone on the first argument and 
+anti-monotone on the second one, i.e., 
+$\forall a, b, c \in A.\, a\leq b \implies  c\odiv b \leq c \odiv a$.
+%
+%Other easy to prove properties are
+%$\forall a\in A. \monid \leq a \odiv a$ and
+%$\forall a, b \in A. a \leq b \implies b \monop (a \odiv b) \leq a$.
+%These latter facts suggest 
+The definition below identifies sub-classes 
+of residuated monoids that are suitable for an easier manipulation
+of constraints (see e.g.~\cite{ecai06}).
+
+\begin{definition}[Families of POMs]
+	A residuated POM $\langle A, \leq, \monop, \odiv, \monid \rangle$ is
+	\begin{itemize}
+		\item
+		\emph{localised} if $\forall a \in A. a \not \in \{\bot,\top\} \implies a \odiv a = \1$;
+		\item
+		\emph{invertible} if $\forall a, b \in A. a \leq b < \top \implies b \monop (a \odiv b) = a$;
+		\item
+		\emph{cancellative} if $\forall a, b, c \in A. a \not \in \{\bot,\top\} \wedge a \otimes b = a  \otimes c \implies b = c$.
+	\end{itemize}
+\end{definition}
+
+\begin{remark}
+When introduced in~\cite[Def.~2.4]{ipl17}, localisation was equivalently stated as 
+$\forall a, b \in A. \bot < a \leq b<\top \implies a \odiv b \leq \1$.
+Indeed, the latter implies $a \odiv a \leq \1$, while  $\1 \leq a \odiv a$
+by definition. Now, assuming $a \odiv a = \1$ and $a \leq b$, 
+by anti-monotonicity $a \odiv b \leq a \odiv a = \1$.
+Note the constraint on $a \not \in \{\bot,\top\}$: indeed, a residuated POM 
+always has a top element and moreover 
+$a \odiv \bot = \top \odiv a = \top$ for any  $a$.
+
+Note that being cancellative is a strong requirement. It implies e.g. 
+some uniqueness of invertibility, that is, for any $a, b$ there exists 
+at most a $c$ such that $b\otimes c = a$.
+It is moreover equivalent to what we could call strong locality,
+that is, $\forall a, b \in A. a \not \in \{\bot,\top\} \implies (a \otimes b) \odiv a = b$. 
+Indeed, this property implies cancellativeness, since if $a \otimes b = a \otimes c$ 
+then $b = (a \otimes b) \odiv a = (a \otimes c) \odiv a = c$. On the other side,
+it is implied, since 
+$((a \otimes b) \odiv a)\otimes a = a \otimes b$ holds in residuated POMs.
+
+As a final remark, note that $\mathbb{P}(S)$ is localised and invertible, yet it is not cancellative.
+\end{remark}
+
+
+
+
+
+\section{A polyadic approach to constraint manipulation}\label{sec:newconstraint}
+
+This section presents our personal take on polyadic algebras for ordered monoids:
+the standard axiomatisation of e.g.~\cite{sagi2013} has been completely 
+reworked, in order to be adapted to the constraints formalism.
+%
+It extends our previous description in~\cite{festcatuscia} by 
+further elaborating on the laws for the polyadic operators in residuated monoids.
+
+\subsection{Cylindric and Polyadic operators for Ordered Monoids}
+\label{cypo}
+We  introduce two families of operators 
+%(cylindric and polyadic ones) 
+that will be used
+for modelling variables hiding and substitution, which are
+key features in languages for manipulating constraints.
+%
+One is a well-known abstraction for existential quantifiers,
+the other one an axiomatisation of the notion of
+substitution, and it is proposed as a weaker  alternative 
+to diagonals~\cite{popl91}, the standard tool for modelling 
+equivalence in constraint programming.\footnote{``Weaker 
+alternative'' here means that diagonals allow for axiomatising
+substitutions at the expenses of working with complete
+partial orders: see e.g.~\cite[Definition 11]{jlamp17}.}
+%
+
+\comment{\smallskip
+Our first step is the introduction of a technical notion that allows for 
+factorising the common properties in the definition of the two families of operators.
+
+\begin{definition}[pomonoid action]
+\label{pomo}
+Let $\mathbb{M} = \langle A, \leq, \monop, \monid \rangle$ be a partially ordered monoid and $\mathbb{P} = \langle S, \leq \rangle$ a partial order.
+A pomonoid action of $\mathbb{M}$ on $\mathbb{P}$ is a function $\phi: A \times S \rightarrow S$ such that
+	\begin{itemize}
+	     \item $\forall s \in S.\ \phi(\monid, s) = s$,
+         \item $\forall a, b \in A,\ s \in S.\ \phi(a, \phi(b, s)) = \phi(a \otimes b, s)$,
+         \item $\forall a, b \in A,\ s, t \in S.\ a \leq b\, \wedge\, s \leq t \implies \phi(a, s) 
+         \leq \phi (b, t)$.
+            % \item $\forall a, b \in A,\ s \in S.\ a \leq b \implies \phi(a, s) \leq \phi (b, s)$.
+	\end{itemize}
+\end{definition}
+
+The first two requirements just state
+that $\phi$ is a monoid action of $\mathbb{M}$ on $S$, while the latter states that $\phi$ is monotone. Sometimes, we say that $\mathbb{P}$ is an $\mathbb{M}$-PO.}
+
+\subsubsection{Cylindric operators.}
+We fix a POM $\mathbb{S} = \langle A, \leq, \monop, \monid \rangle$
+and a set $V$ of variables, and we define a family of cylindric operators axiomatising existential quantifiers.
+
+\begin{definition}[Cylindric ops]\label{cyli}
+	A cylindric operator $\exists$ for $\mathbb{S}$ and $V$ is a family of monotone functions
+	$\exists_x : A \rightarrow A$ indexed by elements in V such that for all 
+	$a, b \in A$ and $x, y \in V$
+	%\todo{$2_f^V$ non e' stato definito prima e/o f non si sa cosa e' qui}
+	\begin{enumerate}
+	     \item $a \leq \exists_x a$,
+         \item $\exists_x \exists_y a = \exists_y \exists_x a$,
+         %\item $\forall a, b \in A.\ X \subseteq Y\wedge a \leq b \implies  \exists(X, a) = \exists(Y, b)$,
+	     %\item $\exists(X, \monid) = \monid$,
+	     \item $\exists_x (a \monop \exists_x b) = \exists_x a \monop \exists_x b$.
+	\end{enumerate}
+	
+	\noindent Let $a \in A$. The \emph{support} of $a$ is the set of variables 
+	$sv(a) = \{ x \mid \exists_x a \neq a\}$. 
+	% and the set of unsupported variables of $a$ is the set of variables $uv(a) =  V \setminus sv(a)$.
+\end{definition}
+
+In other words, $\exists$ fixes a monoid action which is monotone and increasing.
+
+\subsubsection{Polyadic operators.}
+We now move to define a family of operators axiomatising substitutions.  
+They interact with quantifiers, thus, beside a partially ordered monoid $\mathbb{S}$
+and a set $V$ of variables, we fix a cylindric operator $\exists$ over ${\mathbb S}$ and $V$.
+
+Let $F(V)$ be the set of functions with domain and codomain $V$.
+For a function $\sigma$ %: V \rightarrow V$ 
+its support is $sv(\sigma) = \{x \mid \sigma(x) \neq x\}$
+and, for a set $X \subseteq V$,
+$\sigma \mid_{X}: X \rightarrow V$ denotes the restriction of $\sigma$ to $X$
+and $\sigma^{c}(X) = \{ y \mid \sigma(y) \in X\}$ the counter-image 
+of $X$ along $\sigma$.
+%~\footnote{We are not going to need the other standard component proposed in the literature , 
+%i.e., \emph{diagonals}: a %family of elements $d_{x, y} \in A$ indexed by pairs of elements in $V$.}
+
+\begin{definition}[Polyadic ops]
+	\label{def:poly}
+	A polyadic operator $s$ for a cylindric operator $\exists$ is a family of monotone functions 
+	$s_\sigma: A \rightarrow A$
+	indexed by elements in $F(V)$ such that for all $a, b \in A$, $x \in V$, and $\sigma, \tau\in F(V)$
+	\begin{enumerate}
+		\item $sv(\sigma) \cap sv(a) = \emptyset \implies s_\sigma a = a$,
+		\item $s_\sigma(a \monop b) = s_\sigma a \monop s_\sigma b$,
+        \item $\sigma \mid_{sv(a)} = \tau \mid_{sv(a)} \implies s_\sigma a 
+        = s_\tau a$,
+        \item $\exists_x s_\sigma a = \begin{cases}
+			s_\sigma \exists_y a &\text{if $\sigma^c(x) = \{y\}$}\\
+			s_\sigma a &\text{if $\sigma^c(x) = \emptyset$}
+			\end{cases}$.				
+    \end{enumerate}
+\end{definition}
+
+%Clearly item $3$ always holds for an empty $X$.
+%
+A polyadic operator offers enough structure for modelling variable substitution. 
+%
+In the following, we fix a cylindric operator $\exists$
+and a polyadic operator $s$ for it.
+
+\comment{\begin{remark}
+The laws are directly adapted from~\cite{sagi2013}, with the exception of $2$, which 
+is stated as for a finite non-empty $X \subseteq V$ and $a \in A$
+	\begin{itemize}
+          \item[\emph{2'}.] $\sigma \mid_{V \setminus X} = \tau \mid_{V \setminus X}
+		         \implies \forall a\in A.\ s(\sigma, \exists (X, a)) = s(\tau, \exists (X, a))$.
+        \end{itemize}
+However, the two formulations are equivalent. Indeed, note that
+$\sigma \mid_{V \setminus X} = \tau \mid_{V \setminus X}$ implies 
+$\sigma \mid_{sv(a) \setminus X} = \tau \mid_{sv(a) \setminus X}$, 
+which in turn implies that 
+$\sigma \mid_{\exists (X, a)} = \tau \mid_{\exists (X, a)}$, and 
+assuming item $2$ the result follows.
+%
+For the vice-versa, first of all note that 
+$\sigma \mid_{V \setminus X} = \tau \mid_{V \setminus X}$
+coincides with $\sigma \mid_{Y \setminus X} = \tau \mid_{Y \setminus X}$
+for $Y = sv(\sigma) \cup sv(\tau) \subseteq V$, and that $Y$ is finite
+since both $\sigma$ and $\tau$ are finitely supported.
+Now, $\sigma \mid_{sv(a)} = \tau \mid_{sv(a)}$ implies that 
+$\sigma \mid_{Y \setminus (Y \setminus sv(a))} = \tau \mid_{Y \setminus (Y \setminus sv(a))}$,
+thus by $2a$ we have 
+$s(\sigma, \exists (Y \setminus sv(a), a)) = s(\tau, \exists (Y \setminus sv(a), a))$.
+Since by definition we have $\exists (Y \setminus sv(a), a)) = a$, the result follows.
+\end{remark}
+}
+
+
+
+\subsection{Cylindric and Polyadic operators for Residuated Monoids}
+\label{cyre}
+%Both algebraic structures introduced in the previous section are quite standard,
+%even if polyadic operators are less-known in the soft-constraints literature:
+%we tailored their presentation to our needs, and indeed the properties
+%presented in Section~\ref{propo} appear to be original. 
+We now consider 
+the interaction of previous structures with residuation. 
+%
+To this end, in the following we assume that 
+$\mathbb{S}$ is a residuated POM (see Def.~\ref{def:repo}).
+
+
+\begin{lemma}
+\label{divex}
+Let $x \in V$ and $a, b \in A$.
+%$X \subseteq V$ be finite. 
+Then it holds
+	%\begin{itemize}
+         $\exists_x(a \odiv \exists_x b) \leq \exists_x a \odiv \exists_x b \leq
+                                               \exists_x(\exists_x a \odiv b)$.
+	%\end{itemize}
+\end{lemma}
+
+
+
+\begin{remark}
+\label{remdiv}
+It is easy to check that $\exists_x(a \odiv \exists_x b) \leq \exists_x a \odiv \exists_x b$
+is actually equivalent to state that
+$\exists_x(a \monop \exists_x b) \geq \exists_x a \monop \exists_x b$.
+\end{remark}
+
+We can show that $\odiv$ does not substantially alter the free variables of its arguments.
+
+\begin{lemma}
+Let $a, b \in A$. Then it holds $sv(a \odiv b) \subseteq sv(a) \cup sv(b)$. 
+\end{lemma}
+
+
+%\begin{remark}
+%\todo{un esempio dove $\odiv$ non distribuisce}
+%\end{remark}
+
+%Similarly, it is easy to show that it holds $\forall a, b \in A.\ \exists_x(\exists_x a \odiv b) \leq \exists_x a \odiv \exists_x b$. 
+%
+
+A result similar to Lemma~\ref{divex} relates residuation and polyadic operators.
+
+%the following lemma holds.
+%\todo{Mettere motivazione Lemma?}
+
+\begin{lemma}
+Let $a, b \in A$ and $\sigma \in F(V)$. Then it holds
+%\begin{itemize}
+$s_\sigma (a \odiv b) \leq s_\sigma a \odiv s_\sigma b$.
+%\end{itemize}
+Furthermore, if $\sigma$ is invertible, then the equality holds.
+%\begin{itemize}
+%\item $\forall a,b \in A.\ s_\sigma (a \odiv b) = s_\sigma a \odiv s_\sigma b$.
+%\end{itemize}
+\end{lemma}
+
+\subsection{Polyadic Soft Constraints}\label{sec:softconstraints}
+\label{subsec:inst} 
+Our key example comes from the soft constraints literature: 
+our presentation generalises \cite{scc},
+whose underlying algebraic structure is of absorptive and idempotent semirings.
+
+\begin{definition}[Soft constraints]\label{def:softconstraints}
+	Let $V$ be a set of variables, $D$ a finite domain of interpretation
+	and ${\mathbb S} = \langle A, \leq, \monop, \odiv, \monid \rangle$ a residuated SLM.
+	A \emph{(soft) constraint} $c: (V \rightarrow D) \rightarrow
+	A$ is a function associating a value in $A$ with each assignment
+	$\eta: V\rightarrow D$ of the variables.
+\end{definition}
+
+The set of constraints forms a residuated SLM $\mathbb{C}$, with the structure
+lifted from ${\mathbb S}$. Denoting the application of a
+constraint function $c:(V \rightarrow D) \rightarrow A$ to a variable
+assignment $\eta:V\rightarrow D$ as $c\eta$, we have that 
+$c_1 \leq c_2$ if $c_1\eta\leq c_2\eta$ for all $\eta: V \rightarrow D$.
+
+\begin{lemma}[Cylindric and polyadic operators for (soft) constraints]
+	The residuated SLM of constraints $\mathbb{C}$ admits cylindric and polyadic operators, defined as
+	\begin{itemize}
+		\item  $(\exists_x c) \eta = \bigvee \{c \rho \mid \eta\mid_{V \setminus \{x\}} = 
+		\rho\mid_{V \setminus \{x\}}\}$ for all $x \in V$,
+		%\item if $\sigma$ is an injective substitution, then $(s_{\sigma}c)\eta = c(\sigma \circ \eta)$ 
+		%for all $c \in \mathcal{C}$
+		\item  $(s_\sigma c) \eta = c (\eta \circ \sigma)$ for all $\sigma \in F(V)$.
+%		\item $\delta_{x,y}\eta = \left\{
+%		\begin{array}{rcl} \bot & & \text{if } \eta(x) = \eta(y); \\
+%		\top & & \text{otherwise.}
+%		\end{array} \right.$ for all $x, y \in V$
+	\end{itemize}
+\end{lemma}
+
+\begin{remark}
+Note that $sv(c)$ coincides with the classical notion of support
+for soft constraints. Indeed, if $x\not \in sv(c)$, then two
+assignments $\eta_1, \eta_2: V \rightarrow D$ differing only for the
+image of $x$ coincide (i.e., $c\eta_1 =
+c\eta_2$).
+%
+The cylindric operator is called \emph{projection} 
+in the soft framework, and $\exists_x c$ is denoted 
+$c\Downarrow_{V\setminus \{x\}}$.
+\end{remark}
+
+\comment{
+Combining constraints by the $\monop$ operator
+means building a new constraint whose support involves at most
+the variables of the original ones. The resulting constraint  associates with
+each tuple of domain values for such variables the element
+that is obtained by multiplying  those associated by the
+original constraints to the appropriate sub-tuples.
+
+
+\begin{lemma}[Cylindric and polyadic operators for (soft) constraints]
+	The ReSL of constraints $\mathbb{C}$ admits cylindric and polyadic operators, defined as
+	\begin{itemize}
+		\item  $(\exists_x c) \eta = \bigvee \{c \rho \mid \eta\mid_{V \setminus \{x\}} = 
+		\rho\mid_{V \setminus \{x\}}\}$ for all $c \in {\mathcal C}, x \in V$
+		%\item if $\sigma$ is an injective substitution, then $(s_{\sigma}c)\eta = c(\sigma \circ \eta)$ 
+		%for all $c \in \mathcal{C}$
+		\item  $(s_\sigma c) \eta = c (\eta \circ \sigma)$ for all $c \in {\mathcal C}, \sigma \in F(V)$	
+%		\item $\delta_{x,y}\eta = \left\{
+%		\begin{array}{rcl} \bot & & \text{if } \eta(x) = \eta(y); \\
+%		\top & & \text{otherwise.}
+%		\end{array} \right.$ for all $x, y \in V$
+	\end{itemize}
+\end{lemma}
+
+
+A constraint involves all the variables in $V$, yet it may depend on
+the assignment of a finite subset of them, called its support. For
+instance, a binary constraint $c$ with $supp(c)=\{x,y\}$ is a function
+$c: (V\rightarrow D)\rightarrow A$ that depends only on the
+assignment of variables $\{x,y\}\subseteq V$, meaning that two
+assignments $\eta_1, \eta_2: V \rightarrow D$ differing only for the
+image of variables $z \not \in \{x,y\}$ coincide (i.e., $c\eta_1 =
+c\eta_2$).
+
+
+
+Hiding means eliminating variables from the support:
+$supp(\exists_x c) \subseteq supp({c}) \setminus {x}$.\footnote{The operator
+	is called \emph{projection} in the soft framework,
+	and $\exists_x c$ is denoted $c\Downarrow_{V\setminus \{x\}}$.}
+}
+
+\begin{example}
+\label{running}
+For the sake of simplicity, and to better illustrate the differences of our proposal with respect to~\cite{pippo},
+our running example will be
+the SLM of soft constraints where 
+%the SLM $\mathbb{S}$ is the semiring of integers and 
+$D$ is a finite initial segment of the naturals and
+$\mathbb{S}$ is the residuated SLM $\langle \{\bot, \top\},  \{\bot \leq \top\}, \wedge, \top \rangle$
+of booleans.
+That SLM coincide with the SLM $\mathbb{P}(F)$, for $F$ the family of functions 
+$V \rightarrow D$: it is localised and invertible, and the top and the identity element coincides with $F$, i.e., 
+the constraint $c$ such that $c\eta = \top$ for all $\eta$.
+%
+We will then usually express a constraint in $\mathbb{P}(F)$ as a SAT formula with inequations like $x \leq 1$, 
+intended as $(x \leq 1)\eta = \top$ if $\eta(x) \leq 1$ and $\bot$ otherwise. The support of $x \leq 1$ is of course $\{x\}$.
+As expected, $\exists_X$ behaves as an existential quantifier, so that 
+$\exists_x (x \leq 1) = \top$ and $\exists_x ((x \leq 1) \wedge  (y \leq 3)) = y \leq 3$.
+Similarly, for a substitution $\sigma$ we have that $s_\sigma(x \leq 1) = \sigma(x) \leq 1$. 
+
+%and we will exploit this fact.
+\end{example}
+
+\section{Polyadic Soft CCP: Syntax and reduction semantics}\label{sec:detpolyadicCCP}
+This section introduces our language.
+We fix a set of variables $V$, ranged over by $x$, $y$, $\ldots$, and 
+a residuated POM $\mathbb S = \langle {\mathcal C}, \leq, \otimes, \odiv, \1\rangle$, 
+which is cylindric and polyadic over $V$ and whose elements
+are ranged over by $c$, $d$, $\ldots$
+
+\begin{definition}[Agents]%
+The set $\mathcal{A}$ of agents, %which is
+parametric with respect to a set $\mathcal{P}$ of (unary) procedure declarations $p(x) = A$,
+is given by the following grammar
+\[ A \Coloneqq \: \: \mathit{\ostop} \mid \textit{\tell}(c)  \mid \textit{\ask}(c) \mapsto A \mid A \parallel A \mid %\exists_x A \mid %Z \mid \mu_Z A 
+p(x) \mid \exists_x A\]  
+%for $\pi \in {\mathcal C}^\ast$ a (possibly empty) sequence of elements.
+\end{definition}
+
+Hence, the syntax includes a termination agent $\mathit{\ostop}$, and the two typical operations of CCP languages~\cite{popl91}: \textit{\tell}(c) adds the
+constraint $c$ to a common store through which all agents interact, and $\textit{\ask}(c) \mapsto A$ continues as agent $A$ only when $c$ is entailed by 
+such a store (otherwise its execution is suspended). The other operators respectively express the parallel composition between two agents 
+(i.e., $A \parallel A$), the hiding of a variable $x$ in the computation of $A$ ($\exists_x A$), and, finally, the calling of a procedure $p \in \mathcal{P}$ 
+(whose body is an agent $A$) with an actual parameter identified by variable $x$.
+
+In the following we consider 
+a set $\mathcal{E}$ of extended agents that uses the existential operator $\exists^{\pi}_x A$, 
+where $\pi \in {\mathcal C}^\ast$ is meant to represent the sequence of updates performed on the local store. 
+More precisely, the extended agent may carry some information about the hidden variable 
+$x$ in an incremental way. We will often write $\exists_x A$ for $\exists^{[ \,]}_x A$ and $\pi_i$ for 
+the $i$-th element of $\pi = [ \pi_0, \ldots, \pi_n]$.
+
+We denote by $fv(A)$ the set of free variables of an (extended) agent, defined in the expected way 
+by structural induction, assuming that $fv(\tell(c)) = sv(c)$,
+$fv(\ask(c) \mapsto A) = sv(c) \cup fv(A)$,
+% and We also remark that $fv(\exists_x A) = fv(A) \setminus \{x\}$ 
+and $fv(\exists^{\pi}_x A) = (fv(A) \cup \bigcup_i sv(\pi_i)) \setminus \{x\}$.
+%
+In the following, we restrict our attention to 
+procedure declarations $p(x) = A$ such that $fv(A) = \{x\}$.
+
+
+\begin{definition}[Substitutions]
+Let $[^y/_x]: V \to V$ be the substitution defined as
+\[ [^y/_x](w) = 
+		\begin{cases} 
+			y & \text{if $w = x$} \\
+            w & \text{otherwise}
+        \end{cases}. \]
+%
+It induces an operator $[^y/_x]: \mathcal{E} \rarrow \mathcal{E}$ on extended agents as expected,  in particular
+%
+%\begin{itemize}
+%	\item $\ostop[^y/_x] = \ostop$
+%	\item $\tell(c)[^y/_x] = \tell(s_{[^y/_x]}c)$
+%	\item $(\ask(c) \rightarrow A)[^y/_x] = \ask(s_{[^y/_x]}(c)) \rightarrow A[^y/_x]$
+	%\item $[^y/_x] (\exists_w A)  = \exists_w ([^y/_x] A) \ \ \text{for $w \not \in \{x, y\}$}$
+%	\item $p(w)[^y/_x] =  p([^y/_x](w))$
+%	\item $(A_1 \parallel A_2)[^y/_x]  = (A_1[^y/_x] \parallel A_2[^y/_x])$
+        $$(\exists^{\pi}_w A)[^y/_x] = \begin{cases} 
+			\exists^{(s_{[^y/_x]} \pi)}_w A[^y/_x]  & \text{if } w \not \in \{x, y\} \\
+             (\exists^{(s_{[^z/_w]} \pi)}_z A[^z/_w])[^y/_x] & \text{for } z \not \in fv(\exists^{\pi}_w A) \text{ otherwise}
+        \end{cases}$$
+%\end{itemize}
+where $s_{[^y/_x]}: {\mathcal C} \rightarrow {\mathcal C}$ is the function associated with $[^y/_x]$ and 
+  $s_{[^y/_x]} [ \pi_1, \ldots, \pi_n ]$ is a shorthand for $[s_{[^y/_x]} \pi_1, \ldots, s_{[^y/_x]} \pi_n]$.
+\end{definition}
+
+Note that the choice of $z$ in the rule above is immaterial, since for the polyadic operator it holds
+$\exists_x c = \exists_y s_{[^y/_x]}(c)$ if $y \not \in sv(c)$.
+%
+In the following we consider terms to be equivalent up-to $\alpha$-conversion, meaning that terms 
+differing only for hidden variables are considered equivalent, i.e.,
+$\exists_w^\pi A = \exists_z^{(s_{[^z/_w]}\pi)} A[^z/_w]$ for $z \not \in fv(\exists^{\pi}_w A)$.
+
+\begin{lemma}
+Let $A \in \mathcal{E}$ and $x \not \in fv(A)$. Then $A[^y/_x] = A$.
+%\todo{Gi\`a dimostrato}
+\end{lemma}
+
+\begin{example}
+\label{running2}
+Consider the SLM $\mathbb{P}(F)$ illustrated in Example~\ref{running}.
+We can specify agents such as $\hbox{\ask}(y \leq 5) \mapsto \hbox{\ostop}$, i.e., an agent asking the store about the possible values of $y$, then terminating.
+Or $\exists_x (\hbox{\tell}(x \leq 1) \parallel \hbox{\tell}(y \leq 3))$ with $x \neq y$, meaning that the constraint $x \leq 1$ is local: indeed, thanks to $\alpha$-conversion
+it coincides with $\exists_z (\hbox{\tell}(z \leq 1) \parallel \hbox{\tell}(y \leq 3))$ for any $z \neq y$.
+%
+ As we are going to see, the execution of  $\hbox{\tell}(z \leq 1)$ will take the latter agent to $\exists_z^{[z \leq 1]} \hbox{\tell}(y \leq 3)$,
+which in turn coincides with $\exists_x^{[x \leq 1]} \hbox{\tell}(y \leq 3)$.
+\end{example}
+
+\subsection{Reduction semantics}
+We now move to the reduction semantics of our calculus. 
+%
+Given a sequence $\pi = [\pi_1, \ldots,$ $\pi_n]$, we will use 
+$\pi_\otimes$ and $\exists_x \pi$
+as shorthands for $\pi_1 \otimes \ldots \otimes \pi_n$ and
+$[\exists_x \pi_1, \ldots, \exists_x \pi_n]$, respectively,
+sometimes combining them as in $(\exists_x \pi)_\otimes$,
+with $[\,]_\otimes = \1$.
+
+\begin{definition}[Reductions]\label{def:reductions}
+Let $\Gamma = {\mathcal E} \times \C$ be the set of \emph{configurations}.
+The \emph{direct reduction semantics} for SCCP is the pair 
+$\langle \Gamma,  \to \rangle$
+such that $\to \, \, \subseteq \, \,\Gamma \times   \Gamma$ is the 
+binary relations obtained by the axioms in 
+Table~\ref{fig:operational}.
+
+The \emph{reduction semantics} for SCCP is the pair 
+$\langle \Gamma,  \rightarrow \rangle$
+such that $\rightarrow \, \, \subseteq \, \,\Gamma \times   \Gamma$ is the
+binary relation obtained by the rules in 
+Table~\ref{fig:operational} and Table~\ref{fig:operational2}.
+\end{definition}
+
+
+\begin{table}[t]  %\hfil5
+  %\scalebox{0.9}{
+   \begin{center}
+   \begin{tabular}{lcll} 
+   %
+   \mbox{\bf A1}& $ {\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \to \langle 
+   \hbox{\ostop}, \sigma \otimes c\rangle}$
+   \ \ \ & \bf{Tell}&
+  \\ 
+  &\mbox{   }&\mbox{   } &\mbox{   }
+  \\
+  \mbox{\bf A2}& $\frac {\displaystyle \sigma \leq c}{\displaystyle
+  	\begin{array}{l} \langle \hbox{\ask}(c) \mapsto A, \sigma \rangle \to \langle A, \sigma \rangle   	\end{array}}$
+    \ \ \ & \bf{Ask}&
+    \\
+    &\mbox{   }&\mbox{   }&
+    \\
+  \mbox{\bf A3}& $\frac {\displaystyle p(x) = A \in \mathcal{P} }
+  {\displaystyle\langle p(y),\sigma\rangle \to \langle A[^y/_x], \sigma \rangle}$ 
+  &\bf{Rec}&
+    %\\
+    %&\mbox{   }&\mbox{   }&
+    %\\
+    %\mbox{\bf A4}& $\frac {\displaystyle sv(\sigma) \cup fv(\exists_x A) \subseteq 
+    %\Delta \wedge w \not \in \Delta }
+    %{\displaystyle\langle \exists_x A,\sigma\rangle \to_\Delta \langle [^w/_x]A,
+    %\sigma\rangle}$
+    %&\bf{Hide}&
+    %\\
+   %&\mbox{   }&\mbox{   }&
+  \end{tabular}
+  \end{center}
+\caption{Axioms of the reduction semantics for SCCP.}
+\label{fig:operational}
+\end{table}
+
+\begin{table}  %\hfil5
+  %\scalebox{0.9}{
+   \begin{center}
+   \begin{tabular}{lcll} 
+   %
+  \mbox{\bf R1}& $\frac {\displaystyle \langle A, \sigma\rangle \to \langle A', \sigma' \rangle} 
+  {\displaystyle \begin{array}{l}
+                          \langle A\parallel B, \sigma \rangle \to \langle A'\parallel B, \sigma' \rangle
+                          \end{array}}$ 
+    & \bf{Par1}&
+  \\
+  & \mbox{   }&\mbox{   }&
+  \\
+    \mbox{\bf R2}& $\frac {\displaystyle \langle A, \pi_0 \otimes \sigma \rangle
+    \to \langle B, \sigma_1 \rangle \text{ with } \pi_0 = \pi_\otimes \odiv (\exists_x \pi)_\otimes}
+    {\displaystyle\langle \exists^{\pi}_x A,\sigma\rangle \to \langle 
+    \exists^{\pi \rho}_x B, \sigma \otimes \exists_x \rho
+    \rangle \text{ with } \rho = \sigma_1 \odiv (\pi_0 \otimes \sigma)} \text{ for } x \not \in sv(\sigma)$
+    &\bf{Hide}&
+  \end{tabular}
+  \end{center}
+\caption{Contextual rules of the reduction semantics for SCCP.}
+\label{fig:operational2}
+\end{table}
+
+The split distinguishes between the axioms and the rules guaranteeing the closure with respect to the parallel and existential operators. Indeed, rule {\bf  R1} models the interleaving of two agents in parallel, assuming for the sake of simplicity
+that the parallel operator is associative and commutative, as well as satisfying $ \hbox{\ostop} \parallel A = A$.
+%
+%
+In {\bf A1} a constraint $c$ is added to the store $\sigma$.
+%, which in the next step will be $\sigma \otimes c$.
+%
+{\bf A2} checks if $c$ is entailed by  $\sigma$: if not, the computation is blocked.
+%
+Axiom {\bf A3} replaces a procedure identifier with the associated body, renaming the formal parameter with the actual one.
+
+
+Let us instead discuss in some details the rule {\bf R2}.
+The intuition is that if we reach an agent $\langle \exists^{\pi}_x A,\sigma\rangle$, then during the computation
+a sequence $\pi$ of updates has been performed by the local agent, and $(\exists_x \pi)_\otimes$ 
+has been added to the global store. 
+%In order to evaluate $A$, 
+The chosen store for the configuration in the premise is 
+$\pi_0 \otimes \sigma$ for $\pi_0 = \pi_\otimes \odiv (\exists_x \pi)_\otimes$: the
+effect $(\exists_x \pi)_\otimes$ of the sequence of updates is removed from the local store $\pi_\otimes$,
+which may carry information about $x$, since that effect had been previously added to the global store.
+%
+Now, $\rho = \sigma_1 \odiv (\pi_0 \otimes \sigma)$ 
+is precisely the information added by the step originating from $A$, which is then restricted and added to $\sigma$. 
+On the local store we simply add that effect $\rho$ to the sequence of updates, with
+$\pi \rho = [\pi_0, \ldots, \pi_n, \rho]$.
+
+\begin{lemma}[On monotonicity]
+\label{rmono}
+Let $\langle A, \sigma \rangle \rightarrow \langle B, \rho \rangle$ be a reduction. 
+Then $\rho = (\rho \odiv \sigma) \otimes \sigma$ and $fv(\langle B, \rho \rangle) \subseteq fv(\langle A, \sigma \rangle)$.
+%\begin{enumerate}
+%\item $\exists \sigma''.\  \sigma' = \sigma'' \otimes \sigma$
+%\item $fv(\langle B, \sigma' \rangle) \subseteq fv(\langle A, \sigma \rangle)$
+%\end{enumerate}
+\end{lemma}
+ 
+%By the properties of residuation, a witness of the equality in item $1$ is
+%$\sigma' \odiv \sigma$.
+
+
+
+\begin{example}
+\label{running3}
+Consider the agents $A_1 = \hbox{\ask}(y \leq 5) \mapsto \hbox{\ostop}$ and $A_2 = \exists_x (\hbox{\tell}(x \leq 1) \parallel \hbox{\tell}(y \leq 3))$ 
+with $x \neq y$ discussed in Example~\ref{running2}, and the configuration $\langle A_1 \parallel A_2, \top \rangle$.
+Starting from the configuration $\langle A_2, \top \rangle$ we have the reductions
+$$\langle A_2, \top \rangle \to \langle \exists_x^{[y \leq 3]} \hbox{\tell}(x \leq 1), y \leq 3 \rangle
+    \to \langle \exists_x^{[y \leq 3, y > 3 \vee x \leq 1]} \hbox{\ostop}, y \leq 3 \rangle$$
+In both cases, first we apply {\bf A1}, then {\bf R1} and finally {\bf R2}. Looking at the application of {\bf R2} to the first 
+reduction, we have that $\pi_\otimes = \top = (\exists_x \pi)_\otimes$, thus $\pi_0 = \top$, $\rho = (y \leq 3) \odiv \top =  y \leq 3 = \exists_x (y \leq 3)$.
+Now, consider the second reduction. In that case we have $\pi_0 = (y \leq 3) \odiv (y \leq 3) =  \top$ and 
+$\rho = ((y \leq 3)\wedge (x \leq 1)) \odiv (y \leq 3) =  y > 3 \vee x  \leq 1$
+and $\exists_x \rho = \top$.
+%
+Note that in both the second and third state,  agent $A_1$ could be executed.
+\end{example}
+
+\begin{remark}
+\label{crisp}
+With respect to the crisp language with local variables introduced in \cite{pippo},
+which can be recast in our framework as absorptive POMs
+where the monoidal operator is idempotent,
+our proposal differs mostly for the structure of rule \mbox{\bf R2}, which could 
+be presented as shown below
+   $$\frac {\displaystyle \langle A, \pi_0 \otimes \sigma \rangle
+    \to \langle B, \xi \otimes \pi_0 \otimes \sigma \rangle \text{ with } \pi_0 = \pi_\otimes \odiv (\exists_x \pi)_\otimes}
+    {\displaystyle\langle \exists^{\pi}_x A,\sigma\rangle \to \langle 
+    \exists^{\pi \xi}_x B, \sigma \otimes \exists_x \xi
+    \rangle} \text{ for } x \not \in sv(\sigma)$$
+The proposals coincide for cancellative monoids, since inverses are unique.
+However, this is not so if the monoidal operator is idempotent, thus 
+the crisp rule represents in fact a schema, giving rise to a possibly infinite
+family of reductions departing from an agent. Our choice of the witness 
+$\exists_x \sigma_1 \odiv (\pi_0 \otimes \sigma)$ avoids such non-determinism.
+\end{remark}
+
+Let $\gamma = \langle A, \sigma \rangle$ be a configuration.
+%
+We denote by $fv(\gamma)$ the set $fv(A) \cup sv(\sigma)$ and by
+$\gamma[^z/_w]$ the component-wise application of the substitution $[^z/_w]$.
+
+\begin{definition}
+A configuration $\langle A, \sigma \rangle$ is initial if $A\in \mathcal{A}$
+and $\sigma = \1$; it is reachable if it can be reached by an initial configuration 
+via a sequence of reductions.
+\end{definition}
+
+\begin{lemma}[On monotonicity, II]
+\label{mono2}
+Let $\langle A \parallel \exists_x^\pi B, \sigma \rangle$ 
+be a reachable configuration.
+Then $\sigma = (\sigma \odiv (\exists_x \pi)_\otimes) \otimes (\exists_x \pi)_\otimes$.
+%\begin{enumerate}
+%\item $\exists \sigma'.\  \sigma = \sigma' \otimes (\exists_x \pi)_\otimes$
+%\end{enumerate}
+\end{lemma}
+
+\begin{remark}
+An alternative solution for the the structure of rule \mbox{\bf R2} would have been
+    $$\frac {\displaystyle \langle A, \pi_\otimes \otimes \sigma_0 \rangle
+    \to \langle B, \sigma_1 \rangle \text{ with } \sigma_0 = \sigma \odiv (\exists_x \pi)_\otimes}
+    {\displaystyle\langle \exists^{\pi}_x A,\sigma\rangle \to \langle 
+    \exists^{\pi \rho}_x B, \sigma \otimes \exists_x \rho
+    \rangle \text{ with } \rho = \sigma_1 \odiv (\pi_\otimes \otimes \sigma_0)} \text{ for } x \not \in sv(\sigma)$$
+Indeed, in the light of Lemma~\ref{mono2}, the proposals coincide for 
+invertible semirings, since 
+$\pi_0 \otimes \sigma
+=
+(\pi_\otimes \odiv (\exists_x \pi)_\otimes) \otimes (\exists_x \pi)_\otimes \otimes (\sigma \odiv (\exists_x \pi)_\otimes)
+\leq
+\pi_\otimes \otimes (\sigma \odiv (\exists_x \pi)_\otimes)$,
+and the equality holds for invertible semirings
+since $\pi_\otimes \leq (\exists_x \pi)_\otimes$.
+\end{remark}
+
+
+
+\subsection{Saturated bisimulation}\label{sec:saturated}
+As proposed in \cite{pippo} for crisp languages, we define a barbed equivalence between two agents~\cite{barbed}.  
+%
+Intuitively, barbs are basic observations (predicates) on the states of a system, and in our case they correspond 
+to the constraints in $\mathcal{C}$.
+
+\begin{definition} [Barbs]
+Let $\langle A, \sigma \rangle$ be a configuration and $c \in \mathcal{C}$. We say that $\langle A, \sigma \rangle$ verifies $c$, or that $\langle A, \sigma \rangle \downarrow_c$ holds, if  $\sigma \leq c$.
+\end{definition}
+
+Satisfying a barb $c$ means that the agent $\textit{\ask}(c) \mapsto A$ can be executed in the store $\sigma$,
+i.e., the reduction $\langle \textit{\ask}(c) \mapsto A, \sigma \rangle \to \langle A, \sigma \rangle$ is allowed.
+%
+We now move to equivalences: %and %Since \emph{barbed bisimilarity} is an equivalence already for CCP, 
+along~\cite{pippo},
+we propose the use of \emph{saturated bisimilarity}
+%~\cite{barbedMontanari} has been proposed 
+to obtain a congruence.
+
+
+\begin{definition}[Saturated bisimilarity]\label{def:strongsb} A saturated bisimulation is a symmetric relation $R$ on configurations such that whenever
+%$(\gamma_1,\gamma_2) \in R$ with $\gamma_1 = \langle A, \sigma \rangle$
+%and $\gamma_2 = \langle B, \rho \rangle$
+$( \langle A, \sigma \rangle,\langle B, \rho \rangle) \in R$
+\begin{enumerate}
+\item if $\langle A, \sigma \rangle \downarrow_c$ then $\langle B, \rho \rangle \downarrow_c$;
+\item if $\langle A, \sigma \rangle \to \gamma_1$ then there is $\gamma_2$ such that $\langle B, \rho \rangle \to \gamma_2$ and $(\gamma_1, \gamma_2) \in R$;
+\item $(\langle A,\sigma \otimes d\rangle, \langle B,\rho \otimes d \rangle) \in R$ for  all $d$.
+\end{enumerate}
+We say that $\gamma_1$ and $\gamma_2$ are  saturated bisimilar ($\gamma_1  \sim_{\mathit{s}} \gamma_2$) if there exists a  saturated  bisimulation $R$ such that $(\gamma_1 , \gamma_2 ) \in R$. We write $A \sim_{\mathit{s}} B$ if $\langle A, \monid \rangle \sim_{\mathit{s}} \langle B, \monid \rangle$.
+\end{definition}
+
+Note that $\langle A, \sigma \rangle \sim_{\mathit{s}} \langle B, \rho \rangle$ implies
+that $\sigma = \rho$.
+%Since $\sim_{\mathit{s}}$ is a saturated bisimulation, it is clearly closed with respect
+%to the addition of constraints to a store. 
+Moreover, it is also a congruence. Indeed, a context $C[\cdot]$, i.e., an agent with a placeholder $\cdot$,
+can modify the behaviour of a configuration only by adding constraints to its store. 
+
+\begin{proposition}
+\label{cong1}
+Let $A \sim_{\mathit{s}} B$ and $C[\cdot]$ a context.
+Then $C[A] \sim_{\mathit{s}} C[B]$.
+\end{proposition}
+
+
+
+\section{Labelled reduction semantics}\label{sec:labelled}
+The definition of $\sim_{\mathit{s}}$ 
+%and $\approx_{\mathit{s}}$ are fully abstract, they are somewhat 
+is unsatisfactory
+because of the store closure, i.e., the quantification in condition \emph{3} of 
+Definition~\ref{def:strongsb}.
+% and Definition~\ref{def:weaksb}.
+This section presents a labelled version of the reduction semantics that 
+allows for partially 
+%will be used to 
+%define a suitable bisimulation that 
+avoiding such drawback.
+
+\begin{definition}[Labelled reductions]
+	Let $\Gamma = {\mathcal A} \times \C$ be the set of \emph{configurations}.
+	The  \emph{labelled direct reduction semantics} for SCCP is the pair 
+	$\langle \Gamma,   \xrightarrow{ }  \rangle$
+	such that $\to \, \, \subseteq \, \,\Gamma \times \mathcal{C} \times \Gamma$ is the ternary
+	relation obtained by the axioms in Table~\ref{fig:ALTS}.
+	
+	The \emph{labelled reduction semantics} for SCCP is the pair 
+	$\langle \Gamma,  \rightarrow \rangle$
+	such that $\rarrow \, \, \subseteq \, \,\Gamma \times \mathcal{C} \times  \Gamma$ is the ternary relation
+         obtained by the rules in Table~\ref{fig:ALTS} and Table~\ref{fig:CRLTS}.
+\end{definition}
+
+
+\begin{table}  %\hfil5
+   \begin{center}
+   	  \scalebox{0.9}{
+   \begin{tabular}{lcll} 
+   %
+   \mbox{\bf LA1}& ${\displaystyle \langle \hbox{\tell}(c), \sigma \rangle \xrightarrow{\monid} 
+   \langle \hbox{\ostop}, \sigma \otimes c\rangle}$
+   \ \ \ & \bf{Tell}&
+  \\ 
+  &\mbox{   }&\mbox{   } &\mbox{   }
+  \\
+  \mbox{\bf LA2}& $\frac{\displaystyle \alpha \leq  c  \odiv  \sigma} %\wedge \alpha \leq \1} 
+  {{\displaystyle
+  	\begin{array}{l} \langle \hbox{\ask}(c) \mapsto A, \sigma \rangle \xrightarrow{\alpha}
+  	\langle A, \alpha \otimes \sigma \rangle
+  	\end{array}}}$
+  \ \ \ & \bf{Ask}&
+  \\
+  &\mbox{   }&\mbox{   }&
+  \\
+  \mbox{\bf LA3}& $\frac {\displaystyle p(x) = A \in  \mathcal{P} }
+  {\displaystyle\langle p(y),\sigma\rangle \xrightarrow{\monid} \langle  A[^y/_x], \sigma\rangle}$ 
+  &\bf{Rec}&
+ \end{tabular}
+}
+  \end{center}
+\caption{Axioms of the labelled semantics for \SCCP.}
+\label{fig:ALTS}
+\end{table}
+
+
+
+\def\oodiv{\; {\ominus\hspace{-7.5pt} \div} \;}
+
+\begin{table}  %\hfil5
+   \begin{center}
+   	  \scalebox{0.85}{
+   \begin{tabular}{lcll} 
+   %
+  \mbox{\bf LR1}& $\frac {\displaystyle \langle A,\sigma \rangle \xrightarrow{\alpha} \langle A', \sigma' \rangle} 
+  {\displaystyle \begin{array}{l}
+                          \langle A\parallel B, \sigma \rangle \xrightarrow{\alpha} \langle A'\parallel B, \sigma' \rangle
+                          \end{array}}$ 
+    & \bf{Par}&
+  \\
+  & \mbox{   }&\mbox{   }& \mbox{   }
+  \\
+  \mbox{\bf LR2} & $\frac {\displaystyle \langle A, \pi_0 \otimes \sigma \rangle \xrightarrow{\alpha}
+  \langle B, \sigma_1 \rangle \text{ with } \pi_0 = \pi_\otimes \oodiv (\exists_x \pi)_\otimes }
+  {\displaystyle \langle \exists^\pi_x A, \sigma \rangle \xrightarrow{\alpha}
+  \langle \exists^{\pi \rho}_x B, \alpha \otimes \sigma \otimes \exists_x \rho \rangle  \text{ with } \rho = \sigma_1 \oodiv (\alpha \otimes \pi_0 \otimes \sigma)}
+    \text{ for } x \not \in sv(\sigma) \cup sv(\alpha)$
+&\bf{Hide}&
+  \end{tabular}
+}
+  \end{center}
+\caption{Contextual rules of the labelled semantics for \SCCP.}
+\label{fig:CRLTS}
+\end{table}
+
+
+In Table~\ref{fig:ALTS} and Table~\ref{fig:CRLTS} we refine the notion of transition (respectively given in Table~\ref{fig:operational} and Table~\ref{fig:operational2})
+by adding a label that carries additional information about the constraints that cause the reduction.
+Indeed, rules in Table~\ref{fig:ALTS} and Table~\ref{fig:CRLTS} mimic those in Table~\ref{fig:operational} and Table~\ref{fig:operational2}, except for a constraint $\alpha$ that
+represents the additional information that must be combined with $\sigma$ in order to fire an action
+from $\langle A, \sigma\rangle$  to $\langle A', \sigma' \rangle$.
+% i.e., $\langle A, \sigma \otimes \alpha\rangle \longrightarrow \langle A' , \sigma' \rangle$.
+
+For the rules in Table~\ref{fig:ALTS}, as well as for rule {\bf  LR1}, we can restate the intuition given for their unlabelled counterparts. 
+The difference concerns the axioms for $\hbox{\ask}(c)$: if $c$ is not entailed from $\sigma$, then
+some additional information  is imported from the environment, ensuring that the state
+$\alpha \otimes \sigma \leq c$ allows the execution of $\hbox{\ask}(c)$.
+
+
+Once again, the more complex axiom is {\bf LR2}. With respect to {\bf R2}, the additional intuition is that 
+$\alpha$ should not contain the restricted variable $x$: additional information can be obtained from the environment,
+as long as it does not interact with data that are private to the local agent.
+%
+Note that by choosing $\rho = \sigma_1 \odiv (\alpha \otimes \pi_0  \otimes \sigma)$, we are 
+removing $\alpha$ from the update  to be memorised in the local store. However, 
+since $\alpha$ is added to the global store, it will not be necessary to receive it again in the future. 
+
+\def\ooodiv{\; {\ominus\hspace{-5.7pt} \div} \;}
+
+\begin{example}
+\label{running4}
+Consider the agent $A = \exists_x (\hbox{\tell}(x \leq 1) \parallel \hbox{\ask}(y \leq 5) \mapsto \hbox{\ostop})$, 
+with the same SLM as in Example~\ref{running3}. We now have the labelled reductions
+$$\langle A, \top \rangle \xrightarrow{\monid} \langle \exists_x^{[x \leq 1]} \hbox{\ask}(y \leq 5) \mapsto \hbox{\ostop}, \top \rangle
+    \xrightarrow{\alpha} \langle \exists_x^{[x \leq 1, x > 1 \vee \alpha]} \hbox{\ostop}, \top \rangle$$
+for every $\alpha \leq (y \leq 5) \odiv (x \leq 1) = (x > 1) \vee (y \leq 5)$ such that $x \not \in sv(\alpha)$, e.g., $y \leq 5$.
+Indeed, for the first reduction we first apply {\bf LA1}, then {\bf LR1}, and finally {\bf LR2}, while for the second reduction
+we first apply {\bf LA2} and then {\bf LR2}.
+%
+Looking at the application of {\bf LR2} to the first 
+reduction, we have that $\pi_\otimes = \top = (\exists_x \pi)_\otimes$, thus $\pi_0 = \top$, $\rho = (x \leq 1) \odiv \top =  x \leq 1$ 
+and $\exists_x \rho = \top$.
+%
+Now, consider the second reduction. In that case we have $\pi_0 = (x \leq 1) \odiv \top =  x \leq 1$, 
+$\rho = (\alpha \wedge (x \leq 1)) \odiv (x \leq 1) =  x > 1 \vee \alpha$
+and $\exists_x \rho = \top$.
+\end{example}
+
+\begin{remark}
+Concerning the rule ${\bf LA2}$, 
+%the requirement $\alpha \leq \1$ might have been replaced by $\alpha \leq \sigma \odiv \sigma$,
+%still ensuring a strengthening of the store. In view of later results on localised POMs, this choice will be immaterial.
+%
+%More importantly, 
+an alternative solution %for the rule 
+would have been to restrict the possible reductions to the one with the maximal label, 
+that is, $\langle \hbox{\ask}(c) \mapsto A, \sigma \rangle \xrightarrow{c \ooodiv \sigma} \langle A, (c \odiv \sigma) \otimes \sigma \rangle$. 
+However, as hinted at in Example~\ref{running4}, this might have been restrictive in combination with rule ${\bf LR2}$.
+Selecting $\alpha = (x > 1) \vee (y \leq 5)$ is problematic, since $x$ occurs free. Instead, the choice of $\alpha = y \leq 5$,
+or any other value such as $y \leq 4$, $y \leq 3$, $\ldots$, fits the intuition of information  from the environment 
+triggering the reduction.
+
+Note instead that the choice of removing the requirement $x \not \in sv(\alpha)$ and put $\exists_x \alpha$ as label in the 
+conclusion of rule ${\bf LR2}$ would  be too liberal. Once again, it would be counterintuitive for the previous example,
+since $\exists_x ((x > 1) \vee (y \leq 5)) = \top$. 
+%
+Or consider the configuration $\gamma = \langle \exists^{[x \leq 1]}_x \hbox{\ask}(x = 0) \mapsto \hbox{\ostop}, \top \rangle$: 
+such a configuration should intuitively be deadlocked. However, we have that 
+%
+$\langle \hbox{\ask}(x = 0) \mapsto \hbox{\ostop}, x \leq 1 \rangle \xrightarrow{\alpha} \langle \hbox{\ostop}, \alpha \wedge x \leq 1 \rangle$
+for $\alpha \leq (x = 0) \odiv (x \leq 1) = (x > 1) \vee (x = 0) = x \neq 1$, thus allowing the reduction $\gamma \xrightarrow{\top} \langle \exists^{[x \leq 1, \alpha \vee x \leq 1]}_x \hbox{\ostop}, \top\rangle$,
+which clashes with the intuition that receiving information should not enable reductions involving (necessarily) 
+the restricted variable.
+\end{remark}
+
+\begin{lemma}[On labelled monotonicity]
+\label{l-mono}
+Let $\langle A, \sigma \rangle \xrightarrow{\alpha} \langle B, \rho \rangle$ be a labelled reduction. 
+Then 
+%\begin{enumerate}
+$\rho = (\rho \odiv (\alpha \otimes \sigma)) \otimes \alpha \otimes \sigma$ and 
+$fv(\langle B, \rho \rangle) \subseteq fv(\langle A, \sigma \rangle) \cup sv(\alpha)$.
+%\end{enumerate}
+%Moreover, if $\mathbb S$ is localised and $\alpha \neq \monid$ then $\rho \odiv (\alpha \otimes \sigma) = \monid$.
+\end{lemma}
+
+
+\begin{remark}
+We will later prove that if $\mathbb S$ is localised and $\alpha \neq \monid$ then 
+$\rho \odiv (\alpha \otimes \sigma) = \monid$.
+In other terms, if $\langle A, \sigma \rangle \xrightarrow{\alpha} \langle B, \rho \rangle$ 
+is a labelled reduction and $\alpha \neq \monid$, then $\rho = \alpha \otimes \sigma$.
+Indeed, since $\alpha \neq \monid$ its derivation must use the axiom  {\bf LA2}.
+%
+Consider e.g. a labelled reduction 
+$ \langle \exists^\pi_x A, \sigma \rangle \xrightarrow{\alpha}
+  \langle \exists^{\pi \rho}_x B, \alpha \otimes \sigma \otimes \exists_x \rho \rangle$.
+  %Item $1$ of the lemma above tell us that 
+  If $\alpha \neq \monid$, then $\rho = \monid$. 
+  Indeed, this is the expected behaviour: if an input from the context is needed,
+  there is no contribution by the agent to the local store, hence the update is 
+  correctly $\monid$.
+\end{remark}
+
+\begin{definition}
+A configuration is l-reachable if it can be
+reached by an initial configuration via a sequence of 
+labelled reductions.
+\end{definition}
+
+
+
+\begin{lemma}[On labelled monotonicity, II]
+\label{l-mono2}
+Let 
+$\langle B \parallel \exists_x^\pi C, \sigma \rangle$ 
+be an l-reachable configuration. 
+Then 
+%\begin{enumerate}
+%\item $\exists \sigma'.\  \sigma = \sigma' \otimes \exists_x \pi$
+%\end{enumerate}
+$\sigma = (\sigma \odiv (\exists_x \pi)_\otimes) \otimes (\exists_x \pi)_\otimes$.
+\end{lemma}
+
+
+\section{Semantics correspondence and labelled bisimilarity}\label{sec:correspondancebis}
+We collect further formal results in two different subsections: Section~\ref{sec:corres} proves the correspondence between the unlabelled and the labelled semantics, while Section~\ref{sec:bisimilarity} proposes a bisimilarity reduction for the labelled  semantics.
+
+\subsection{On the correspondence between reduction semantics}
+\label{sec:corres}
+This section shows the connection between labelled and unlabelled reduction semantics.
+
+\begin{proposition}[Soundness]
+\label{sound}
+%Let $\langle A, \sigma \rangle$ be an l-reachable configuration and
+If $\langle A, \sigma \rangle \xrightarrow{\alpha} \langle B, \sigma' \rangle$
+then %$\langle A, \alpha \otimes \sigma \rangle$ is a reachable configuration and
+$\langle A, \alpha \otimes \sigma \rangle \to \langle B, \sigma' \rangle$.
+\end{proposition}
+
+
+
+The theorem above can be easily reversed, saying that if a configuration $\langle A, \sigma \rangle$ is reachable,
+then it is also l-reachable via a sequence of reductions labelled with $\monid$.
+
+\begin{lemma}
+\label{idred}
+If %$\langle A, \sigma \rangle$ be a reachable configuration and
+$\langle A, \sigma \rangle \to \langle B, \sigma' \rangle$
+then %$\langle A, \sigma \rangle$ is an l-reachable configuration and
+$\langle A, \sigma \rangle \xrightarrow{\monid}  \langle B, \sigma' \rangle$.
+\end{lemma}
+
+
+	
+These results also ensure that a configuration is reachable iff it is l-reachable.
+%
+However, we are interested in a more general notion of completeness, possibly taking into account 
+reductions needing a label. For this, we first need some technical lemmas.
+% as stated in the theorem below.
+%
+%
+
+Now, note that the proof of every (labelled) reduction is given by the choice of an axiom 
+and a series of applications of the rules {\bf LR1} and  {\bf LR2}.
+Also, note that if 
+$\langle A, \sigma \rangle \xrightarrow{\alpha} \langle B, \sigma' \rangle$ is a reduction 
+via the axiom {\bf LA1}, then $\alpha = \1$.
+
+\begin{proposition}[Completeness, I]
+\label{LA1}
+Let $\langle A, \tau \rangle \xrightarrow{\monid} \langle B, \tau' \rangle$ be a reduction 
+via the axiom {\bf LA1} for $\tau \not \in \{\bot, \top\}$. 
+If $\C$ is cancellative then 
+%there exists $\xi$
+%such that $\tau' = \xi \otimes \tau$
+%and 
+$\langle A, \sigma \rangle \xrightarrow{\monid} \langle B, \sigma' \rangle$
+and $\tau' \odiv \tau = \sigma' \odiv \sigma$
+for every $\sigma \not \in \{\bot, \top\}$.
+\end{proposition}
+
+
+
+
+\begin{proposition}[Completeness, II]
+\label{LA2}
+Let $\langle A, \tau \rangle \xrightarrow{\beta} \langle B, \tau' \rangle$ be a reduction 
+via the axiom {\bf LA2} for $\tau \not \in \{\bot, \top\}$. If $\C$ is localised then $\tau' = \beta \otimes \tau$
+and if $\alpha \leq (\beta \otimes \tau) \odiv \sigma$ then
+$\langle A, \sigma \rangle \xrightarrow{\alpha} \langle B, \alpha \otimes \sigma \rangle$
+for every $\sigma \not \in \{\bot, \top\}$.
+\end{proposition}
+
+Clearly $\alpha = (\beta \otimes \tau) \odiv \sigma$ is a possible witness. Note however that 
+it might be that $\beta \otimes \tau \not \leq \alpha \otimes \sigma$
+if $\sigma = \bot$, in which case $\alpha = \top$.
+
+\subsection{Labelled bisimulation}\label{sec:bisimilarity}
+We now exploit the labelled reductions in order to define a suitable notion of bisimilarity without the upward closure condition.
+As it occurs with the crisp language~\cite{pippo} and the soft variant with global variables~\cite{jlamp17}, 
+%and differently from most process calculi~\ref{xxx}, 
+barbs cannot be removed from the 
+definition of bisimilarity because they cannot be inferred by the reductions.
+
+\begin{definition}[Strong bisimilarity]\label{def:strongbis} A strong bisimulation is a symmetric relation $R$ on configurations such that whenever
+%$(\gamma_1,\gamma_2) \in R$ with $\gamma_1 = \langle A, \sigma \rangle$
+%and $\gamma_2 = \langle B, \rho \rangle$
+$( \langle A, \sigma \rangle,\langle B, \rho \rangle) \in R$
+\begin{enumerate}
+\item if $\langle A, \sigma \rangle \downarrow_c$ then $\langle B, \rho \rangle \downarrow_c$;
+\item if $\langle A, \sigma \rangle \xrightarrow{\alpha} \gamma_1$ then there is $\gamma_2$ such that $\langle B, \alpha \otimes \rho \rangle \to \gamma_2$ 
+and $(\gamma_1, \gamma_2) \in R$;
+\item $(\langle A,\sigma \otimes d\rangle, \langle B,\rho \otimes d \rangle) \in R$ for  all $d$ such that $d \not \leq \monid$.
+%$\sigma \otimes d \not \leq \sigma$. 
+\end{enumerate}
+We say that $\gamma_1$ and $\gamma_2$ are  strongly bisimilar ($\gamma_1  \sim \gamma_2$) if there exists a strong  bisimulation 
+$R$ such that $(\gamma_1 , \gamma_2 ) \in R$. We write $A \sim B$ if $\langle A, \monid \rangle \sim \langle B, \monid \rangle$.
+\end{definition}
+
+Note that $\langle A, \sigma \rangle \sim \langle B, \rho \rangle$ implies
+$\sigma = \rho$, as for saturated bisimilarity.
+%This fact does not hold if we move to weak relations. 
+%
+%
+We improved on the feasibility of $\sim$ by requiring that the equivalence is upward closed 
+only whenever the store does not decrease. Note that in some cases, e.g. 
+when $\mathcal{C}$ is absorptive (as in  \cite{pippo}), the clause is vacuous. 
+%
+However, thanks to the correspondence results in Section~\ref{sec:corres}, 
+it can be proved upward-closed for all $d$, and thus it is also a congruence.
+%
+%Recall that a context $C[\cdot]$ is an agent with an placeholder $\cdot$.
+
+\begin{proposition}
+Let $\langle A,\sigma \rangle \sim \langle B,\rho \rangle$ and $d \in \mathcal{C}$.
+If  $\mathcal{C}$ is cancellative then $\langle A,\sigma \otimes d\rangle \sim \langle B,\rho \otimes d \rangle$.
+\end{proposition}
+
+As for the unlabelled case (Proposition~\ref{cong1}), strong bisimilarity is a congruence.
+
+\begin{proposition}
+Let $A \sim B$ and $C[\cdot]$ a context.
+If $\mathcal{C}$ is cancellative 
+then $C[A] \sim C[B]$.
+\end{proposition}
+
+Finally, we can state the correspondence between our bisimilarity semantics.
+
+\begin{theorem}
+$\sim_{\mathit{s}} \subseteq \sim$. Moreover, if $\mathcal{C}$ is cancellative, then the equality holds.
+\end{theorem}
+
+
+
+\section{Related works}\label{sec:related}
+As it is possible to appreciate from the survey in \cite{emerging}, the literature on CCP languages is quite ample. In the following of this section  we briefly summarise proposals that consider both local and global stores, and information mobility.
+
+The work that is most related to ours is represented by \cite{pippo}. Anyhow, the differences are significant: in that work the underlying constraint system is crisp, as it can only deal with hard constraints (which indeed we can do as well). 
+%For this reason, there is no need for defining a \emph{residuated} preference system, which allows us to use bipolar preferences. 
+Furthermore, the authors of \cite{pippo} adopt a cylindric algebra instead of a polyadic one, as introduced in Section~\ref{sec:intro}. Finally, as already noted in Remark~\ref{crisp} in this paper, the use of the local store is different with respect to our approach.
+Since the monoidal operator is idempotent, in \cite{pippo} the semantics 
+of the hiding operator is simply presented as $\langle 
+\exists^{e}_x A, \sigma \rangle \to \langle  \exists^{e'}_x B, \sigma \otimes \exists_x e' \rangle$ if $\langle 
+A, e \otimes \exists_x \sigma \rangle \to \langle  B, e' \otimes \exists_x \sigma \rangle$. 
+Since we have introduced polyadic operators, with their simpler representation of substitutions, and thus we consider agents up-to $\alpha$-conversion,
+we can replace $\exists_x \sigma$ with $\sigma$ by requiring that $x \not \in sv(\sigma)$.
+Most importantly, in \cite{pippo} the local store $e$ is used to fire a step that only changes the local store to $e'$, and this change is  visible in the global store except  for the effect on variable $x$. However, this rule is intrinsically non-deterministic, since many such $e'$ can exist. Moreover, since we are not idempotent we cannot add the whole $e'$ to both the local and the global stores, but only the ``difference'' between $e'$ and $e$ at each step. 
+
+In \cite{spatialvalencia} the authors describe a \emph{spatial} constraint system with operators to
+specify information and processes moving from a space to another. Such a language provides for the specification of spatial mobility and epistemic concepts such as belief, utterance and lies: besides local stores for agents  (representing belief), it can express the epistemic notion of knowledge by means of a derived spatial operator that specifies global shared information. Differently from this work, our approach focuses on preferences, on the concurrent language on top of the system, and on process equivalences.
+
+The process calculi in \cite{parrowlics,buscemi} provide  to agents the use of assertions within $\pi$-like processes. A soft language is adopted in \cite{buscemi}: from a variant of $\pi$-calculus it inherits \emph{explicit fusions}, i.e. simple constraints expressing name equalities, in order to pass constraints from an agent to another.
+ However, the algebraic structure is neither residuated nor  polyadic; in addition, no process-equivalence relation is proposed.  In \cite{pi1,pi2}  processes can send constraints using communication channels much like in the $\pi$-calculus. 
+ 
+ A further language that uses $\pi$-calculus features to exchange constraints between agents, but this time with a probabilistic semantics, is shown in \cite{bortolussi}. A congruence relation and a labelled transition system are also shown in the paper. 
+
+In \cite{catuscia} the authors propose an extension of the CCP language with the purpose to model process migration within a hierarchical network. Agents bring their local store when they migrate. In \cite{lubos} the authors enrich a CCP language with the possibility to share (read/write) the information in the global store, and communicate with other agents (via multi-party or handshake).
+
+All the systems described in this section are based on hard constraints, and  they do not consider preferences associated with constraints (except \cite{buscemi}, whose algebraic structure is however less general). In addition, a very few proposals formalise process equivalences by providing a deeper investigation of the semantics.
+
+\section{Conclusions and further works}\label{sec:conclusion}
+With the language we presented in this paper, our goal was to further extend and generalise  the family of CCP-based languages . In fact, \emph{i)}  with respect to crisp languages we can  represent preferences, and thus both hard and soft constraints. Then, \emph{ii)} polyadic operators make it possible  to have a compact representation of soft constraints (about this, we point the interested reader to \cite{festcatuscia}), which in turn can be used in several applications, as in hybrid systems, loop invariant generation, and parameter design of control~\cite{smtpolynomial}.  Furthermore, \emph{iii)} the polyadic algebra we adopted takes advantage of a residuated POM which allows any partially ordered set of preference values, while $\odiv$ permits to easily compute barbs and remove one constraint (store) from another. The use of a non idempotent operator $\otimes$ for combining constraints led us to redesign the local stores proposed in \cite{pippo}, to add to the global store the information added at each computation step only.
+
+An important issue we are currently working on is to remove the requirement of cancellativeness on the first completeness result between the reduction semantics, hence in the 
+correspondence between the barbed and strong bisimilarities, 
+as well as to remove the closure of the store with $d \not \leq \monid$ in the definition of strong bisimilarity. Instead, our proposal could be easily extended in order to describe the weak variant of our bisimulation equivalences, which is the main reason why we introduced barbs directly in this paper. 
+Indeed, in such semantics equivalent configurations may have different stores, and barbs were introduced to address this kind of issues~\cite{barbed}.
+
+In the case of ``soft languages'', the removal of constraints can also be partial, while in case of ``crisp  languages'', constraint tokens can only be entirely removed or left in the store. A \emph{retract} operation could also be directly included in the language syntax, in the style of \cite{fun11,buscemi}, even if it is not in the scope of this paper.
+
+For the future, we conceive more applicative extensions of the language we designed: while in this paper we focused on its formal definition, semantics, and process equivalence, we can think of application fields concerning epistemic concepts or process migration from node to node, as some of the proposals in Section~\ref{sec:related} offer.
+
+Separately from the process algebra focus we developed in this paper, we can also think of defining the class of Polynomial \emph{Soft} Constraint Satisfaction Problems (PSCSPs), 
+as accomplished in \cite{pcsp09} with crisp constraints, in order to achieve a similar generalisation with respect to CSPs. Hence, we can implement polynomial constraint satisfaction as a SMT module, where agents can tell constraints and ask for their satisfaction.
+
+
+\bibliographystyle{splncs04}
+\bibliography{main,softccp}
+
+
+
+\end{document}
