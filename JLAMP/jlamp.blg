@@ -1,47 +1,47 @@
 This is BibTeX, Version 0.99d (TeX Live 2020)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: jlamp.aux
-The style file: splncs04.bst
+The style file: elsarticle-num.bst
 Database file #1: main.bib
 Database file #2: softccp.bib
 You've used 26 entries,
-            2850 wiz_defined-function locations,
-            783 strings with 9373 characters,
-and the built_in function-call counts, 17208 in all, are:
-= -- 1430
-> -- 504
-< -- 45
-+ -- 201
-- -- 172
-* -- 1120
-:= -- 2106
-add.period$ -- 47
+            2952 wiz_defined-function locations,
+            858 strings with 9968 characters,
+and the built_in function-call counts, 9937 in all, are:
+= -- 924
+> -- 332
+< -- 19
++ -- 125
+- -- 99
+* -- 724
+:= -- 1289
+add.period$ -- 26
 call.type$ -- 26
-change.case$ -- 172
+change.case$ -- 25
 chr.to.int$ -- 0
 cite$ -- 26
-duplicate$ -- 1548
-empty$ -- 1529
-format.name$ -- 199
-if$ -- 3806
+duplicate$ -- 348
+empty$ -- 1111
+format.name$ -- 126
+if$ -- 2570
 int.to.chr$ -- 0
 int.to.str$ -- 26
-missing$ -- 318
-newline$ -- 84
-num.names$ -- 70
-pop$ -- 538
+missing$ -- 27
+newline$ -- 86
+num.names$ -- 44
+pop$ -- 207
 preamble$ -- 1
-purify$ -- 125
+purify$ -- 0
 quote$ -- 0
-skip$ -- 498
+skip$ -- 664
 stack$ -- 0
-substring$ -- 1040
-swap$ -- 967
-text.length$ -- 45
+substring$ -- 617
+swap$ -- 125
+text.length$ -- 19
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 102
+type$ -- 0
 warning$ -- 0
-while$ -- 152
+while$ -- 88
 width$ -- 28
-write$ -- 283
+write$ -- 235

@@ -1,0 +1,125 @@
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \def\href#1#2{#2} \def\path#1{#1}\fi
+
+\bibitem{popl91}
+V.~A. Saraswat, M.~C. Rinard, P.~Panangaden, Semantic foundations of concurrent
+  constraint programming, in: D.~S. Wise (Ed.), POPL 1991, ACM Press, 1991, pp.
+  333--352.
+
+\bibitem{pippo}
+A.~Aristiz{\'a}bal, F.~Bonchi, C.~Palamidessi, L.~F. Pino, F.~D. Valencia,
+  Deriving labels and bisimilarity for concurrent constraint programming, in:
+  M.~Hofmann (Ed.), FOSSACS 2011, Vol. 6604 of LNCS, Springer, 2011, pp.
+  138--152.
+
+\bibitem{scc}
+S.~Bistarelli, U.~Montanari, F.~Rossi, Soft concurrent constraint programming,
+  ACM Transactions on Computational Logic 7~(3) (2006) 563--589.
+
+\bibitem{ccpi}
+M.~G. Buscemi, U.~Montanari, {CC-P}i: A constraint-based language for
+  specifying service level agreements, in: R.~{De Nicola} (Ed.), ESOP 2007,
+  Vol. 4421 of LNCS, Springer, 2007, pp. 18--32.
+
+\bibitem{sefm12}
+S.~Bistarelli, F.~Santini, A secure non-monotonic soft concurrent constraint
+  language, Fundamamenta Informaticae 134~(3-4) (2014) 261--285.
+
+\bibitem{fun14}
+S.~Bistarelli, F.~Santini, A secure non-monotonic soft concurrent constraint
+  language, Fundam. Inform. 134~(3-4) (2014) 261--285.
+
+\bibitem{coordination08}
+S.~Bistarelli, M.~Gabbrielli, M.~C. Meo, F.~Santini, Timed soft concurrent
+  constraint programs, in: D.~Lea, G.~Zavattaro (Eds.), COORDINATION, Vol. 5052
+  of LNCS, 2008, pp. 50--66.
+
+\bibitem{tplp15}
+S.~Bistarelli, M.~Gabbrielli, M.~C. Meo, F.~Santini, Timed soft concurrent
+  constraint programs: An interleaved and a parallel approach, {TPLP} 15~(6)
+  (2015) 743--782.
+
+\bibitem{coordination15}
+F.~Gadducci, F.~Santini, L.~F. Pino, F.~D. Valencia, A labelled semantics for
+  soft concurrent constraint programming, in: T.~Holvoet, M.~Viroli (Eds.),
+  COORDINATION 2015, LNCS, Springer, 2015, pp. 133--149.
+
+\bibitem{CLIM}
+G.~Karner, Semiring-based constraint satisfaction and optimization, Semigroup
+  Forum 45~(XX) (1992) 148--165.
+
+\bibitem{probabilistic}
+H.~Fargier, J.~Lang, Uncertainty in constraint satisfaction problems: a
+  probabilistic approach, in: M.~Clarke, R.~Kruse, S.~Moral (Eds.), ECSQUARU
+  1993, Vol. 747 of LNCS, Springer, 1993, pp. 97--104.
+
+\bibitem{jacm}
+S.~Bistarelli, U.~Montanari, F.~Rossi, Semiring-based constraint satisfaction
+  and optimization, Journal of ACM 44~(2) (1997) 201--236.
+
+\bibitem{golan}
+J.~Golan, Semirings and Affine Equations over Them: Theory and Applications,
+  Kluwer, 2003.
+
+\bibitem{ecai06}
+S.~Bistarelli, F.~Gadducci, Enhancing constraints manipulation in
+  semiring-based formalisms, in: G.~Brewka, S.~Coradeschi, A.~Perini,
+  P.~Traverso (Eds.), ECAI 2006, Vol. 141 of FAIA, IOS Press, 2006, pp. 63--67.
+
+\bibitem{residuated}
+N.~Galatos, P.~Jipsen, T.~Kowalski, H.~Ono, Residuated Lattices: An Algebraic
+  Glimpse at Substructural Logics, Vol. 151, Elsevier, 2007.
+
+\bibitem{resbook}
+F.~Baccelli, G.~Cohen, G.~Olsder, J.-P. Quadrat, Synchronization and Linearity:
+  An Algebra for Discrete Event Systems, Wiley, 1992.
+
+\bibitem{monk}
+J.~D. Monk, An introduction to cylindric set algebras, Logic Journal of IGPL
+  8~(4) (2000) 451--496.
+
+\bibitem{barbedMontanari}
+U.~Montanari, V.~Sassone, Dynamic congruence vs. progressing bisimulation for
+  {CCS}, Fundamenta informaticae 16~(2) (1992) 171--199.
+
+\bibitem{Leifer:00:CONCUR}
+J.~J. Leifer, R.~Milner, Deriving bisimulation congruences for reactive
+  systems, in: C.~Palamidessi (Ed.), CONCUR 2000, LNCS, 2000, pp. 243--258.
+
+\bibitem{Bonchi:09:FOSSACS}
+F.~Bonchi, F.~Gadducci, G.~V. Monreale, Reactive systems, barbed semantics, and
+  the mobile ambients, in: L.~de~Alfaro (Ed.), FOSSACS 2009, LNCS, 2009, pp.
+  272--287.
+
+\bibitem{fairness}
+M.~Z. Kwiatkowska, Infinite behaviour and fairness in concurrent constraint
+  programming, in: Sematics: Foundations and Applications, {REX} Workshop, Vol.
+  666 of Lecture Notes in Computer Science, Springer, 1992, pp. 348--383.
+
+\bibitem{LagoM04}
+U.~{Dal Lago}, S.~Martini, Phase semantics and decidability of elementary
+  affine logic, Theoretical Computer Science 318~(3) (2004) 409--433.
+
+\bibitem{general-topology}
+A.V.Arkhangelskii, L.S.Pontryagin, General Topology I, Springer, 1990.
+
+\bibitem{Pino:14:ICTAC}
+L.~F. Pino, F.~Bonchi, F.~D. Valencia, A behavioral congruence for concurrent
+  constraint programming with non-deterministic choice, in: G.~Ciobanu,
+  D.~M{\'{e}}ry (Eds.), ICTAC 2014, Vol. 8687 of LNCS, Springer, 2014, pp.
+  351--368.
+
+\bibitem{extendedHiding}
+F.~S. de~Boer, M.~Gabbrielli, E.~Marchiori, C.~Palamidessi, Proving concurrent
+  constraint programs correct, ACM ToPLaS 19~(5) (1997) 685--725.
+
+\bibitem{BonchiGM14}
+F.~Bonchi, F.~Gadducci, G.~V. Monreale, A general theory of barbs, contexts,
+  and labels, {ACM} Transactions on Computational Logic 15~(4) (2014)
+  35:1--35:27.
+
+\end{thebibliography}

@@ -1,7 +1,7 @@
-\documentclass{llncs}
+\documentclass[preprint,12pt]{elsarticle}
 \usepackage{mathptmx}
 
-\usepackage{amsmath,amssymb,amsxtra,amsfonts,cancel}
+\usepackage{amsmath,amssymb,amsxtra,amsfonts,cancel,amsmath}
 \usepackage{graphicx,paralist}
 \usepackage{url}
 \usepackage{tikz-cd}
@@ -40,9 +40,14 @@
 %\addtolength{\floatsep}{-5mm} \addtolength{\textfloatsep}{-5mm}
 % -------------------------------------------------------------
 
-\newtheorem{define}[theorem]{Definition}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
 
-\newtheorem{exa}[theorem]{Example}
+
+\newtheorem{example}{Example}
 \def\smallromani{\renewcommand{\theenumi}{\roman{enumi}}
         \renewcommand{\labelenumi}{(\theenumi)}}
 
@@ -90,25 +95,33 @@
 
 \begin{document}
 
-\title{Soft Concurrent Constraint Programming\\ with Local Variables\thanks{Research partially supported by the MIUR PRIN 2017FTXR7S ``IT-MaTTerS''
-and by GNCS-INdAM (``Gruppo Nazionale per il Calcolo Scientifico'').}
-}
 
 
-\author{Laura Bussi\inst{1}, Fabio Gadducci\inst{1}, 
-Francesco Santini\inst{2}
-} 
-	\institute{Dipartimento di Informatica, Universit{\`a} di Pisa, Pisa, Italy \\
-		\email{laura.bussi@phd.unipi.it} \qquad
-		\email{fabio.gadducci@unipi.it}
-		\and Dipartimento di Matematica e Informatica, Universit{\`a} degli Studi di Perugia, Perugia, Italy\\
-		\email{francesco.santini@unipg.it}
+\begin{frontmatter}
+	%%  Tell me if you like this title. It's ok if you want to keep the old one.
+	%%
+	\title{Soft Concurrent Constraint Programming\\ with Local Variables\thanks{Research partially supported by the MIUR PRIN 2017FTXR7S ``IT-MaTTerS''
+			and by GNCS-INdAM (``Gruppo Nazionale per il Calcolo Scientifico'').
 		}
+	}
 	
-\titlerunning{SCCP with Local Variables}
-\authorrunning{Bussi, Gadducci, and Santini}
+	\author[fb]{Fabio~Gadducci\corref{cor1}}
+	\ead{gadducci@unipi.it}
+	\author[fs]{Francesco~Santini\corref{cor2}\fnref{fn2}}
+	\ead{francesco.santini@dmi.unipg.it}
+	\author[lb]{Laura Bussi}
+	\ead{laura.bussi@phd.unipi.it}
 
-\maketitle
+	
+	\cortext[cor1]{Principal corresponding author.}
+	\cortext[cor2]{Secondary corresponding author.}
+	
+	
+	%\fntext[fn2]{Partially supported by .} 
+	\address[fb]{Dipartimento di Informatica, Universit\`a di Pisa, Italy} 
+	\address[fs]{Dipartimento di Matematica e Informatica, Universit\`a degli Studi di Perugia, Italy}
+	\address[lb]{Dipartimento di Informatica, Universit\`a di Pisa, Italy}
+
 
 \begin{abstract}
 We extend Soft Concurrent Constraint languages with the possibility to manage variables that are local (i.e., private) to some of the agents. Being  constraints soft,  it is possible to represent preferences as a partially ordered set.
@@ -119,7 +132,14 @@ further proving their correspondence.
 \end{abstract}
 
 
-\keywords{Soft concurrent constraint programming, residuated monoids, local variables, bisimulation equivalences.}
+
+
+%\maketitle
+\end{frontmatter}
+
+
+
+
 
 \section{Introduction}\label{sec:intro}
 \emph{Concurrent Constraint Programming} (CCP) is a declarative model for concurrency where agents interact on a common store of information by telling and asking constraints~\cite{emerging}.  In general terms, a constraint is a relationship on a set of variables: an assignment of (some of) the variables in the store needs to be found so to satisfy a given goal.  A constraint system provides a signature from which the constraints are built;  it is formalised as an algebra with operators to express conjunction of constraints, absent and inconsistent information, hiding of information and parameter passing.
@@ -1396,7 +1416,7 @@ Separately from the process algebra focus we developed in this paper, we can als
 as accomplished in \cite{pcsp09} with crisp constraints, in order to achieve a similar generalisation with respect to CSPs. Hence, we can implement polynomial constraint satisfaction as a SMT module, where agents can tell constraints and ask for their satisfaction.
 
 
-\bibliographystyle{splncs04}
+\bibliographystyle{elsarticle-num}
 \bibliography{main,softccp}
 
 
