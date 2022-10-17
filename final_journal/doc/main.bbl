@@ -26,21 +26,11 @@ Bistarelli, S., Gadducci, F.: Enhancing constraints manipulation in
 Bistarelli, S., Montanari, U., Rossi, F.: Soft concurrent constraint
   programming. ACM Transactions on Computational Logic  7(3),  563--589 (2006)
 
-\bibitem{fun11}
-Bistarelli, S., Santini, F.: A nonmonotonic soft concurrent constraint language
-  to model the negotiation process. Fundamamenta Informaticae  111(3),
-  257--279 (2011)
-
 \bibitem{festcatuscia}
 Bonchi, F., Bussi, L., Gadducci, F., Santini, F.: Polyadic soft constraints.
   In: Alvim, M.S., Chatzikokolakis, K., Olarte, C., Valencia, F. (eds.) The Art
   of Modelling Computational Systems. LNCS, vol. 11760, pp. 241--257. Springer
   (2019)
-
-\bibitem{smtpolynomial}
-Borralleras, C., Lucas, S., Oliveras, A., Rodr{\'{\i}}guez{-}Carbonell, E.,
-  Rubio, A.: {SAT} modulo linear arithmetic for solving polynomial constraints.
-  Journal of Automed Reasoning  48(1),  107--131 (2012)
 
 \bibitem{bortolussi}
 Bortolussi, L., Wiklicky, H.: A distributed and probabilistic concurrent
@@ -106,10 +96,5 @@ S\'agi, G.: Polyadic algebras. In: Andr\'eka, H., Ferenczi, M., N\'emeti, I.
 Saraswat, V.A., Rinard, M.C., Panangaden, P.: Semantic foundations of
   concurrent constraint programming. In: Wise, D.S. (ed.) POPL 1991. pp.
   333--352. ACM Press (1991)
-
-\bibitem{pcsp09}
-Scott, A.D., Sorkin, G.B.: Polynomial constraint satisfaction problems, graph
-  bisection, and the {I}sing partition function. ACM Transactions on Algorithms
-   5(4),  45:1--45:27 (2009)
 
 \end{thebibliography}
